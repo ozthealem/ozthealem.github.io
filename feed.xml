@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+    <title>ozthealem</title>
+    <link href="https://ozthealem.com/feed.xml" rel="self" />
+    <link href="https://ozthealem.com" />
+    <updated>2026-08-04T19:45:35+03:00</updated>
+    <author>
+        <name>Yazar</name>
+    </author>
+    <id>https://ozthealem.com</id>
+
+    <entry>
+        <title>Deneme Sayfa</title>
+        <author>
+            <name>Yazar</name>
+        </author>
+        <link href="https://ozthealem.com/dene-sayfa.html"/>
+        <id>https://ozthealem.com/dene-sayfa.html</id>
+
+        <updated>2026-04-06T20:21:35+03:00</updated>
+            <summary type="html">
+                <![CDATA[
+                    asdf sd sd sd sdsdfsdf sdf sdf sd sdfsdfsd
+                ]]>
+            </summary>
+        <content type="html">
+            <![CDATA[
+                <p>asdf</p>
+<p>sd</p>
+<p>sd</p>
+<p>sd</p>
+<p>sdsdfsdf</p>
+<p>sdf</p>
+<p>sdf</p>
+<p>sd</p>
+<p>sdfsdfsd</p>
+<p> </p>
+            ]]>
+        </content>
+    </entry>
+</feed>
