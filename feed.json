@@ -12,16 +12,16 @@
         {
             "id": "https://ozthealem.com/dene-sayfa.html",
             "url": "https://ozthealem.com/dene-sayfa.html",
-            "title": "Deneme Sayfa",
-            "summary": "asdf sd sd sd sdsdfsdf sdf sdf sd sdfsdfsd",
-            "content_html": "<p>asdf</p>\n<p>sd</p>\n<p>sd</p>\n<p>sd</p>\n<p>sdsdfsdf</p>\n<p>sdf</p>\n<p>sdf</p>\n<p>sd</p>\n<p>sdfsdfsd</p>\n<p> </p>",
+            "title": "Deneme Post",
+            "summary": "# Title Deneme Text",
+            "content_html": "<p># Title</p>\n<p>Deneme Text</p>",
             "author": {
                 "name": "Yazar"
             },
             "tags": [
             ],
             "date_published": "2026-04-06T20:21:35+03:00",
-            "date_modified": "2026-08-04T19:45:35+03:00"
+            "date_modified": "2026-08-04T23:36:05+03:00"
         }
     ]
 }
