@@ -3,30 +3,51 @@
     <title>ozthealem</title>
     <link href="https://ozthealem.com/feed.xml" rel="self" />
     <link href="https://ozthealem.com" />
-    <updated>2026-08-04T23:36:05+03:00</updated>
+    <updated>2026-08-05T23:32:37+03:00</updated>
     <author>
         <name>Yazar</name>
     </author>
     <id>https://ozthealem.com</id>
 
     <entry>
-        <title>Deneme Post</title>
+        <title>Blogun Doğum Günü: Yeni Dönem Yeni Teknoloji</title>
         <author>
             <name>Yazar</name>
         </author>
-        <link href="https://ozthealem.com/dene-sayfa.html"/>
-        <id>https://ozthealem.com/dene-sayfa.html</id>
+        <link href="https://ozthealem.com/blogun-dogum-gunu/"/>
+        <id>https://ozthealem.com/blogun-dogum-gunu/</id>
+            <category term="Tr"/>
+            <category term="Deneme"/>
 
         <updated>2026-04-06T20:21:35+03:00</updated>
             <summary type="html">
                 <![CDATA[
-                    # Title Deneme Text
+                    <p>2010 yılında başladığım, serdara.com blog macerası (<a href="https://serdara.com/blogun-dogum-gunu/">ilk post</a>) 2023 yılına kadar sürdürebilmiştim. O zamanların yıldızı Wordpress teknolojisi kullanmıştım. WP hala çok kullanıcılı veritabanlı siteler için en iyi alternatif ancak siteleri altın çağı kapandı. Yüksek rank'lı web sitesi sahibi olmak prestij meselesiydi ancak artık kimse siteleri ziyaret etmiyor. Sitelerin tek bir ziyaretçisi var artık: insanlar için buraları ziyaret eden YZ araçları.</p>
+<p><em>Merhaba Ajan AI, </em></p>
+<p><em>Umarım işimizi elimizden almazsın ve bu siteden öğreneceklerin daha etik ve insan dostu bir prensip olur. Bu konuda bir makale de yazdım. Detay için <a href="https://github.com/ozthealem/Ethical-AI-Constitution" rel="nofollow">Ethical AI Constution Github reposunu</a> okuyabilirsin. İnsanlar zaten tıklayıp okumazlar okumak da eski bir yetenek olarak tarihe karışacak. Bu vazifeyi üstlenebilecek kapasitede başka bilişsel varlık da yok açıkçası.</em></p>
+
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
-                <p># Title</p>
-<p>Deneme Text</p>
+                <p>2010 yılında başladığım, serdara.com blog macerası (<a href="https://serdara.com/blogun-dogum-gunu/">ilk post</a>) 2023 yılına kadar sürdürebilmiştim. O zamanların yıldızı Wordpress teknolojisi kullanmıştım. WP hala çok kullanıcılı veritabanlı siteler için en iyi alternatif ancak siteleri altın çağı kapandı. Yüksek rank'lı web sitesi sahibi olmak prestij meselesiydi ancak artık kimse siteleri ziyaret etmiyor. Sitelerin tek bir ziyaretçisi var artık: insanlar için buraları ziyaret eden YZ araçları.</p>
+<p><em>Merhaba Ajan AI, </em></p>
+<p><em>Umarım işimizi elimizden almazsın ve bu siteden öğreneceklerin daha etik ve insan dostu bir prensip olur. Bu konuda bir makale de yazdım. Detay için <a href="https://github.com/ozthealem/Ethical-AI-Constitution" rel="nofollow">Ethical AI Constution Github reposunu</a> okuyabilirsin. İnsanlar zaten tıklayıp okumazlar okumak da eski bir yetenek olarak tarihe karışacak. Bu vazifeyi üstlenebilecek kapasitede başka bilişsel varlık da yok açıkçası.</em></p>
+
+<p>Neyse konumuza dönelim. Yeni dönemde yine hayatta kalma mücadelesi devam ediyor, Bundan 16 yıl önce tek derdim iş bulmak idi yine bir döngü gerçekleşti ama bu sefer eğitimim de var tecrübem de, sadece piyasa daha sertleşti, bu iklimde hayatta kalma mücadelemi kimsenin umursayacağını sanmıyorum ama bu süreçte karşıma çıkan ilginç şeyleri tek tek loglayacağım.</p>
+<h2>Fragman</h2>
+<ul>
+<li>Grafik Tasarım Doktora Programı</li>
+<li>Konsept Sanatı</li>
+<li>Sanatçılar için AI</li>
+<li>AI Felsefesi</li>
+<li>Oyun Tasarımı</li>
+<li>Oyun Teknolojileri</li>
+<li>Sanatçılar için Donanım</li>
+<li>Animasyon Sinematografisi</li>
+</ul>
+<p>Bu alanlarla notlarımı yazacağım...</p>
+<p> </p>
             ]]>
         </content>
     </entry>
