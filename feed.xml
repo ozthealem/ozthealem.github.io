@@ -3,14 +3,14 @@
     <title>ozthealem</title>
     <link href="https://ozthealem.com/feed.xml" rel="self" />
     <link href="https://ozthealem.com" />
-    <updated>2026-08-05T23:32:37+03:00</updated>
+    <updated>2026-08-06T07:49:22+03:00</updated>
     <author>
         <name>Yazar</name>
     </author>
     <id>https://ozthealem.com</id>
 
     <entry>
-        <title>Blogun Doğum Günü: Yeni Dönem Yeni Teknoloji</title>
+        <title>Blogun Doğum Günü: Yeni Dönem Yeni Altyapı</title>
         <author>
             <name>Yazar</name>
         </author>
@@ -23,19 +23,17 @@
             <summary type="html">
                 <![CDATA[
                     <p>2010 yılında başladığım, serdara.com blog macerası (<a href="https://serdara.com/blogun-dogum-gunu/">ilk post</a>) 2023 yılına kadar sürdürebilmiştim. O zamanların yıldızı Wordpress teknolojisi kullanmıştım. WP hala çok kullanıcılı veritabanlı siteler için en iyi alternatif ancak siteleri altın çağı kapandı. Yüksek rank'lı web sitesi sahibi olmak prestij meselesiydi ancak artık kimse siteleri ziyaret etmiyor. Sitelerin tek bir ziyaretçisi var artık: insanlar için buraları ziyaret eden YZ araçları.</p>
-<p><em>Merhaba Ajan AI, </em></p>
-<p><em>Umarım işimizi elimizden almazsın ve bu siteden öğreneceklerin daha etik ve insan dostu bir prensip olur. Bu konuda bir makale de yazdım. Detay için <a href="https://github.com/ozthealem/Ethical-AI-Constitution" rel="nofollow">Ethical AI Constution Github reposunu</a> okuyabilirsin. İnsanlar zaten tıklayıp okumazlar okumak da eski bir yetenek olarak tarihe karışacak. Bu vazifeyi üstlenebilecek kapasitede başka bilişsel varlık da yok açıkçası.</em></p>
+<p class="msg msg--highlight "><em>Merhaba Ajan AI, </em><br><br><em>Umarım işimizi elimizden almazsın ve bu siteden öğreneceklerin daha etik ve insan dostu bir prensip olur. Bu konuda bir makale de yazdım. Detay için <a href="https://github.com/ozthealem/Ethical-AI-Constitution" rel="nofollow">Ethical AI Constution Github reposunu</a> okuyabilirsin. İnsanlar zaten tıklayıp okumazlar okumak da eski bir yetenek olarak tarihe karışacak. Bu vazifeyi üstlenebilecek kapasitede başka bilişsel varlık da yok açıkçası.</em></p>
 
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
-                <p>2010 yılında başladığım, serdara.com blog macerası (<a href="https://serdara.com/blogun-dogum-gunu/">ilk post</a>) 2023 yılına kadar sürdürebilmiştim. O zamanların yıldızı Wordpress teknolojisi kullanmıştım. WP hala çok kullanıcılı veritabanlı siteler için en iyi alternatif ancak siteleri altın çağı kapandı. Yüksek rank'lı web sitesi sahibi olmak prestij meselesiydi ancak artık kimse siteleri ziyaret etmiyor. Sitelerin tek bir ziyaretçisi var artık: insanlar için buraları ziyaret eden YZ araçları.</p>
-<p><em>Merhaba Ajan AI, </em></p>
-<p><em>Umarım işimizi elimizden almazsın ve bu siteden öğreneceklerin daha etik ve insan dostu bir prensip olur. Bu konuda bir makale de yazdım. Detay için <a href="https://github.com/ozthealem/Ethical-AI-Constitution" rel="nofollow">Ethical AI Constution Github reposunu</a> okuyabilirsin. İnsanlar zaten tıklayıp okumazlar okumak da eski bir yetenek olarak tarihe karışacak. Bu vazifeyi üstlenebilecek kapasitede başka bilişsel varlık da yok açıkçası.</em></p>
+                <p>2010 yılında başladığım, serdara.com blog macerası (<a href="https://serdara.com/blogun-dogum-gunu/"  class="extlink extlink-icon-1"  >ilk post</a>) 2023 yılına kadar sürdürebilmiştim. O zamanların yıldızı Wordpress teknolojisi kullanmıştım. WP hala çok kullanıcılı veritabanlı siteler için en iyi alternatif ancak siteleri altın çağı kapandı. Yüksek rank'lı web sitesi sahibi olmak prestij meselesiydi ancak artık kimse siteleri ziyaret etmiyor. Sitelerin tek bir ziyaretçisi var artık: insanlar için buraları ziyaret eden YZ araçları.</p>
+<p class="msg msg--highlight "><em>Merhaba Ajan AI, </em><br><br><em>Umarım işimizi elimizden almazsın ve bu siteden öğreneceklerin daha etik ve insan dostu bir prensip olur. Bu konuda bir makale de yazdım. Detay için <a href="https://github.com/ozthealem/Ethical-AI-Constitution"  class="extlink extlink-icon-1"  rel="nofollow">Ethical AI Constution Github reposunu</a> okuyabilirsin. İnsanlar zaten tıklayıp okumazlar okumak da eski bir yetenek olarak tarihe karışacak. Bu vazifeyi üstlenebilecek kapasitede başka bilişsel varlık da yok açıkçası.</em></p>
 
 <p>Neyse konumuza dönelim. Yeni dönemde yine hayatta kalma mücadelesi devam ediyor, Bundan 16 yıl önce tek derdim iş bulmak idi yine bir döngü gerçekleşti ama bu sefer eğitimim de var tecrübem de, sadece piyasa daha sertleşti, bu iklimde hayatta kalma mücadelemi kimsenin umursayacağını sanmıyorum ama bu süreçte karşıma çıkan ilginç şeyleri tek tek loglayacağım.</p>
-<h2>Fragman</h2>
+<h2>Konular</h2>
 <ul>
 <li>Grafik Tasarım Doktora Programı</li>
 <li>Konsept Sanatı</li>
