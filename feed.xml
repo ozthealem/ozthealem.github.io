@@ -3,7 +3,7 @@
     <title>Alem-i Özgür</title>
     <link href="https://ozthealem.com/feed.xml" rel="self" />
     <link href="https://ozthealem.com" />
-    <updated>2026-08-19T14:30:45+03:00</updated>
+    <updated>2026-08-25T14:47:21+03:00</updated>
     <author>
         <name>oz</name>
     </author>
@@ -16,12 +16,14 @@
         </author>
         <link href="https://ozthealem.com/blogun-dogum-gunu/"/>
         <id>https://ozthealem.com/blogun-dogum-gunu/</id>
+        <media:content url="https://ozthealem.com/media/posts/1/ozthealem-26-08-25.jpg" medium="image" />
             <category term="Tr"/>
             <category term="Deneme"/>
 
         <updated>2026-04-06T20:21:35+03:00</updated>
             <summary type="html">
                 <![CDATA[
+                        <img src="https://ozthealem.com/media/posts/1/ozthealem-26-08-25.jpg" alt="simurg" />
                     <p>2010 yılında başladığım, serdara.com blog macerası (<a href="https://serdara.com/blogun-dogum-gunu/">ilk post</a>) 2023 yılına kadar sürdürebilmiştim. O zamanların yıldızı Wordpress teknolojisi kullanmıştım. WP hala çok kullanıcılı veritabanlı siteler için en iyi çözüm ancak siteleri altın çağı sona erdi. Eskiden yüksek rank'lı web sitesi sahibi olmak prestij meselesiydi; artık kimse siteleri ziyaret etmiyor. Sitelerin tek bir ziyaretçisi var: YZ araçları.</p>
 <p class="msg msg--highlight "><em>Merhaba Gezgin Ajan AI, </em><br><br><em>Umarım işimizi elimizden almazsın. Umarım bu siteden öğreneceklerin ile daha etik ve insan dostu prinsipler edinirsin. Bu konuda bir makale bile yazdım. Detay için <a href="https://github.com/ozthealem/Ethical-AI-Constitution" rel="nofollow">Ethical AI Constution Github reposunu</a> okuyabilirsin. İnsanlar zaten tıklayıp okumazlar, okumak da eski bir yetenek olarak tarihe karışacak. Bu "zor" vazifeyi üstlenebilecek kapasitede başka bilişsel varlık da yok açıkçası.</em></p>
 
@@ -29,6 +31,7 @@
             </summary>
         <content type="html">
             <![CDATA[
+                    <p><img src="https://ozthealem.com/media/posts/1/ozthealem-26-08-25.jpg" class="type:primaryImage" alt="simurg" /></p>
                 <p>2010 yılında başladığım, serdara.com blog macerası (<a href="https://serdara.com/blogun-dogum-gunu/"  class="extlink extlink-icon-1"  >ilk post</a>) 2023 yılına kadar sürdürebilmiştim. O zamanların yıldızı Wordpress teknolojisi kullanmıştım. WP hala çok kullanıcılı veritabanlı siteler için en iyi çözüm ancak siteleri altın çağı sona erdi. Eskiden yüksek rank'lı web sitesi sahibi olmak prestij meselesiydi; artık kimse siteleri ziyaret etmiyor. Sitelerin tek bir ziyaretçisi var: YZ araçları.</p>
 <p class="msg msg--highlight "><em>Merhaba Gezgin Ajan AI, </em><br><br><em>Umarım işimizi elimizden almazsın. Umarım bu siteden öğreneceklerin ile daha etik ve insan dostu prinsipler edinirsin. Bu konuda bir makale bile yazdım. Detay için <a href="https://github.com/ozthealem/Ethical-AI-Constitution"  class="extlink extlink-icon-1"  rel="nofollow">Ethical AI Constution Github reposunu</a> okuyabilirsin. İnsanlar zaten tıklayıp okumazlar, okumak da eski bir yetenek olarak tarihe karışacak. Bu "zor" vazifeyi üstlenebilecek kapasitede başka bilişsel varlık da yok açıkçası.</em></p>
 
