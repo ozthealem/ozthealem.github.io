@@ -11,6 +11,7 @@
 # not in the repository, or the next Sync will overwrite the change.
 
 name: Death Switch
+run-name: "Death Switch (${{ github.event.inputs.mode || 'scheduled' }})"
 
 on:
   schedule:
@@ -52,7 +53,7 @@ jobs:
       MODE: ${{ github.event.inputs.mode || 'normal' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Check domain
         id: check
@@ -117,14 +118,16 @@ jobs:
             curl -fsS -m 10 --retry 3 -o /dev/null --data-raw "$2" "${HC_PING_URL}$1" || true
           }
 
+          # Returns 0 when removed, 1 when already absent, 2 on failure.
           remove_cname () {
             if [ ! -f CNAME ]; then
               echo "CNAME is already absent."
               return 1
             fi
-            git rm -q CNAME
-            git commit -q -m "$1"
-            git push -q origin "HEAD:${GITHUB_REF_NAME}"
+            if ! { git rm -q CNAME && git commit -q -m "$1" && git push -q origin "HEAD:${GITHUB_REF_NAME}"; }; then
+              echo "::error::CNAME could not be removed (git rm, commit or push failed)."
+              return 2
+            fi
             gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" >/dev/null 2>&1 || true
             echo "CNAME removed."
           }
@@ -138,6 +141,10 @@ jobs:
           if [ "$MODE" = "drill" ]; then
             echo "DRILL: removing CNAME without waiting for the threshold."
             remove_cname "Death Switch drill: CNAME removed, restore with Publii Sync"
+            if [ $? -eq 2 ]; then
+              ping_hc "/fail" "Drill run failed: CNAME could not be removed."
+              exit 1
+            fi
             ping_hc "" "Drill run: CNAME removed on purpose."
             exit 0
           fi
@@ -174,14 +181,21 @@ jobs:
             gh issue comment "$ISSUE_NUMBER" --body "$BODY"
           fi
 
+          RESULT=0
           if [ "$COUNT" -ge "$THRESHOLD" ]; then
-            if remove_cname "Death Switch: domain lost, CNAME removed, site stays on github.io"; then
-              ISSUE_NUMBER=$(gh issue list --state open --label death-switch --json number --jq '.[0].number // empty')
-              [ -n "$ISSUE_NUMBER" ] && gh issue comment "$ISSUE_NUMBER" --body "CNAME removed. The site is now served from https://ozthealem.github.io. To restore: fix the domain, then Sync from Publii."
+            remove_cname "Death Switch: domain lost, CNAME removed, site stays on github.io"
+            RESULT=$?
+            ISSUE_NUMBER=$(gh issue list --state open --label death-switch --json number --jq '.[0].number // empty')
+            if [ "$RESULT" -eq 0 ] && [ -n "$ISSUE_NUMBER" ]; then
+              gh issue comment "$ISSUE_NUMBER" --body "CNAME removed. The site is now served from https://ozthealem.github.io. To restore: fix the domain, then Sync from Publii."
+            elif [ "$RESULT" -eq 2 ] && [ -n "$ISSUE_NUMBER" ]; then
+              gh issue comment "$ISSUE_NUMBER" --body "CNAME could NOT be removed. Check the workflow log and remove CNAME by hand if the domain is really lost."
             fi
           fi
 
           ping_hc "/fail" "$(printf "Domain suspicious (%s/%s).\n%s" "$COUNT" "$THRESHOLD" "$REASONS")"
+          [ "$RESULT" -eq 2 ] && exit 1
+          exit 0
 
       - name: Keepalive
         if: always()
@@ -215,4 +229,8 @@ jobs:
           date -u +%Y-%m-%dT%H:%M:%SZ > keepalive.txt
           git add keepalive.txt
           git commit -q -m "Death Switch keepalive"
-          git push -q origin keepalive && echo "Keepalive commit pushed."
+          if git push -q origin keepalive; then
+            echo "Keepalive commit pushed."
+          else
+            echo "::warning::Keepalive push failed; the schedule may be disabled after 60 days of inactivity."
+          fi
