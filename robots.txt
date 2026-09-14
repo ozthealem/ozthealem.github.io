@@ -7,10 +7,16 @@
 # Maintained by hand. While this file exists Publii does not generate its
 # own robots.txt, so the Site Settings > SEO bot toggles do nothing here.
 #
+# Rule: training crawlers are blocked; search and user-request crawlers are
+# allowed, so AI answer engines can find and cite this site.
+#
 # Deliberately NOT blocked, so they keep working:
-#   ChatGPT-User    - live fetch when a user asks ChatGPT to open the page
-#   OAI-SearchBot   - builds the SearchGPT index that lets ChatGPT cite us
+#   ChatGPT-User     - live fetch when a user asks ChatGPT to open the page
+#   OAI-SearchBot    - builds the ChatGPT search index that lets it cite us
+#   Claude-User      - live fetch when a user asks Claude to open the page
+#   Claude-SearchBot - builds the Claude search index that lets it cite us
 #   Googlebot / Bingbot / DuckDuckBot - normal search indexing
+#                      (Google AI Overviews use Googlebot, not Google-Extended)
 # They fall under "User-agent: *" at the bottom.
 
 # --- AI training / bulk AI scraping: blocked ---
@@ -54,7 +60,13 @@ Disallow: /
 User-agent: FacebookBot
 Disallow: /
 
+# Perplexity: both crawlers blocked, including its user-request agent,
+# because it has been reported to ignore robots.txt.
+
 User-agent: PerplexityBot
+Disallow: /
+
+User-agent: Perplexity-User
 Disallow: /
 
 User-agent: YouBot

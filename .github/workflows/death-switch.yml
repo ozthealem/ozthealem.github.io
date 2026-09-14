@@ -1,0 +1,218 @@
+# Death Switch - keeps ozthealem.com alive on ozthealem.github.io if the domain is lost.
+#
+# Daily: checks that the domain still points to GitHub Pages and is still bound
+# to this repository. After 3 consecutive suspicious days it removes CNAME, so
+# GitHub Pages serves the site from the github.io address.
+#
+# Recovery is manual on purpose: fix the domain, then Sync from Publii.
+# Publii writes CNAME back on every deploy.
+#
+# This file is published from Publii's root-files folder. Edit it there,
+# not in the repository, or the next Sync will overwrite the change.
+
+name: Death Switch
+
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'normal: real run | simulate: checks only, changes nothing | drill: remove CNAME now'
+        required: true
+        default: simulate
+        type: choice
+        options:
+          - simulate
+          - normal
+          - drill
+
+permissions:
+  contents: write
+  issues: write
+  pages: write
+
+concurrency:
+  group: death-switch
+  cancel-in-progress: false
+
+env:
+  DOMAIN: ozthealem.com
+  THRESHOLD: 3
+  KEEPALIVE_DAYS: 30
+  ISSUE_PREFIX: 'Death Switch: domain suspicious'
+
+jobs:
+  watch:
+    if: github.repository == 'ozthealem/ozthealem.github.io'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      HC_PING_URL: ${{ secrets.HC_PING_URL }}
+      MODE: ${{ github.event.inputs.mode || 'normal' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check domain
+        id: check
+        run: |
+          set +e
+          command -v dig >/dev/null || sudo apt-get install -y -qq dnsutils >/dev/null
+          GITHUB_IPS=" 185.199.108.153 185.199.109.153 185.199.110.153 185.199.111.153 "
+          REASONS=""
+
+          A_RECORDS=$(dig +short A "$DOMAIN" | grep -E '^[0-9.]+$' | sort | tr '\n' ' ')
+          echo "DNS A records: ${A_RECORDS:-none}"
+          if [ -z "$A_RECORDS" ]; then
+            REASONS="${REASONS}- DNS: no A records\n"
+          else
+            for ip in $A_RECORDS; do
+              case "$GITHUB_IPS" in
+                *" $ip "*) ;;
+                *) REASONS="${REASONS}- DNS: $ip is not a GitHub Pages address\n" ;;
+              esac
+            done
+          fi
+
+          PAGES=$(gh api "repos/${GITHUB_REPOSITORY}/pages" 2>/dev/null)
+          if [ -z "$PAGES" ]; then
+            echo "::warning::GitHub Pages API could not be read; only DNS was checked."
+          else
+            PAGES_CNAME=$(echo "$PAGES" | jq -r '.cname // ""')
+            PROTECTED=$(echo "$PAGES" | jq -r '.protected_domain_state // ""')
+            echo "Pages API: cname=${PAGES_CNAME:-none} protected_domain_state=${PROTECTED:-none}"
+            if [ "$PAGES_CNAME" != "$DOMAIN" ]; then
+              REASONS="${REASONS}- GitHub Pages: custom domain is '${PAGES_CNAME:-none}'\n"
+            fi
+            if [ -n "$PROTECTED" ] && [ "$PROTECTED" != "verified" ]; then
+              REASONS="${REASONS}- GitHub Pages: domain protection is '$PROTECTED'\n"
+            fi
+          fi
+
+          if [ -z "$REASONS" ]; then
+            echo "healthy=true" >> "$GITHUB_OUTPUT"
+            echo "Result: healthy"
+          else
+            echo "healthy=false" >> "$GITHUB_OUTPUT"
+            printf 'Result: suspicious\n%b' "$REASONS"
+            {
+              echo "reasons<<EOF"
+              printf '%b' "$REASONS"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Decide and act
+        env:
+          HEALTHY: ${{ steps.check.outputs.healthy }}
+          REASONS: ${{ steps.check.outputs.reasons }}
+        run: |
+          set +e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          ping_hc () {
+            [ -z "$HC_PING_URL" ] && return
+            curl -fsS -m 10 --retry 3 -o /dev/null --data-raw "$2" "${HC_PING_URL}$1" || true
+          }
+
+          remove_cname () {
+            if [ ! -f CNAME ]; then
+              echo "CNAME is already absent."
+              return 1
+            fi
+            git rm -q CNAME
+            git commit -q -m "$1"
+            git push -q origin "HEAD:${GITHUB_REF_NAME}"
+            gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" >/dev/null 2>&1 || true
+            echo "CNAME removed."
+          }
+
+          gh label create death-switch --color B60205 --description "Death Switch domain watch" --force >/dev/null 2>&1
+          ISSUE=$(gh issue list --state open --label death-switch --json number,title --jq '.[0] // empty')
+          ISSUE_NUMBER=$(echo "$ISSUE" | jq -r '.number // empty')
+          COUNT=$(echo "$ISSUE" | jq -r '.title // ""' | grep -oE '\(([0-9]+)/' | tr -dc '0-9')
+          COUNT=${COUNT:-0}
+
+          if [ "$MODE" = "drill" ]; then
+            echo "DRILL: removing CNAME without waiting for the threshold."
+            remove_cname "Death Switch drill: CNAME removed, restore with Publii Sync"
+            ping_hc "" "Drill run: CNAME removed on purpose."
+            exit 0
+          fi
+
+          if [ "$HEALTHY" = "true" ]; then
+            if [ -n "$ISSUE_NUMBER" ]; then
+              if [ "$MODE" = "simulate" ]; then
+                echo "SIMULATE: would close issue #$ISSUE_NUMBER."
+              else
+                gh issue close "$ISSUE_NUMBER" --comment "Domain looks healthy again. Counter reset."
+              fi
+            fi
+            ping_hc "" "Healthy."
+            exit 0
+          fi
+
+          COUNT=$((COUNT + 1))
+          TITLE="$ISSUE_PREFIX ($COUNT/$THRESHOLD)"
+          BODY=$(printf "Day %s of %s.\n\n%s\n\nIf the domain is fine, nothing is needed: the issue closes itself on the next healthy check.\nIf CNAME was removed and the domain is back, Sync from Publii." "$COUNT" "$THRESHOLD" "$REASONS")
+
+          if [ "$MODE" = "simulate" ]; then
+            echo "SIMULATE: would set issue title to '$TITLE'."
+            if [ "$COUNT" -ge "$THRESHOLD" ]; then
+              echo "SIMULATE: would remove CNAME."
+            fi
+            ping_hc "" "Simulate run: domain suspicious, nothing changed."
+            exit 0
+          fi
+
+          if [ -z "$ISSUE_NUMBER" ]; then
+            gh issue create --title "$TITLE" --body "$BODY" --label death-switch
+          else
+            gh issue edit "$ISSUE_NUMBER" --title "$TITLE"
+            gh issue comment "$ISSUE_NUMBER" --body "$BODY"
+          fi
+
+          if [ "$COUNT" -ge "$THRESHOLD" ]; then
+            if remove_cname "Death Switch: domain lost, CNAME removed, site stays on github.io"; then
+              ISSUE_NUMBER=$(gh issue list --state open --label death-switch --json number --jq '.[0].number // empty')
+              [ -n "$ISSUE_NUMBER" ] && gh issue comment "$ISSUE_NUMBER" --body "CNAME removed. The site is now served from https://ozthealem.github.io. To restore: fix the domain, then Sync from Publii."
+            fi
+          fi
+
+          ping_hc "/fail" "$(printf "Domain suspicious (%s/%s).\n%s" "$COUNT" "$THRESHOLD" "$REASONS")"
+
+      - name: Keepalive
+        if: always()
+        run: |
+          set +e
+          if [ "$MODE" != "normal" ]; then
+            echo "Keepalive skipped in $MODE mode."
+            exit 0
+          fi
+          LAST=$(git ls-remote --exit-code origin refs/heads/keepalive >/dev/null 2>&1 && gh api "repos/${GITHUB_REPOSITORY}/commits/keepalive" --jq '.commit.committer.date' 2>/dev/null)
+          if [ -n "$LAST" ]; then
+            AGE=$(( ( $(date +%s) - $(date -d "$LAST" +%s) ) / 86400 ))
+          else
+            AGE=9999
+          fi
+          echo "Last keepalive: ${LAST:-never} (${AGE} days ago)"
+          if [ "$AGE" -lt "$KEEPALIVE_DAYS" ]; then
+            exit 0
+          fi
+          WORK=$(mktemp -d)
+          cd "$WORK"
+          git init -q
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          if git fetch -q --depth 1 origin keepalive; then
+            git checkout -q -b keepalive FETCH_HEAD
+          else
+            git checkout -q --orphan keepalive
+          fi
+          date -u +%Y-%m-%dT%H:%M:%SZ > keepalive.txt
+          git add keepalive.txt
+          git commit -q -m "Death Switch keepalive"
+          git push -q origin keepalive && echo "Keepalive commit pushed."
