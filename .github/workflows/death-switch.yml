@@ -4,8 +4,10 @@
 # to this repository. After 3 consecutive suspicious days it removes CNAME, so
 # GitHub Pages serves the site from the github.io address.
 #
-# Recovery is manual on purpose: fix the domain, then Sync from Publii.
-# Publii writes CNAME back on every deploy.
+# Recovery is manual on purpose: fix the domain, Sync from Publii (writes CNAME
+# back), then enter the domain again in repository Settings > Pages > Custom
+# domain and Save. Removing CNAME clears that setting; the file alone does not
+# restore it (confirmed in the 2026-09-14 drill).
 #
 # This file is published from Publii's root-files folder. Edit it there,
 # not in the repository, or the next Sync will overwrite the change.
@@ -140,7 +142,7 @@ jobs:
 
           if [ "$MODE" = "drill" ]; then
             echo "DRILL: removing CNAME without waiting for the threshold."
-            remove_cname "Death Switch drill: CNAME removed, restore with Publii Sync"
+            remove_cname "Death Switch drill: CNAME removed, restore with Publii Sync + Settings > Pages > Custom domain"
             if [ $? -eq 2 ]; then
               ping_hc "/fail" "Drill run failed: CNAME could not be removed."
               exit 1
@@ -163,7 +165,7 @@ jobs:
 
           COUNT=$((COUNT + 1))
           TITLE="$ISSUE_PREFIX ($COUNT/$THRESHOLD)"
-          BODY=$(printf "Day %s of %s.\n\n%s\n\nIf the domain is fine, nothing is needed: the issue closes itself on the next healthy check.\nIf CNAME was removed and the domain is back, Sync from Publii." "$COUNT" "$THRESHOLD" "$REASONS")
+          BODY=$(printf "Day %s of %s.\n\n%s\n\nIf the domain is fine, nothing is needed: the issue closes itself on the next healthy check.\nIf CNAME was removed and the domain is back: Sync from Publii, then Settings > Pages > Custom domain > enter the domain > Save." "$COUNT" "$THRESHOLD" "$REASONS")
 
           if [ "$MODE" = "simulate" ]; then
             echo "SIMULATE: would set issue title to '$TITLE'."
@@ -187,7 +189,7 @@ jobs:
             RESULT=$?
             ISSUE_NUMBER=$(gh issue list --state open --label death-switch --json number --jq '.[0].number // empty')
             if [ "$RESULT" -eq 0 ] && [ -n "$ISSUE_NUMBER" ]; then
-              gh issue comment "$ISSUE_NUMBER" --body "CNAME removed. The site is now served from https://ozthealem.github.io. To restore: fix the domain, then Sync from Publii."
+              gh issue comment "$ISSUE_NUMBER" --body "CNAME removed. The site is now served from https://ozthealem.github.io. To restore: fix the domain, Sync from Publii, then Settings > Pages > Custom domain > enter the domain > Save."
             elif [ "$RESULT" -eq 2 ] && [ -n "$ISSUE_NUMBER" ]; then
               gh issue comment "$ISSUE_NUMBER" --body "CNAME could NOT be removed. Check the workflow log and remove CNAME by hand if the domain is really lost."
             fi
