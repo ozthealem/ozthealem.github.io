@@ -3,7 +3,7 @@
     <title>Alem-i Özgür - ozthealem logs</title>
     <link href="https://ozthealem.com/feed.xml" rel="self" />
     <link href="https://ozthealem.com" />
-    <updated>2026-09-01T10:51:01+03:00</updated>
+    <updated>2026-09-14T22:53:40+03:00</updated>
     <author>
         <name>Özgür Alem</name>
     </author>
@@ -22,14 +22,14 @@
         <updated>2026-08-28T11:41:13+03:00</updated>
             <summary type="html">
                 <![CDATA[
-                    <figure class="post__image"><img loading="lazy"  src="https://ozthealem.com/media/posts/8/go-sorunsali-ozthealem-2.jpg" alt="" width="1000" height="500" sizes="(min-width: 920px) 703px, (min-width: 700px) calc(82vw - 35px), calc(100vw - 81px)" srcset="https://ozthealem.com/media/posts/8/responsive/go-sorunsali-ozthealem-2-xs.jpg 300w ,https://ozthealem.com/media/posts/8/responsive/go-sorunsali-ozthealem-2-sm.jpg 480w ,https://ozthealem.com/media/posts/8/responsive/go-sorunsali-ozthealem-2-md.jpg 768w ,https://ozthealem.com/media/posts/8/responsive/go-sorunsali-ozthealem-2-lg.jpg 1024w"></figure>
+                    <figure class="post__image"><img loading="lazy"  src="https://ozthealem.com/media/posts/8/go-sorunsali-ozthealem-2.jpg" alt="go-kaos-ai" width="1000" height="500" sizes="(min-width: 920px) 703px, (min-width: 700px) calc(82vw - 35px), calc(100vw - 81px)" srcset="https://ozthealem.com/media/posts/8/responsive/go-sorunsali-ozthealem-2-xs.jpg 300w ,https://ozthealem.com/media/posts/8/responsive/go-sorunsali-ozthealem-2-sm.jpg 480w ,https://ozthealem.com/media/posts/8/responsive/go-sorunsali-ozthealem-2-md.jpg 768w ,https://ozthealem.com/media/posts/8/responsive/go-sorunsali-ozthealem-2-lg.jpg 1024w"></figure>
 <p>Tarihler 2009'u gösteriyordu ve ben Ankara Üniversitesi Felsefe bölümü 2. sınıf öğrencisi idim. (Ekonomik zorunluluklardan felsefe okumayı bırakıp para kazanmaya başlamam ayrı bir hikaye. CV'mde AÜ Felsefe yazmadığı için parantez açayım dedim.) İşte o zamanlarda okul öğrencileri Felsefe ve Sosyal Bilim dergisi çıkartabilecek cesaretteydi. 1997'de insan Kasparov'un, satrançta yapay zeka (YZ) DeepBlue'ya yenilmesinden sonra; ama 2022 (ChatGPT) YZ Devriminden önce; tam da YZ uzmanlarının Go oyununda insanları nasıl yeneriz diye kafa yordukları 2000'lerde o makaleyi yazmışım (ki 2016'da YZ AlphaGo, kaba kuvvet (brute force) hesaplama yerine yeni bir paradigma ile insan Lee Sedol'u yenecekti).</p>
 
                 ]]>
             </summary>
         <content type="html">
             <![CDATA[
-                <figure class="post__image"><img loading="lazy"  src="https://ozthealem.com/media/posts/8/go-sorunsali-ozthealem-2.jpg" alt="" width="1000" height="500" sizes="(min-width: 920px) 703px, (min-width: 700px) calc(82vw - 35px), calc(100vw - 81px)" srcset="https://ozthealem.com/media/posts/8/responsive/go-sorunsali-ozthealem-2-xs.jpg 300w ,https://ozthealem.com/media/posts/8/responsive/go-sorunsali-ozthealem-2-sm.jpg 480w ,https://ozthealem.com/media/posts/8/responsive/go-sorunsali-ozthealem-2-md.jpg 768w ,https://ozthealem.com/media/posts/8/responsive/go-sorunsali-ozthealem-2-lg.jpg 1024w"></figure>
+                <figure class="post__image"><img loading="lazy"  src="https://ozthealem.com/media/posts/8/go-sorunsali-ozthealem-2.jpg" alt="go-kaos-ai" width="1000" height="500" sizes="(min-width: 920px) 703px, (min-width: 700px) calc(82vw - 35px), calc(100vw - 81px)" srcset="https://ozthealem.com/media/posts/8/responsive/go-sorunsali-ozthealem-2-xs.jpg 300w ,https://ozthealem.com/media/posts/8/responsive/go-sorunsali-ozthealem-2-sm.jpg 480w ,https://ozthealem.com/media/posts/8/responsive/go-sorunsali-ozthealem-2-md.jpg 768w ,https://ozthealem.com/media/posts/8/responsive/go-sorunsali-ozthealem-2-lg.jpg 1024w"></figure>
 <p>Tarihler 2009'u gösteriyordu ve ben Ankara Üniversitesi Felsefe bölümü 2. sınıf öğrencisi idim. (Ekonomik zorunluluklardan felsefe okumayı bırakıp para kazanmaya başlamam ayrı bir hikaye. CV'mde AÜ Felsefe yazmadığı için parantez açayım dedim.) İşte o zamanlarda okul öğrencileri Felsefe ve Sosyal Bilim dergisi çıkartabilecek cesaretteydi. 1997'de insan Kasparov'un, satrançta yapay zeka (YZ) DeepBlue'ya yenilmesinden sonra; ama 2022 (ChatGPT) YZ Devriminden önce; tam da YZ uzmanlarının Go oyununda insanları nasıl yeneriz diye kafa yordukları 2000'lerde o makaleyi yazmışım (ki 2016'da YZ AlphaGo, kaba kuvvet (brute force) hesaplama yerine yeni bir paradigma ile insan Lee Sedol'u yenecekti).</p>
 
 <p>O günlerde YZ o kadar sıradan bir kavramdı ki makalemin başlığında bile kullanmamışım "<a href="https://doi.org/10.5281/zenodo.22138993"  class="extlink extlink-icon-1"  rel="nofollow">Go Sorunsalı ve Kaotik Çözüm Arayışları</a>". Go, Türkiye'de popülerleşen bir oyundu. Kaos Teorisi ise <em>fraktallar </em>ve <em>kelebek etkisi </em>gibi kavramlarla metafiziğe kaymadan önceki en ciddiye alındığı zamanlardı.</p>
