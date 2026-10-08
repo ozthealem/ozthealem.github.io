@@ -1,0 +1,994 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#12301f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Bir Ömür $1M</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jersey+10&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#12301f; --bar:#1a3d29; --shadow:#0a1a11; --panel:#e3efd9; --panel2:#cfe2c3; --line:#1d4a33;
+  --ink:#14261b; --muted:#4f6b58; --gold:#d4a72c; --green:#2e8b57; --red:#e63946; --blue:#2f6fd6; --white:#f4f8ef;
+}
+* { box-sizing:border-box; }
+html, body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:'VT323', ui-monospace, monospace; font-size:20px; }
+button, input { font-family:inherit; }
+#app { max-width:1280px; margin:0 auto; height:100vh; height:100dvh; display:flex; flex-direction:column; }
+
+#top { background:var(--bar); border-bottom:4px solid var(--shadow); padding:8px 12px; display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; color:var(--white); }
+.logo { font-family:'Jersey 10', sans-serif; font-size:34px; color:var(--gold); text-shadow:2px 2px 0 var(--shadow); line-height:1; }
+.logo small { display:block; font-size:14px; color:#cfe2c3; text-shadow:none; letter-spacing:1px; }
+#money { text-align:center; }
+#money .usd { font-family:'Jersey 10', sans-serif; font-size:34px; color:var(--gold); line-height:1; font-variant-numeric:tabular-nums; }
+#money .sub { font-size:16px; color:#b9d3ad; }
+#money .yilTL { font-size:17px; color:var(--white); margin:1px 0 2px; }
+#age { text-align:right; font-size:18px; line-height:1.15; }
+#age b { font-family:'Jersey 10', sans-serif; font-size:26px; font-weight:400; color:var(--white); }
+
+#tabs { display:none; }
+#screens { flex:1; min-height:0; display:grid; grid-template-columns:1.15fr 1fr 1fr; gap:10px; padding:10px; }
+#varliklar { overflow-y:auto; }
+#aile { display:flex; flex-wrap:wrap; gap:6px; padding:8px 10px; background:#1f4a32; border-bottom:3px solid var(--shadow); }
+.screen { min-height:0; display:flex; flex-direction:column; background:#173a27; border:3px solid var(--shadow); }
+.screen h2 { margin:0; padding:6px 10px; background:var(--shadow); color:var(--gold); font-family:'Jersey 10', sans-serif; font-weight:400; font-size:24px; letter-spacing:1px; }
+
+#feed { flex:1; min-height:0; overflow-y:auto; padding:10px; display:flex; flex-direction:column; gap:8px; }
+.note { background:var(--panel); border:3px solid var(--line); box-shadow:3px 3px 0 var(--shadow); padding:8px 10px; animation:pop .25s ease-out; }
+@keyframes pop { from { transform:translateY(8px); opacity:0; } to { transform:none; opacity:1; } }
+.note .who { font-family:'Jersey 10', sans-serif; font-size:20px; color:var(--line); }
+.note .who small { font-family:'VT323', monospace; color:var(--muted); font-size:16px; margin-left:6px; }
+.note .txt { font-size:19px; line-height:1.15; }
+.note .src { font-size:15px; color:var(--muted); margin-top:3px; }
+.note.q { border-color:var(--gold); background:#fbf6e4; }
+.note.year { background:var(--panel2); }
+.note b.plus { color:var(--blue); } .note b.minus { color:var(--red); }
+.opts { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px; }
+.opts.three { grid-template-columns:1fr 1fr 1fr; }
+.opts.one { grid-template-columns:1fr; }
+.opt { background:var(--white); border:3px solid var(--line); box-shadow:2px 2px 0 var(--shadow); padding:6px; font-size:18px; cursor:pointer; line-height:1.05; text-align:center; }
+.opt small { display:block; color:var(--muted); font-size:15px; }
+.opt:active { transform:translate(2px,2px); box-shadow:none; }
+.opt.chosen { background:var(--gold); }
+.opt:disabled { cursor:default; opacity:.5; }
+.opt.chosen:disabled { opacity:1; }
+
+#control { overflow-y:auto; }
+.sahne { width:100%; display:flex; align-items:flex-end; gap:10px; flex-wrap:wrap; padding:4px 2px 2px; }
+.sahne .cift { display:flex; align-items:flex-end; }
+.sahne .cift .insan + .insan { margin-left:-6px; }   /* 2 piksel bindirme: eller buluşur */
+.spr { display:block; image-rendering:pixelated; }
+.box .spr { float:right; margin:0 0 2px 6px; }
+#people { display:flex; flex-wrap:wrap; gap:6px; padding:10px; background:#1f4a32; border-bottom:3px solid var(--shadow); }
+.box { background:var(--panel); border:3px solid var(--line); box-shadow:2px 2px 0 var(--shadow); padding:4px 8px; font-size:17px; line-height:1.05; }
+.box b { display:block; font-family:'Jersey 10', sans-serif; font-weight:400; font-size:19px; color:var(--line); }
+.box.thing { background:#f6eccb; }
+.box.sell { cursor:pointer; }
+.box.sell .tap { display:block; font-size:13px; color:var(--muted); }
+.box.sell.open { outline:3px solid var(--gold); }
+.satBtn { display:block; margin-top:4px; width:100%; background:var(--red); color:#fff; border:2px solid var(--shadow); font-family:'Jersey 10', sans-serif; font-size:18px; cursor:pointer; padding:2px 6px; }
+.note.alarm { background:#ffe3e3; border-color:var(--red); }
+table.puan { width:100%; border-collapse:collapse; margin:8px 0 4px; font-size:17px; }
+table.puan td { padding:2px 4px; border-bottom:1px dashed #b9d3ad; }
+table.puan td:last-child { text-align:right; font-variant-numeric:tabular-nums; }
+table.seref { font-size:16px; margin:4px 0 10px; }
+table.seref td:first-child { width:28px; color:var(--muted); }
+table.seref tr.ben td { background:#f6e3a0; }
+.seref b { display:block; margin-top:8px; font-family:'Jersey 10', sans-serif; font-weight:400; font-size:20px; color:var(--line); }
+.seref .not2 { font-size:14px; color:var(--muted); }
+.isBtn { background:var(--red) !important; color:#fff; font-family:'Jersey 10', sans-serif; font-size:24px; }
+.slide { display:flex; align-items:center; gap:10px; margin-top:8px; }
+.slide input { flex:1; accent-color:var(--green); height:28px; }
+.slide b { min-width:150px; text-align:right; font-weight:400; }
+.chk { display:flex; align-items:center; gap:8px; color:var(--white); font-size:17px; padding:6px; cursor:pointer; }
+.chk input { width:20px; height:20px; accent-color:var(--gold); }
+#gelirHesap { flex-direction:column; align-items:flex-start; gap:2px; cursor:default; }
+#gelirHesap label { display:flex; align-items:center; gap:8px; cursor:pointer; }
+details.grpline summary { list-style:none; cursor:pointer; }
+details.grpline summary::-webkit-details-marker { display:none; }
+details.grpline .line { padding-left:18px; }
+details.grpline .pm { font-style:normal; display:inline-block; width:14px; color:var(--gold); }
+details.grpline .pm::before { content:"+"; } details.grpline[open] .pm::before { content:"−"; }
+.opt:focus-visible, #go:focus-visible, #mailBtn:focus-visible, .box.sell:focus-visible, .slide input:focus-visible, #mailFilt button:focus-visible { outline:3px solid var(--gold); outline-offset:2px; }
+#mailFilt { display:flex; gap:6px; padding:6px 10px 0; }
+#mailFilt button { flex:1; background:#1f4a32; color:#cfe2c3; border:2px solid var(--shadow); font-family:'Jersey 10', sans-serif; font-size:19px; cursor:pointer; padding:2px 6px; }
+#mailFilt button.on { background:var(--gold); color:var(--ink); }
+.kalemler { display:grid; grid-template-columns:1fr auto; gap:0 10px; font-size:17px; margin-top:2px; }
+.kalemler b { font-weight:400; text-align:right; font-variant-numeric:tabular-nums; }
+.kalemler .top { border-top:1px dashed var(--muted); padding-top:2px; }
+.box small { color:var(--muted); font-size:14px; }
+.grp { width:100%; font-family:'Jersey 10', sans-serif; font-size:20px; color:var(--gold); margin-top:2px; }
+.grp span { font-family:'VT323', monospace; font-size:16px; color:#cfe2c3; margin-left:6px; }
+.ledger { padding:8px 10px; }
+.ledger h3 { margin:6px 0 4px; font-family:'Jersey 10', sans-serif; font-weight:400; font-size:21px; }
+.ledger h3 .tot { float:right; font-family:'VT323', monospace; font-size:18px; }
+.ledger.gain h3 { color:#8fb8ff; } .ledger.kar h3 { color:var(--white); } .ledger.enf { border-top:3px solid var(--shadow); }
+.ledger .tot.p { color:#8fb8ff; } .ledger .tot.m { color:#ff9aa2; } .ledger.cost h3 { color:#ff9aa2; } .ledger.once h3 { color:var(--gold); }
+.once .line .v.p { color:#8fb8ff; } .once .line .v.m { color:#ff9aa2; }
+.line { display:grid; grid-template-columns:1fr auto; gap:6px; padding:3px 6px; color:var(--white); border-bottom:1px dashed #2f5c43; font-size:18px; }
+.line .v { font-variant-numeric:tabular-nums; }
+.gain .line .v { color:#8fb8ff; } .cost .line .v { color:#ff9aa2; }
+.line .y { display:block; font-size:14px; color:#9fbfa9; }
+.empty { color:#9fbfa9; font-size:16px; padding:2px 6px; }
+.facts { padding:6px 10px 10px; font-size:15px; color:#9fbfa9; }
+.chart { padding:8px 10px; border-bottom:3px solid var(--shadow); }
+.chart h3 { margin:4px 0; font-family:'Jersey 10', sans-serif; font-weight:400; font-size:20px; color:var(--white); }
+.chart .lg { font-family:'VT323', monospace; font-size:15px; color:#cfe2c3; margin-left:6px; }
+.chart .lg i { display:inline-block; width:10px; height:10px; margin:0 3px 0 8px; vertical-align:middle; }
+.chart .lg i.g { background:#4f86e8; } .chart .lg i.c { background:#e8566a; }
+.chart svg { width:100%; height:auto; display:block; }
+.chart svg text { font-family:'VT323', monospace; font-size:11px; fill:#9fbfa9; }
+.chart .empty { font-size:15px; }
+
+#bottom { padding:10px; background:var(--bar); border-top:4px solid var(--shadow); display:grid; grid-template-columns:1fr 3fr 1fr; gap:10px; }
+#mailBtn, #tamEkran { position:relative; background:var(--panel); color:var(--ink); border:3px solid var(--line); box-shadow:3px 3px 0 var(--shadow); padding:6px 14px; font-family:'Jersey 10', sans-serif; font-size:24px; cursor:pointer; }
+#tamEkran.acik { background:var(--gold); }
+#mailBtn small, #tamEkran small { display:block; font-family:'VT323', monospace; font-size:15px; color:var(--muted); }
+#badge { position:absolute; top:-10px; right:-10px; min-width:26px; height:26px; padding:0 6px; border-radius:13px; background:var(--red); color:#fff; font-family:'VT323', monospace; font-size:18px; line-height:26px; display:none; }
+#mailBtn.flash { animation:flash .5s ease-out; }
+@keyframes flash { 50% { background:var(--gold); } }
+#popup { position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; align-items:center; justify-content:center; padding:16px; z-index:6; }
+#popup.open { display:flex; }
+#popup .txt { font-size:20px; line-height:1.2; }
+#popup .card { max-height:92vh; overflow-y:auto; }
+#mailBox { position:fixed; inset:0; background:rgba(10,26,17,.85); display:none; align-items:center; justify-content:center; padding:12px; z-index:4; }
+#mailBox.open { display:flex; }
+#mailPanel { width:100%; max-width:560px; max-height:88vh; display:flex; flex-direction:column; background:#173a27; border:4px solid var(--line); box-shadow:5px 5px 0 var(--shadow); }
+#mailPanel header { display:flex; justify-content:space-between; align-items:center; padding:6px 10px; background:var(--shadow); color:var(--gold); font-family:'Jersey 10', sans-serif; font-size:26px; }
+#mailPanel header button { background:var(--panel); border:3px solid var(--line); font-family:'Jersey 10', sans-serif; font-size:20px; cursor:pointer; padding:2px 10px; }
+#mailList { overflow-y:auto; padding:10px; display:flex; flex-direction:column; gap:8px; }
+#mailList .note { animation:none; }
+#mailList .note.new { border-color:var(--gold); }
+#go { width:100%; background:var(--green); color:var(--white); border:3px solid var(--line); box-shadow:3px 3px 0 var(--shadow); padding:10px; font-family:'Jersey 10', sans-serif; font-size:30px; cursor:pointer; }
+#go small { display:block; font-family:'VT323', monospace; font-size:17px; color:#d8efe0; }
+#go:disabled { background:#4d6b5a; color:#b9cbbf; cursor:default; }
+
+#start { position:fixed; inset:0; background:var(--bg); display:flex; align-items:center; justify-content:center; padding:16px; z-index:5; }
+.card { width:100%; max-width:380px; background:var(--panel); border:4px solid var(--line); box-shadow:5px 5px 0 var(--shadow); padding:16px; text-align:center; }
+.card h1 { margin:0 0 10px; font-family:'Jersey 10', sans-serif; font-weight:400; font-size:30px; color:var(--line); }
+.card input { width:100%; font-size:24px; padding:8px; border:3px solid var(--line); background:var(--white); text-align:center; }
+.card .hint { color:var(--muted); font-size:16px; margin-top:6px; }
+.usdAlt { color:var(--muted); font-size:.82em; white-space:nowrap; }
+.line .v .usdAlt, .box .usdAlt, .ledger h3 .tot .usdAlt { display:block; color:#9fbfa9; }
+.line .v { text-align:right; }
+.giris { display:block; text-align:left; margin-top:12px; font-size:19px; }
+.giris b { float:right; font-family:'Jersey 10', sans-serif; font-weight:400; font-size:22px; color:var(--line); }
+.giris input { display:block; width:100%; accent-color:var(--green); height:20px; margin:0; padding:0; }
+.giris { line-height:1.1; }
+.cek { position:relative; text-align:left; background:#f3f7ea; border:2px solid var(--line); box-shadow:inset 0 0 0 4px #f3f7ea, inset 0 0 0 5px #9fbfa9; padding:10px 12px; margin:8px 0; font-size:17px; }
+.cek .ust { display:flex; justify-content:space-between; font-family:'Jersey 10', sans-serif; font-size:18px; color:var(--line); border-bottom:1px dashed #9fbfa9; padding-bottom:4px; }
+.cek .ust span { font-family:'VT323', monospace; font-size:15px; color:var(--muted); }
+.cek .satir { margin-top:8px; border-bottom:1px solid #9fbfa9; }
+.cek .satir b { font-weight:400; font-size:20px; color:var(--ink); }
+.cek .tutar { display:inline-block; margin-top:8px; border:2px solid var(--line); padding:0 8px; font-family:'Jersey 10', sans-serif; font-size:30px; color:var(--line); background:#fff; }
+.cek .yazi { font-size:15px; color:var(--muted); margin-top:2px; }
+.cek .alt { display:flex; justify-content:space-between; align-items:flex-end; gap:10px; margin-top:10px; }
+.cek .not { font-style:italic; font-size:15px; line-height:1.1; }
+.cek .imza { font-family:'Jersey 10', sans-serif; font-size:24px; color:#1d3f8a; border-top:1px solid var(--ink); padding:0 6px; transform:rotate(-6deg); }
+.damga { display:inline-block; margin:4px 0; border:3px solid var(--red); color:var(--red); padding:2px 8px; transform:rotate(-3deg); font-size:16px; line-height:1.15; }
+.card .big { font-family:'Jersey 10', sans-serif; font-size:44px; color:var(--gold); text-shadow:2px 2px 0 var(--line); margin:6px 0; }
+.card .opt { width:100%; margin-top:10px; font-size:24px; background:var(--green); color:var(--white); }
+
+@media (max-width:760px) {
+  #tabs { display:flex; background:var(--shadow); }
+  #tabs button { flex:1; background:none; border:none; color:#9fbfa9; font-family:'Jersey 10', sans-serif; font-size:22px; padding:6px; cursor:pointer; }
+  #tabs button.on { color:var(--gold); border-bottom:3px solid var(--gold); }
+  #screens { grid-template-columns:1fr; padding:6px; }
+  .screen h2 { display:none; }
+  .screen.hide { display:none; }
+  #money .usd { font-size:28px; }
+  .logo { font-size:28px; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="top">
+    <div class="logo"><small>Bir Ömür</small>$1M</div>
+    <div id="money"><div class="usd" id="usd">$0,00</div><div class="yilTL" id="yilLine">Yıl: 2026</div><div class="sub" id="kurLine">1 $ = … TL</div></div>
+    <div id="age"><b id="ageN">Yaş: 18</b><br><span id="yearN"></span></div>
+  </div>
+  <div id="tabs"><button class="on" data-t="notes">Durum</button><button data-t="varliklar">Bilanço</button><button data-t="control">Gelir Gider</button></div>
+  <div id="screens">
+    <section class="screen" id="notes"><h2>Durum</h2><div id="aile"></div><div id="feed"></div></section>
+    <section class="screen" id="varliklar">
+      <h2>Bilanço</h2>
+      <div class="chart"><h3>Servet <span class="lg" id="servet26">2026 parasıyla</span></h3><svg id="chServet" viewBox="0 0 340 110" role="img" aria-label="Yıllara göre servet"></svg></div>
+      <div id="people"></div>
+    </section>
+    <section class="screen" id="control">
+      <h2>Gelir Gider</h2>
+      <div class="ledger gain"><h3>+ Yıllık Gelir <span class="tot" id="gainTot"></span></h3><div id="gains"></div><div class="chk" id="gelirHesap" role="radiogroup"><span>Gelirini her yıl otomatik olarak:</span><label><input type="radio" name="gh" value="vadesiz" checked> vadesizde bırak</label><label><input type="radio" name="gh" value="vadeli"> vadeliye koy</label><label><input type="radio" name="gh" value="dolar"> dolara çevir</label></div></div>
+      <div class="ledger cost"><h3>− Yıllık Gider <span class="tot" id="costTot"></span></h3><div id="costs"></div></div>
+      <div class="ledger kar"><h3>= Yıllık kâr <span class="tot" id="karTot"></span></h3><div class="empty">gelir − gider (düzenli kalemler; tek seferlikler postada)</div></div>
+      <div class="ledger once enf"><h3>Enflasyon karşısında <span class="tot" id="enfTot"></span></h3><div class="empty">Gelir ya da gider değil: fiyatlar artarken birikiminle alabildiğin şey ne kadar arttı ya da azaldı (bu yılın parasıyla).</div><div id="enfs"></div></div>
+      <div class="facts" id="facts"></div>
+    </section>
+  </div>
+  <div id="bottom"><button id="mailBtn">POSTA<small>mesajlar</small><span id="badge"></span></button><button id="go">DEVAM<small>bir yılı tamamla</small></button><button id="tamEkran" title="Tam ekran (F)">EKRAN<small id="tamYazi">tam ekran</small></button></div>
+</div>
+<div id="popup"><div class="card"><h1 id="popT"></h1><div class="txt" id="popM"></div><button class="opt" id="popOk">TAMAM</button></div></div>
+<div id="mailBox"><div id="mailPanel"><header>Posta Kutusu<button id="mailClose">KAPAT</button></header><div id="mailFilt"><button data-f="hepsi" class="on">Tümü</button><button data-f="gelir">Gelirler</button><button data-f="gider">Harcamalar</button></div><div id="mailList"></div></div></div>
+
+<div id="start">
+  <div class="card" id="startCard">
+    <div style="font-family:'Jersey 10',sans-serif;font-size:22px;color:var(--muted)">Bir Ömür</div><div class="big" style="margin:0 0 10px">$1M</div><h1>Karakter Bilgileri</h1>
+    <input id="nameIn" maxlength="16" placeholder="İsim" autocomplete="off">
+    <div class="hint" id="isimHata" style="color:var(--red);min-height:0"></div>
+    <label class="giris">Başlangıç yılı <b id="yilV">2026</b><input id="yilIn" type="range" min="1978" max="2026" value="2026"></label>
+    <div class="hint" id="yilNot">Ekonomi 2026'dan itibaren modelle ilerler.</div>
+    <button class="opt" id="baslaBtn">BAŞLA</button>
+    <button class="opt" id="girisTam" style="background:var(--panel);color:var(--ink);font-size:18px">⛶ Tam ekranda oyna</button>
+    <button class="opt" id="girisSeref" style="background:var(--panel);color:var(--ink);font-size:18px">Şeref listesi</button>
+    <div class="hint">Klavye: Tab alanlar arasında, yön tuşları kaydırıcıyı oynatır, Enter başlar. Oyunda P posta, Esc kapatır.</div>
+  </div>
+</div>
+
+<script>
+"use strict";
+// Bütün tutarlar 2026 fiyatlarıyla (reel) TL. "örnek" ya da "varsayım" yazanlar doğrulanacak.
+const D = {
+  kur: 49.16, kurSrc: "sabit: Yahoo Finance, 6 Eki 2026",
+  veraset: { istisna: 2907136, dilim: [[3e6, .01], [10e6, .03], [25e6, .05], [55e6, .07], [Infinity, .10]], src: "GİB, 2026 tarifesi" },
+  harc: .02,
+  evler: {
+    ucuz: { ad: "Esenyurt", fiyat: 3044392, kira: 22800, src: "Endeksa, Esenyurt ortalaması (Mart 2026); kira 100 m² (2026)" },
+    orta: { ad: "İstanbul ortalaması", fiyat: 7158000, kira: 45510, src: "Endeksa, İstanbul ortalaması (Temmuz 2026); kira Eylül 2026" },
+    luks: { ad: "Sarıyer", fiyat: 22035461, kira: 59000, src: "Endeksa, Sarıyer ortalaması (Mart 2026); kira 100 m² (2026)" } },
+  kira: 45510, kiraSrc: "Endeksa, İstanbul ortalama kirası, Eylül 2026",
+  arabalar: {
+    ucuz: { ad: "2. el sedan", yas0: 14, fiyat: 600000, mtv: 10016, sigorta: 25000, bakim: 30000, yakit: 110000, src: "fiyat ve masraflar örnek; MTV 2026 tarifesi (1301-1600 cc)" },
+    orta: { ad: "Renault Clio", yas0: 0, fiyat: 1830000, mtv: 12028, sigorta: 36600, bakim: 30000, yakit: 100000, src: "Renault Ekim 2026 listesi; MTV 2026 tarifesi (yaklaşık); kasko, bakım ve yakıt örnek" },
+    luks: { ad: "BMW 520i M Sport", yas0: 0, fiyat: 9290400, mtv: 12028, sigorta: 232000, bakim: 150000, yakit: 130000, src: "BMW Ekim 2026 listesi; MTV 2026 tarifesi (1.597 cc); kasko (%2,5) ve yetkili servis örnek" } },
+  // araba yaşlandıkça: MTV düşer (2026 tarifesi, 1301-1600 cc: 1-3 yaş 10.016, 4-6 yaş 7.510, 7-11 yaş 4.354, 12-15 yaş 3.077, 16+ 1.181 TL),
+  // bakım yılda %12, yakıt yılda %2 artar, 6 yaştan sonra arıza olasılığı her yıl %5 büyür; 25 yaşında hurdaya çıkar
+  mtvKat: [[3, 1], [6, .75], [11, .435], [15, .307], [Infinity, .118]], arabaOmur: 25,
+  hayvanlar: {
+    kus: { ad: "Kuş ya da balık", isim: "Maviş", ilk: 8000, yil: 10000, omur: 8, ses: "Cik cik!" },
+    kedi: { ad: "Kedi", isim: "Pamuk", ilk: 12000, yil: 48000, omur: 15, ses: "Miyav!" },
+    kopek: { ad: "Köpek", isim: "Karabaş", ilk: 15000, yil: 66000, omur: 12, ses: "Hav!" } },
+  hayvanSrc: "veteriner 2026 İstanbul: muayene 1.750, kuduz aşısı 1.450, karma aşı 1.750 TL (karekod.org); mama, kum, kafes ve akvaryum örnek",
+  gelirVergi: { istisna: 58000, goturu: .15, dilim: [[190000, .15], [400000, .20], [1000000, .27], [5300000, .35], [Infinity, .40]], src: "PwC, 2026 tarifesi" },
+  emlakOran: .002,
+  faizNet: .326, enflasyon: .315, faizSrc: "vadeli net faiz %32,6 (Akbank Serbest Plus, stopaj sonrası); enflasyon %31,5 (2026 3. çeyrek)",
+  ekoSrc: "TÜİK reel getiri bültenleri: mevduat 2021 −%36, 2022 −%41, 2023 −%23, 2024 +%6, 2025 +%9; dolar 2023 −%14, 2025 −%4,5. Vadeliyi eriten dönemler: 1977-80, 1994, 2021-23 (yaklaşık 15-17 yılda bir, 1-3 yıl)",
+  gecimBirim: (123130 - 45510) / 2.1, gecimSrc: "Türk-İş yoksulluk sınırı Eylül 2026 eksi İstanbul ortalama kirası (konut hariç geçim), OECD hane ölçeği",
+  gss: 1981.80,
+  emeklilik: { prim: 10899.90, yil: 25, yas: 65, maas: 23552, src: "SGK 2026: isteğe bağlı sigorta en düşük prim (33.030 TL × %33, GSS dahil); 2008 sonrası 9.000 prim günü (25 yıl) ve 65 yaş; en düşük emekli aylığı 23.552 TL (Temmuz 2026)" },
+  satis: { evKesinti: .02 + .024, evSrc: "satıcı tapu harcı %2 + emlakçı komisyonu %2 ve KDV", arabaYillikKayip: .10 },
+  okul: { min: 0, ort: 1050189, max: 1702800, src: "iyiokullar, İstanbul 2026-2027 (devlet, Taş Koleji, Koç)" },
+  uni: { min: 0, ort: 650000, max: 1500000, src: "örnek" },
+  dugun: { min: 450000, ort: 1200000, max: 3500000, src: "örnek" },
+  tatil: { min: 90000, ort: 260000, max: 900000, src: "örnek, 2 kişi" },
+  eglence: { min: 60000, ort: 180000, max: 600000, src: "örnek, 1 kişi" }
+};
+// Gerçek veriler (yıl: [TÜFE %, mevduat faizi %, yıl sonu USD/TL yeni TL]); 2026 ve sonrası model
+const TARIH = {
+  1977: [null, null, 1.8e-05],
+  1978: [47.2, 6, 2.428e-05],
+  1979: [56.8, 7.33, 3.108e-05],
+  1980: [115.6, 8, 7.604e-05],
+  1981: [33.9, 26.5, 0.0001112],
+  1982: [21.9, 45, 0.0001626],
+  1983: [37.1, 45.3, 0.0002255],
+  1984: [49.7, 51.4, 0.0003667],
+  1985: [44.2, 49.25, 0.000522],
+  1986: [30.7, 40.58, 0.0006745],
+  1987: [55.1, 35, 0.0008572],
+  1988: [75.2, 49.08, 0.001422],
+  1989: [68.8, 53.79, 0.002305],
+  1990: [60.6, 47.48, 0.00293],
+  1991: [71.1, 62.68, 0.00508],
+  1992: [67.9, 68.74, 0.008564],
+  1993: [71.4, 64.57, 0.014458],
+  1994: [125.5, 87.79, 0.038418],
+  1995: [76.0, 75.97, 0.059501],
+  1996: [79.8, 80.75, 0.107775],
+  1997: [99.1, 79.49, 0.205605],
+  1998: [69.7, 80.11, 0.314464],
+  1999: [68.8, 78.43, 0.540098],
+  2000: [39.0, 47.16, 0.671765],
+  2001: [68.5, 74.7, 1.446638],
+  2002: [29.7, 50.49, 1.643699],
+  2003: [18.4, 37.68, 1.396835],
+  2004: [9.3, 24.26, 1.3421],
+  2005: [7.72, 20.4, 1.343],
+  2006: [9.65, 21.65, 1.4056],
+  2007: [8.39, 22.56, 1.1647],
+  2008: [10.06, 22.91, 1.5154],
+  2009: [6.53, 17.65, 1.4977],
+  2010: [6.4, 15.27, 1.5407],
+  2011: [10.45, 14.11, 1.8893],
+  2012: [6.16, 17.19, 1.7826],
+  2013: [7.4, 15.29, 2.1343],
+  2014: [8.17, 16.93, 2.3189],
+  2015: [8.81, 14.92, 2.9067],
+  2016: [8.53, 14.61, 3.5192],
+  2017: [11.92, 15.29, 3.7845],
+  2018: [20.3, 23.28, 5.28],
+  2019: [11.84, 25.41, 5.9465],
+  2020: [14.6, 13.36, 7.4336],
+  2021: [36.08, 15, 13.335],
+  2022: [64.27, 17, 18.698],
+  2023: [64.77, 27, 29.48],
+  2024: [44.38, 36, 35.36],
+  2025: [30.89, 39, 42.95] };
+const TARIH_SRC = "TÜFE: TÜİK (Vikipedi tablosu); mevduat faizi: Dünya Bankası FR.INR.DPST (IMF), 2021-2025 TÜİK reel getirisine göre; kur: 1977-1988 Dünya Bankası yıllık ortalama, 1989 sonrası TCMB yıl sonu gösterge kuru; miras alım gücüyle sabit (TÜFE sepeti)";
+// Ekonomi her yıl değişir. Enflasyon %30-%65 arasında gezinir; normal yılda reel faiz −%6…+%8.
+// Kriz dönemi (yılda %6 olasılık, 1-3 yıl): reel faiz −%42…−%15. Reel faiz = mevduat faizi − enflasyon.
+const yuz = x => (x <= -.0005 ? "−%" : "%") + Math.abs(x * 100).toFixed(1).replace(".", ",");
+const rnd = (a, b) => a + Math.random() * (b - a);
+const reel = () => (1 + S.eko.faiz) / (1 + S.eko.enf) - 1;   // alım gücü: kaç sepet
+function ekoKur(kriz) {                      // gelecek yılın enflasyonu ve mevduat faizi
+  const E = S.eko;
+  E.enf = Math.min(.65, Math.max(.30, E.enf + (kriz ? rnd(0, .20) : rnd(-.08, .08))));
+  E.faiz = Math.max(.08, (1 + E.enf) * (1 + (kriz ? rnd(-.42, -.15) : rnd(-.06, .08))) - 1);
+}
+
+const $ = id => document.getElementById(id);
+const tlR = n => (n < 0 ? "−" : "") + Math.round(Math.abs(n)).toLocaleString("tr-TR") + " TL";   // 2026 parasıyla
+const tlTL = n => tlR(n * S.endeks);   // o yılın parasıyla: her şey enflasyonla zamlanır
+const usdK = n => { const v = n / D.kur, a = Math.abs(v); return (v < 0 ? "−$" : "$") + a.toLocaleString("tr-TR", { maximumFractionDigits: a < 10 ? 2 : 0 }); };
+const tl = n => `${tlTL(n)} <small class="usdAlt">(${usdK(n)})</small>`;           // TL ve altında dolar
+const tlYil = n => `${tlTL(n)}/yıl <small class="usdAlt">(${usdK(n)})</small>`;
+const tlKisa = n => { const v = n * S.endeks, a = Math.abs(v), f = x => x.toLocaleString("tr-TR", { maximumFractionDigits: 1 });
+  return (v < 0 ? "−" : "") + (a >= 1e9 ? f(a / 1e9) + " milyar TL" : a >= 1e6 ? f(a / 1e6) + " milyon TL" : Math.round(a).toLocaleString("tr-TR") + " TL"); };
+const usdFmt = n => (n < 0 ? "−$" : "$") + Math.abs(n).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+function kademe(m, dilim) { let t = 0, alt = 0; for (const [ust, o] of dilim) { if (m <= alt) break; t += (Math.min(m, ust) - alt) * o; alt = ust; } return t; }
+const pick = a => a[Math.floor(Math.random() * a.length)];
+
+const S = { krizSay: 0, tarihKrizde: false, secimler: [], luksGez: -9, basYas: 18, bas: 2026, kur2026: 0, endeks: 1, dolar: 0, kur0: 0, kurArtis: 0, eko: { enf: D.enflasyon, faiz: D.faizNet, kriz: 0 }, anaKutu: null, gezdi: false, esFark: 0, gelirHesap: "vadesiz", acikGrup: {}, emekliYas: null, postaFiltre: "hepsi", gecmis: [], sigortali: false, primYil: 0, emekli: false, ayrilan: {}, arabaYil: 0, acil: false, secili: null, ad: "", yas: 18, yil: 2026, vadesiz: 0, vadeli: 0, gosterilen: 0, evler: [], araba: null, hayvan: null, es: false, yasEvlilik: null,
+  cocuklar: [], okul: {}, uni: {}, buYil: {}, sonYil: {}, kayit: {}, bekleyen: [], bitti: false };
+const nakit = () => S.vadesiz + S.vadeli + S.dolar * D.kur;
+
+const SABIT_KAZANC = ["Kira geliri", "Emekli maaşı"];
+// Enflasyon karşısında: paranın alım gücündeki değişim. Gelir ya da gider değildir, ayrı gösterilir.
+const ENF = ["Vadesiz: faiz yok, enflasyonla erir", "Vadeli: faiz − enflasyon", "Dolar: kur − enflasyon"];
+const SABIT_GIDER = ["Kira (oturduğun ev)", "Yaşam gideri", "Sağlık sigortası (GSS)", "Emeklilik primi", "Kira vergisi", "Emlak vergisi", "MTV (araba)", "Araba: sigorta", "Araba: bakım ve servis", "Araba: yakıt", "Araba: arıza", "Okul", "Üniversite", "Evcil hayvan"];
+// giderlerde açılır kapanır gruplar
+const GRUP = [{ ad: "Vergiler", k: ["Kira vergisi", "Emlak vergisi", "MTV (araba)"] }, { ad: "Araba", k: ["Araba: sigorta", "Araba: bakım ve servis", "Araba: yakıt", "Araba: arıza"] }];
+const evDeger = () => S.evler.reduce((a, e) => a + D.evler[e].fiyat, 0);
+function kaydet(kalem, t) { S.kayit[kalem] = (S.kayit[kalem] || 0) + t; S.buYil[kalem] = (S.buYil[kalem] || 0) + t; }
+function gelir(kalem, t, hesap = "vadesiz") { if (hesap === "dolar") S.dolar += t / D.kur; else S[hesap] += t; kaydet(kalem, t); }
+function dengele() {                       // eksideki hesap sırayla vadesiz, vadeli, dolardan kapanır
+  const H = ["vadesiz", "vadeli", "dolar"], A = { vadesiz: S.vadesiz, vadeli: S.vadeli, dolar: S.dolar * D.kur };
+  for (const k of H) for (const j of H) if (A[k] < 0 && j !== k && A[j] > 0) { const m = Math.min(A[j], -A[k]); A[j] -= m; A[k] += m; }
+  S.vadesiz = A.vadesiz; S.vadeli = A.vadeli; S.dolar = A.dolar / D.kur;
+}
+function ode(kalem, t) { S.vadesiz -= t; kaydet(kalem, -t); dengele(); }   // yıllık giderler: önce vadesizden
+function al(kalem, t) { S.vadeli -= t; kaydet(kalem, -t); dengele(); }     // alışveriş: önce vadeliden
+
+
+// Görseller: kullanıcının çizimleri GORSEL'e gömülür (ad → PNG data URI). Gelene kadar standart ölçüde gri yer tutucu.
+// Standart: insanlar 16×16 kare, ayaklar en alt satırda, eller iki dış sütunda EL_SATIR hizasında; ev 16×16; araba 24×12.
+const GORSEL = {};
+const STD = { yetiskin: [16, 16, 16], cocuk3: [16, 16, 13], cocuk2: [16, 16, 10], cocuk1: [16, 16, 7], ev: [16, 16], araba: [24, 12] };
+const EL_SATIR = 9;
+function gorsel(ad, renk, olcek = 3, baslik = "") {
+  const [w, h, boy] = STD[ad];
+  const svg = ic => `<svg class="spr${boy ? " insan" : ""}" width="${w * olcek}" height="${h * olcek}" viewBox="0 0 ${w} ${h}" shape-rendering="crispEdges" role="img" aria-label="${baslik}"><title>${baslik}</title>${ic}</svg>`;
+  if (GORSEL[ad]) return svg(`<image href="${GORSEL[ad]}" width="${w}" height="${h}" style="image-rendering:pixelated"/>`);
+  if (!boy) return svg(`<rect x="0.5" y="0.5" width="${w - 1}" height="${h - 1}" fill="#8a8a8a" stroke="#5c5c5c"/>${renk ? `<rect x="1" y="${h - 4}" width="${w - 2}" height="2" fill="${renk}"/>` : ""}`);
+  const en = Math.max(4, Math.round(boy * .5)), x0 = (w - en) / 2, ust = h - boy, el = Math.max(EL_SATIR, ust + 2);
+  return svg(`<rect x="${x0}" y="${ust}" width="${en}" height="${boy}" fill="#8a8a8a"/>`
+    + `<rect x="${x0}" y="${ust + Math.round(boy * .45)}" width="${en}" height="2" fill="${renk || "#5c5c5c"}"/>`
+    + `<rect x="0" y="${el}" width="${w}" height="1" fill="#8a8a8a"/><rect x="0" y="${el}" width="1" height="1" fill="#5c5c5c"/><rect x="${w - 1}" y="${el}" width="1" height="1" fill="#5c5c5c"/>`);
+}
+const kalp = () => `<svg class="spr" width="14" height="12" viewBox="0 0 7 6" shape-rendering="crispEdges"><title>evlendi</title><path d="M1 0h2v1h1V0h2v1h1v2H6v1H5v1H4v1H3V5H2V4H1V3H0V1h1z" fill="#e63946"/></svg>`;
+const RENK = { ben: "#2e8b57", es: "#d4a72c", cocuk: "#4f86e8", damat: "#b07cc6", ucuz: "#9fbfa9", orta: "#4f86e8", luks: "#e63946" };
+function aileSahnesi() {                    // ben ve eşim el ele; evdeki çocuklar elimizi tutar; evlenen çocuk eşiyle ayrı durur
+  let ev = gorsel("yetiskin", RENK.ben, 3, S.ad || "Sen");
+  if (S.es) ev += gorsel("yetiskin", RENK.es, 3, "Eşin");
+  const disari = [];
+  S.cocuklar.forEach((c, i) => {
+    const y = S.yil - c; if (y < 0) return;
+    const ad = `Çocuk ${i + 1}, ${y} yaşında`;
+    if (S.ayrilan[c]) disari.push(`<span class="cift">${gorsel("yetiskin", RENK.cocuk, 3, ad)}${gorsel("yetiskin", RENK.damat, 3, "Çocuğunun eşi")}</span>`);
+    else ev += gorsel(y < 6 ? "cocuk1" : y < 13 ? "cocuk2" : y < 22 ? "cocuk3" : "yetiskin", RENK.cocuk, 3, ad);
+  });
+  return `<div class="sahne"><span class="cift">${ev}</span>${disari.map(x => `${kalp()}${x}`).join("")}</div>`;
+}
+
+const feed = $("feed");
+function kart(who, txt, opt = {}) {          // ekranda duran kart (soru, sonuç)
+  const d = document.createElement("div");
+  d.className = "note " + (opt.cls || "");
+  d.innerHTML = `<div class="who">${who}<small>Yaş: ${S.yas}</small></div><div class="txt">${txt}</div>${opt.src ? `<div class="src">Kaynak: ${opt.src}</div>` : ""}`;
+  feed.appendChild(d); feed.scrollTop = feed.scrollHeight; return d;
+}
+// Diğer her şey posta kutusuna gider
+const posta = []; let okunmamis = 0;
+function note(who, txt, opt = {}) {
+  posta.push({ who, txt, src: opt.src, yas: S.yas, yeni: true, tur: opt.tur || "genel" });
+  if (opt.sessiz) return;
+  okunmamis++; const b = $("badge"); b.textContent = okunmamis; b.style.display = "block";
+  const m = $("mailBtn"); m.classList.remove("flash"); void m.offsetWidth; m.classList.add("flash");
+}
+function postaAc() {
+  document.querySelectorAll("#mailFilt button").forEach(b => b.classList.toggle("on", b.dataset.f === S.postaFiltre));
+  $("mailList").innerHTML = posta.filter(p => S.postaFiltre === "hepsi" || p.tur === S.postaFiltre).reverse().map(p => `<div class="note ${p.yeni ? "new" : ""}"><div class="who">${p.who}<small>Yaş: ${p.yas}</small></div><div class="txt">${p.txt}</div>${p.src ? `<div class="src">Kaynak: ${p.src}</div>` : ""}</div>`).join("") || `<div class="empty">Posta yok</div>`;
+  posta.forEach(p => p.yeni = false); okunmamis = 0; $("badge").style.display = "none";
+  $("mailBox").classList.add("open");
+}
+$("mailBtn").onclick = postaAc;
+$("mailFilt").onclick = e => { const b = e.target.closest("button"); if (b) { S.postaFiltre = b.dataset.f; postaAc(); b.focus(); } };
+function yilListesi(tur, e0) {                 // yıl sonu: gelir ya da harcama kalemleri, o yılın parasıyla
+  const L = Object.entries(S.buYil).filter(([k, v]) => !ENF.includes(k) && (tur === "gelir" ? v > 0 : v < 0)).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
+  if (!L.length) return;
+  const f = v => tlR(Math.abs(v) * e0), top = L.reduce((a, [, v]) => a + v, 0);
+  note(tur === "gelir" ? "Yılın gelirleri" : "Yılın harcamaları", `<div class="kalemler">${L.map(([k, v]) => `<span>${k}</span><b>${f(v)}</b>`).join("")}<span class="top">Toplam</span><b class="top ${tur === "gelir" ? "plus" : "minus"}">${tur === "gelir" ? "+" : "−"}${f(top)}</b></div>`, { tur, sessiz: true });
+}
+let popIs = null;
+// Tam ekran: tarayıcı çubukları gizlenir. iPhone Safari desteklemez; orada "Ana ekrana ekle" ile açılınca zaten tam ekran olur.
+const tamEkranVar = () => document.fullscreenElement || document.webkitFullscreenElement;
+function tamEkran() {
+  const el = document.documentElement;
+  if (tamEkranVar()) return (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+  const ac = el.requestFullscreen || el.webkitRequestFullscreen;
+  if (ac) ac.call(el); else popup("Tam ekran", "Bu tarayıcı tam ekranı desteklemiyor. iPhone'da Paylaş menüsünden <b>Ana Ekrana Ekle</b> deyip oyunu oradan açarsan tam ekran olur.");
+}
+$("tamEkran").onclick = tamEkran;
+["fullscreenchange", "webkitfullscreenchange"].forEach(ev => document.addEventListener(ev, () => { $("tamEkran").classList.toggle("acik", !!tamEkranVar()); $("tamYazi").textContent = tamEkranVar() ? "küçült" : "tam ekran"; }));
+document.addEventListener("keydown", e => { if ((e.key === "f" || e.key === "F") && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) tamEkran(); });
+function popup(baslik, metin, dugme = "TAMAM", is = null) { $("popT").textContent = baslik; $("popM").innerHTML = metin; $("popOk").textContent = dugme; popIs = is; $("popup").classList.add("open"); $("popOk").focus(); }
+$("popOk").onclick = () => { if (popIs) return popIs(); $("popup").classList.remove("open"); $("go").focus(); };
+$("mailClose").onclick = () => $("mailBox").classList.remove("open");
+$("mailBox").onclick = e => { if (e.target.id === "mailBox") $("mailBox").classList.remove("open"); };
+function soru(who, txt, secenekler, src, opt = {}) {
+  const d = kart(who, txt, { cls: "q", src });
+  const box = document.createElement("div"); box.className = "opts" + (secenekler.some(x => (x.s || "").replace(/<small class="usdAlt">.*?<\/small>/g, "").replace(/<[^>]+>/g, "").length > 22) ? " one" : secenekler.length === 3 ? " three" : "");
+  secenekler.forEach(s => {
+    const b = document.createElement("button"); b.className = "opt";
+    b.innerHTML = s.t + (s.s ? `<small>${s.s}</small>` : "");
+    if (s.kapali) b.disabled = true;   // ör. paran yetmiyor
+    b.onclick = () => {
+      if (opt.degisir) {                         // fikir değiştirilebilir; seçim DEVAM'a basınca uygulanır
+        [...box.children].forEach(x => x.classList.remove("chosen")); b.classList.add("chosen");
+        box._f = s.f; box.dataset.secildi = "1"; d.classList.remove("alarm");
+        if (!box._ilk) { box._ilk = true; S.secimler.push(box); sonraki(); }
+        return;
+      }
+      if (s.alt) {                               // alt menü: tekrar basınca kapanır, başka seçenek seçilebilir
+        const acik = box._alt; if (acik) { acik.remove(); box._alt = null; S.bekleyen = []; }
+        [...box.children].forEach(x => x.classList.remove("chosen"));
+        if (acik && box._altSahibi === b) { box._altSahibi = null; return; }
+        b.classList.add("chosen"); box._altSahibi = b; S.anaKutu = box;
+        const once = feed.lastElementChild; s.f(); sonraki();
+        box._alt = feed.lastElementChild !== once ? feed.lastElementChild : null;
+        return;
+      }
+      [...box.children].forEach(x => x.disabled = true); b.classList.add("chosen");
+      if (S.anaKutu && S.anaKutu !== box) { [...S.anaKutu.children].forEach(x => x.disabled = true); S.anaKutu = null; }
+      s.f(); ciz(); sonraki();
+    };
+    box.appendChild(b);
+  });
+  if (opt.zorunlu) box.dataset.zorunlu = "1";
+  d.appendChild(box); feed.scrollTop = feed.scrollHeight;
+  odak(box.querySelector(".opt:not(:disabled)"));
+}
+const odak = el => { if (el && !S.bitti) el.focus({ preventScroll: true }); };
+// Bir tur içindeki soru sırası: bekleyenler bitince DEVAM açılır
+function sonraki() {
+  if (S.bitti) return;
+  if (S.bekleyen.length) return S.bekleyen.shift()();
+  $("go").disabled = S.acil;
+  if (!S.acil && !feed.querySelector(".opt:not(:disabled)")) odak($("go"));
+}
+
+// Satış: varlığa dokun, SAT
+const arabaYas = () => D.arabalar[S.araba].yas0 + S.arabaYil;
+function arabaMasraf(k, yas, yilSahip) {    // yaşa göre yıllık masraflar
+  const A = D.arabalar[k], deger = Math.pow(1 - D.satis.arabaYillikKayip, yilSahip);
+  return { mtv: A.mtv * D.mtvKat.find(([u]) => yas <= u)[1], sigorta: A.sigorta * (.5 + .5 * deger), bakim: A.bakim * Math.pow(1.12, yas), yakit: A.yakit * (1 + .02 * yas) };
+}
+function satisDegeri(id) {
+  if (id === "araba") return D.arabalar[S.araba].fiyat * Math.pow(1 - D.satis.arabaYillikKayip, S.arabaYil);
+  return D.evler[S.evler[+id.slice(2)]].fiyat * (1 - D.satis.evKesinti);
+}
+function sat(id) {
+  const d = satisDegeri(id);
+  if (id === "araba") { note("Galeri", `${D.arabalar[S.araba].ad} satıldı: <b class="plus">+${tl(d)}</b>`, { src: "değer kaybı yılda %10, örnek" }); S.araba = null; S.arabaYil = 0; gelir("Araba satışı", d); }
+  else {
+    const i = +id.slice(2), E = D.evler[S.evler[i]];
+    S.evler.splice(i, 1); gelir("Ev satışı", d);
+    note("Emlakçı", `${E.ad} evi satıldı: <b class="plus">+${tl(d)}</b>.${i === 0 ? (S.evler.length ? " Kiradaki evlerinden birine taşındın, kiracı çıktı." : " Yeniden kiradasın.") : ""}`, { src: D.satis.evSrc });
+  }
+  S.secili = null;
+  if (S.acil && nakit() < 0 && !S.evler.length && !S.araba) { feed.innerHTML = ""; const d = kart("ACİL", `Sattın ama yetmedi: <b class=\"minus\">${tl(nakit())}</b>. Satacak bir şeyin kalmadı.`, { cls: "alarm" }); d.insertAdjacentHTML("beforeend", `<div class=\"opts one\"><button class=\"opt isBtn\">İŞE BAŞLA</button></div>`); d.querySelector(".isBtn").onclick = () => son(false, `${S.yas} yaşında işe başladın. Çalışmadan geçen ömür burada bitti.`); }
+  if (S.acil && nakit() >= 0) { S.acil = false; $("go").disabled = false; feed.innerHTML = ""; note("Banka", "Açık kapandı, hesap yeniden artıda."); turBasla(); }
+  ciz();
+}
+$("gelirHesap").onchange = e => { S.gelirHesap = e.target.value; note("Banka", { vadesiz: "Gelirlerin (kira, emekli maaşı) vadesiz hesapta kalacak.", vadeli: "Gelirlerin (kira, emekli maaşı) her yıl doğrudan vadeliye geçecek.", dolar: "Gelirlerin (kira, emekli maaşı) her yıl o günün kuruyla dolara çevrilecek." }[S.gelirHesap]); };
+$("costs").addEventListener("toggle", e => { if (e.target.matches("details.grpline")) S.acikGrup[e.target.dataset.g] = e.target.open; }, true);
+$("people").addEventListener("click", e => {
+  const b = e.target.closest(".satBtn"); if (b) { sat(b.dataset.id); return; }
+  const k = e.target.closest(".box.sell"); if (!k || S.bitti) return;
+  S.secili = S.secili === k.dataset.id ? null : k.dataset.id; ciz();
+});
+
+// Kontrol ekranı
+function ciz() {
+  dengele();
+  $("ageN").textContent = "Yaş: " + S.yas; $("yearN").textContent = S.ad;
+  $("yilLine").textContent = `Yıl: ${S.yil} · (${tlKisa(nakit())})`;
+  const kf = n => n.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const nom = D.kur * S.endeks;   // nominal kur = reel kur × fiyat endeksi
+  $("kurLine").innerHTML = `1 $ = ${kf(nom)} TL${S.kurArtis ? ` <b style="color:#8fb8ff;font-weight:400">${S.kurArtis >= 0 ? "▲" : "▼"}${yuz(Math.abs(S.kurArtis))}</b>` : ""}<br>Mevduat Faizi ${yuz(S.eko.faiz)} − Enflasyon ${yuz(S.eko.enf)} = Reel faiz ${yuz(reel())}${S.eko.kriz ? ' <b style="color:#ff9aa2;font-weight:400">· KRİZ</b>' : ""}${S.yil < 2026 ? ' <b style="color:var(--gold);font-weight:400">· gerçek veri</b>' : ""}`;
+  const kutu = (b, t, cls = "") => `<div class="box ${cls}"><b>${b}</b>${t}</div>`;
+  let p = kutu("Karakter", `${S.ad || "?"}, ${S.yas}`);
+  if (S.es) p += kutu("Eşi", `${S.yas + S.esFark} yaşında<br><small>${S.yasEvlilik} yaşında evlendiniz</small>`);
+  S.cocuklar.forEach((c, i) => { const y = S.yil - c; p += kutu(`Çocuk ${i + 1}`, y < 0 ? "yolda" : `${y} yaşında${S.ayrilan[c] ? "<br><small>evlendi ve evden ayrıldı</small>" : ""}`); });
+  p += kutu("Sigorta", S.emekli ? "emekli" : S.sigortali ? `${S.primYil >= D.emeklilik.yil ? "prim tamam, GSS ödüyor" : `prim ${S.primYil}/${D.emeklilik.yil} yıl`}<br><small>emekli maaşı ${D.emeklilik.yas} yaşında</small>` : "yalnız GSS");
+  if (S.hayvan) { const H = D.hayvanlar[S.hayvan.k]; p += kutu(H.ad === "Kuş ya da balık" ? "Kuş" : H.ad, `${H.isim}<br><small>${S.hayvan.yil} yıldır seninle</small>`); }
+  let v = kutu("Vadesiz", tl(S.vadesiz), "thing") + kutu("Vadeli", `${tl(S.vadeli)}<br><small>(%${Math.round(S.eko.faiz * 100)})</small>`, "thing") + kutu("Dolar", `$${Math.round(S.dolar).toLocaleString("tr-TR")}<br><small>(${tlTL(S.dolar * D.kur)})</small>`, "thing");
+  const satKutu = (id, b, t, deger) => `<div class="box thing sell ${S.secili === id ? "open" : ""}" data-id="${id}" tabindex="0" role="button"><b>${b}</b>${t}${S.secili === id ? `<button class="satBtn" data-id="${id}">SAT +${tl(deger)}</button>` : `<span class="tap">dokun: sat</span>`}</div>`;
+  if (!S.evler.length) v += kutu("Ev", `${gorsel("ev", null, 2, "kiradaki ev")}Kiradasın<br><small>kira ${tl(D.kira)}/ay</small>`, "thing");   // evi yokken kirada oturur
+  S.evler.forEach((e, i) => { const E = D.evler[e]; v += satKutu("ev" + i, i === 0 ? "Oturduğun ev" : "Kiradaki ev", `${gorsel("ev", null, 2, "ev")}${E.ad}<br>${tl(E.fiyat)}${i ? `<br>kira ${tl(E.kira)}/ay` : ""}`, satisDegeri("ev" + i)); });
+  if (S.araba) v += satKutu("araba", "Araba", `${gorsel("araba", RENK[S.araba], 2, "araba")}${D.arabalar[S.araba].ad}<br>${arabaYas()} yaşında<br><small>${S.arabaYil} yıldır sende</small>`, satisDegeri("araba"));
+  const servet = nakit() + evDeger();
+  $("aile").innerHTML = `<div class="grp">Aile</div>${aileSahnesi()}${p}`;
+  $("people").innerHTML = `<div class="grp">Varlıklar <span>toplam ${tl(servet)}</span></div>${v}`;
+  const line = k => { const y = Math.abs(S.sonYil[k] || 0); return `<div class="line"><span>${k}<span class="y">${y ? `aylık ${tlTL(y / 12)} × 12` : S.buYil[k] !== undefined ? "bu yıl başladı" : "geçen yıl yok"}</span></span><span class="v">${y ? tlYil(y) : ""}</span></div>`; };
+  const ks = Object.keys(S.kayit), aktif = k => S.sonYil[k] !== undefined || S.buYil[k] !== undefined;   // biten sabit kalemler listeden düşer
+  $("gains").innerHTML = ks.filter(k => SABIT_KAZANC.includes(k) && aktif(k)).map(line).join("") || `<div class="empty">Henüz yok</div>`;
+  const grupta = GRUP.flatMap(g => g.k);
+  const grup = g => { const K = g.k.filter(k => S.kayit[k] !== undefined && aktif(k)); if (!K.length) return "";
+    const y = K.reduce((a, k) => a + Math.abs(S.sonYil[k] || 0), 0);
+    return `<details class="grpline" data-g="${g.ad}" ${S.acikGrup[g.ad] ? "open" : ""}><summary class="line"><span><i class="pm"></i>${g.ad} (${K.length} kalem)<span class="y">aylık ${tlTL(y / 12)} × 12</span></span><span class="v">${tlYil(y)}</span></summary>${K.map(k => line(k).replace(">" + k + "<", ">· " + k.replace("Araba: ", "") + "<")).join("")}</details>`; };
+  $("costs").innerHTML = (ks.filter(k => SABIT_GIDER.includes(k) && !grupta.includes(k) && aktif(k)).sort((a, b) => S.kayit[a] - S.kayit[b]).map(line).join("") + GRUP.map(grup).join("")) || `<div class="empty">Henüz yok</div>`;
+  const yilTop = L => ks.filter(k => L.includes(k)).reduce((a, k) => a + Math.abs(S.sonYil[k] || 0), 0);
+  const gelirT = yilTop(SABIT_KAZANC), giderT = yilTop(SABIT_GIDER), kar = gelirT - giderT, enfT = ENF.reduce((a, k) => a + (S.sonYil[k] || 0), 0);
+  const isaret = (el, v) => { $(el).innerHTML = S.gecmis.length ? (v >= 0 ? "+" : "−") + tlYil(Math.abs(v)) : ""; $(el).className = "tot " + (v >= 0 ? "p" : "m"); };
+  $("gainTot").innerHTML = S.gecmis.length ? tlYil(gelirT) : "";
+  $("costTot").innerHTML = S.gecmis.length ? tlYil(giderT) : "";
+  isaret("karTot", kar); isaret("enfTot", enfT);
+  $("enfs").innerHTML = ENF.filter(k => S.sonYil[k] !== undefined).map(k => `<div class="line"><span>${k}</span><span class="v ${S.sonYil[k] >= 0 ? "p" : "m"}">${S.sonYil[k] >= 0 ? "+" : "−"}${tl(Math.abs(S.sonYil[k]))}</span></div>`).join("");
+  $("facts").innerHTML = `Bütün tutarlar o yılın parasıyla: ev, araba, maaş, vergi, kira her yıl enflasyon kadar zamlanır. Servet grafiği karşılaştırma için 2026 parasıyla. Tek seferlik gelir ve harcamalar postada (filtre: Gelirler, Harcamalar). Bu yıl vadeli reel ${yuz(reel())}, vadesiz para enflasyonla ${yuz(S.eko.enf / (1 + S.eko.enf))} erir (alım gücü), doların faizi yok, değeri kurla iner çıkar.<br>Yıl katsayısı: 2026'da 1 TL olan her şey bu yıl ${S.endeks.toLocaleString("tr-TR", { maximumSignificantDigits: 4 })} TL (ev, araba, maaş, vergi hepsi aynı katsayıyla).<br>Başlangıç: ${D.faizSrc}<br>Geçmiş yıllar: ${TARIH_SRC}<br>Ekonomi: ${D.ekoSrc}<br>Kur: ${D.kurSrc}`;
+  if (S.kur2026) $("servet26").textContent = `2026 parasıyla $${Math.round(servet / S.kur2026).toLocaleString("tr-TR")} (${tlR(servet)})`;
+  grafik(); sayac();
+}
+// Grafikler: üstte servet (çizgi), altta yıllık kazanç (yukarı) ve gider (aşağı). Aynı yaş ekseni.
+const kisa = n => { const a = Math.abs(n); return (n < 0 ? "−" : "") + (a >= 1e6 ? (a / 1e6).toLocaleString("tr-TR", { maximumFractionDigits: 1 }) + " mn" : Math.round(a / 1e3) + " bin"); };
+function grafik() {
+  const G = S.gecmis, L = 46, R = 334, W = R - L;
+  if (G.length < 2) { $("chServet").innerHTML = `<text x="10" y="55">İlk yıllar geçince grafik oluşur</text>`; return; }
+  const x = i => L + (G.length === 1 ? W / 2 : i * W / (G.length - 1));
+  const bw = Math.max(2, Math.min(10, W / G.length - 2));
+  const etiketX = () => { const ad = Math.max(1, Math.ceil(G.length / 6)); return G.map((g, i) => (i % ad === 0 && G.length - 1 - i >= ad / 2) || i === G.length - 1 ? `<text x="${x(i)}" text-anchor="middle" y="__Y__">${g.yas}</text>` : "").join(""); };
+  // servet
+  const sMax = Math.max(...G.map(g => g.servet), 1), sMin = Math.min(0, ...G.map(g => g.servet));
+  const ys = v => 8 + (1 - (v - sMin) / (sMax - sMin)) * 84;
+  const yolS = G.map((g, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${ys(g.servet).toFixed(1)}`).join(" ");
+  const sonS = G[G.length - 1];
+  $("chServet").innerHTML = `<line x1="${L}" x2="${R}" y1="${ys(0)}" y2="${ys(0)}" stroke="#2f5c43"/>
+    <text x="${L - 4}" y="${ys(sMax) + 4}" text-anchor="end">${kisa(sMax)}</text><text x="${L - 4}" y="${ys(0) + 4}" text-anchor="end">0</text>
+    <path d="${yolS}" fill="none" stroke="#d4a72c" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="${x(G.length - 1)}" cy="${ys(sonS.servet)}" r="4" fill="#d4a72c" stroke="#173a27" stroke-width="2"/>
+    ${G.map((g, i) => `<rect x="${x(i) - W / G.length / 2}" y="0" width="${W / G.length}" height="100" fill="transparent"><title>Yaş ${g.yas}: servet ${tlR(g.servet)} (2026 parasıyla)</title></rect>`).join("")}
+    ${etiketX().replaceAll("__Y__", "108")}`;
+}
+let anim = null;
+function sayac() {
+  cancelAnimationFrame(anim);
+  const bas = S.gosterilen, hedef = nakit() / D.kur, t0 = performance.now();
+  const adim = now => { const u = Math.min(1, (now - t0) / 900); S.gosterilen = bas + (hedef - bas) * (1 - Math.pow(1 - u, 3)); $("usd").textContent = usdFmt(S.gosterilen); if (u < 1) anim = requestAnimationFrame(adim); };
+  anim = requestAnimationFrame(adim);
+}
+
+// Giriş
+// Giriş: isim, başlangıç yaşı ve başlangıç yılı tek ekranda
+const girisGuncelle = () => {
+  $("yilV").textContent = $("yilIn").value;
+  $("yilNot").textContent = +$("yilIn").value < 2026 ? `${$("yilIn").value}-2025 arası yaşanmış verilerle (enflasyon, faiz, kur), sonrası modelle ilerler.` : "Ekonomi 2026'dan itibaren modelle ilerler.";
+};
+$("yilIn").oninput = girisGuncelle;
+// İsim filtresi: şeref listesine çıkacağı için küfür ve hakaret engellenir.
+// Önce sadeleştirme (Türkçe harf, rakamla yazılmış harf, araya konan işaret, tekrar eden harf), sonra iki liste:
+// UZUN kelimeler ismin her yerinde aranır; KISA olanlar yalnız tam kelime olarak (Hamza, Samet, Işık gibi masum isimler takılmasın).
+const KUFUR_UZUN = ["orospu", "orspu", "aminak", "aminako", "amcik", "sikis", "siktir", "sikerim", "sikeyim", "sikim", "sikik", "yarrak", "dalyarak",
+  "pezevenk", "gavat", "kahpe", "ibne", "pust", "gotveren", "yavsak", "kaltak", "surtuk", "fahise", "serefsiz", "tasak", "dasak", "kancik",
+  "fuck", "shit", "bitch", "cunt", "pussy", "whore", "slut", "nigger", "nigga", "faggot", "asshole", "bastard", "nazi", "hitler"];
+const KUFUR_KISA = ["am", "amk", "amq", "aq", "mk", "oc", "sik", "got", "pic", "bok", "yarak", "dick", "cock", "fag", "porn", "rape"];
+function sadeIsim(t) {
+  const harf = { "ı": "i", "ş": "s", "ç": "c", "ğ": "g", "ö": "o", "ü": "u", "â": "a", "î": "i", "û": "u", "0": "o", "1": "i", "3": "e", "4": "a", "5": "s", "7": "t", "8": "b", "9": "g", "@": "a", "$": "s", "€": "e", "!": "i", "|": "i" };
+  return t.toLocaleLowerCase("tr").replace(/./g, c => harf[c] || c);
+}
+function isimUygunMu(ad) {
+  const sade = sadeIsim(ad), kelimeler = sade.split(/[^a-z]+/).filter(Boolean).map(k => k.replace(/(.)\1+/g, "$1"));
+  const bitisik = sade.replace(/[^a-z]/g, "").replace(/(.)\1+/g, "$1");
+  if (KUFUR_UZUN.some(k => bitisik.includes(k))) return false;
+  if (KUFUR_KISA.some(k => kelimeler.includes(k) || bitisik === k)) return false;
+  return true;
+}
+function girisBitti() {
+  const yazilan = ($("nameIn").value || "").trim();
+  if (yazilan && !isimUygunMu(yazilan)) { $("isimHata").textContent = "Bu isim kullanılamaz. Şeref listesinde görüneceği için başka bir isim yaz."; $("nameIn").focus(); $("nameIn").select(); return; }
+  S.ad = yazilan || "Torun";
+  mirasKart(+$("yilIn").value);
+}
+$("baslaBtn").onclick = girisBitti;
+$("nameIn").addEventListener("input", () => { $("isimHata").textContent = ""; });
+$("girisTam").onclick = tamEkran;
+$("girisSeref").onclick = () => { popup("Şeref listesi", `<div id="seref" class="seref"></div>`); serefGoster("seref"); };
+
+// Şeref listesi: önce bu cihazın listesi (localStorage), sonra ortak liste (data.cezvi.com, PocketBase).
+// Sunucu kuralları: oyun 1m_1omur, isim 1-16 harf (< > & " yok), puan 1-10.000.000 tam sayı, yaş 0-120. Ortak liste yalnız ozthealem.com'dan açılınca çalışır (CORS).
+const SEREF_API = "https://data.cezvi.com/api/collections/skorlar/records", SEREF_OYUN = "1m_1omur", SEREF_YEREL = "1m_1omur_seref";
+const kacis = t => String(t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+function yerelListe() { try { return JSON.parse(localStorage.getItem(SEREF_YEREL)) || []; } catch (e) { return []; } }
+function serefKaydet(k) {
+  try { const L = yerelListe(); L.push(k); L.sort((a, b) => b.puan - a.puan); localStorage.setItem(SEREF_YEREL, JSON.stringify(L.slice(0, 20))); } catch (e) {}
+  if (!k.puan) return Promise.resolve(null);
+  return fetch(SEREF_API, { method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ oyun: SEREF_OYUN, isim: k.isim, puan: k.puan, yas: k.yas, meta: { bas: k.bas, baslik: k.baslik } }) })
+    .then(r => r.ok ? r.json() : null).catch(() => null);
+}
+function serefTablo(L, baslik, benId, benTarih) {
+  const satir = (x, i) => `<tr class="${(benId && x.id === benId) || (benTarih && x.tarih === benTarih) ? "ben" : ""}"><td>${i + 1}.</td><td>${kacis(x.isim)}</td><td>${x.yas ? x.yas + " yaş" : ""}</td><td>${Number(x.puan).toLocaleString("tr-TR")}</td></tr>`;
+  return `<b>${baslik}</b><table class="puan seref">${L.map(satir).join("") || `<tr><td></td><td>Henüz kimse yok</td></tr>`}</table>`;
+}
+async function serefGoster(hedef, benId, benTarih) {
+  const el = $(hedef); if (!el) return;
+  const yerel = n => serefTablo(yerelListe().slice(0, n), "Bu cihazda", null, benTarih);
+  el.innerHTML = yerel(10) + `<div class="not2">Ortak liste yükleniyor…</div>`;
+  try {
+    const r = await fetch(`${SEREF_API}?filter=${encodeURIComponent(`oyun='${SEREF_OYUN}'`)}&sort=-puan&perPage=10`);
+    if (!r.ok) throw 0;
+    const j = await r.json();
+    el.innerHTML = serefTablo(j.items, "Şeref listesi (herkes)", benId) + yerel(5);
+  } catch (e) { el.innerHTML = yerel(10) + `<div class="not2">Ortak listeye şu an ulaşılamadı. Oyun ozthealem.com/1m1omur adresinden açılınca görünür.</div>`; }
+}
+$("startCard").addEventListener("keydown", e => { if (e.key === "Enter" && $("yilIn")) { e.preventDefault(); girisBitti(); } });
+function mirasKart(Y) {
+  S.bas = Y;
+  // o yılın başındaki reel kur (2026 TL / $): basla() ile aynı hesap
+  let e = 1; for (let t = Y; t <= 2025; t++) e /= 1 + TARIH[t][0] / 100;
+  const kurR = Y < 2026 ? TARIH[Y - 1][2] / e : D.kur;
+  const net = 1e6 * D.kur / kurR, fark = net - 1e6;   // aynı alım gücü, o yılın dolarıyla
+  const usd = n => "$" + Math.round(n).toLocaleString("tr-TR");
+  const tarih = `${Y}`;
+  $("startCard").innerHTML = `<div class="txt">Sayın ${S.ad}, ${S.yas}. doğum gününüz kutlu olsun. Dedeniz size bir çek bıraktı:</div>
+    <div class="cek"><div class="ust">VASİYET BANK<span>Çek No: 000018 · ${tarih}</span></div>
+      <div class="satir">Ödeyiniz: <b>${S.ad}</b></div>
+      <div class="tutar">$1.000.000,00</div><div class="yazi">Yalnız bir milyon ABD doları</div>
+      <div class="alt"><div class="not">"Sana bunu daha iyi bir gelecek kur diye veriyorum. Akıllıca kullan."</div><div class="imza">Deden</div></div></div>
+    ${Math.abs(fark) > 1 ? `<div class="damga">Zamanda geriye gitme ${fark < 0 ? "vergisi" : "bonusu"}: ${fark < 0 ? "−" : "+"}${usd(Math.abs(fark))}<br><small>Bugünün $1.000.000'ının Türkiye'de aldığını ${Y} yılında ${usd(net)} alıyordu</small></div>` : ""}
+    <button class="opt" id="kabul">ÇEKİ BOZDUR</button>`;
+  $("kabul").onclick = () => basla(net); $("kabul").focus();
+}
+$("nameIn").focus();
+
+function basla(miras) {
+  $("start").remove();
+  S.kur0 = S.kur2026 = D.kur;
+  if (S.bas < 2026) {                        // geçmiş yıl: fiyat endeksi o yılın başına, kur o yılın kuruna
+    S.yil = S.bas; S.endeks = 1;
+    for (let t = S.bas; t <= 2025; t++) S.endeks /= 1 + TARIH[t][0] / 100;
+    D.kur = TARIH[S.bas - 1][2] / S.endeks;  // yıl başı kuru, 2026 parasıyla
+    if (S.bas < 2005) S.endeks *= 1e6;       // eski Türk lirası
+    S.eko.enf = TARIH[S.bas][0] / 100; S.eko.faiz = TARIH[S.bas][1] / 100;
+  }
+  const tlMiras = miras * D.kur;
+  S.dolar = miras;   // miras dolar olarak gelir; kazanç değildir, deftere yazılmaz
+  note("Banka", `Dolar hesabınıza <b class="plus">$${Math.round(miras).toLocaleString("tr-TR")}</b> (${tl(tlMiras)}) geçti. Doların faizi yok, değeri kura bağlı.`, { src: S.bas < 2026 ? TARIH_SRC : D.kurSrc });
+  const v = kademe(Math.max(0, tlMiras - D.veraset.istisna), D.veraset.dilim);
+  ode("Veraset vergisi", v);
+  note("Maliye", `Veraset ve intikal vergisi: <b class="minus">−${tl(v)}</b> ($${Math.round(v / D.kur).toLocaleString("tr-TR")} bozduruldu). Daha hiçbir şey almadın.`, { src: D.veraset.src });
+  S.bekleyen.push(sigortaSoru);
+  ciz(); turBasla();
+}
+
+// Her tur: zorunlu sorular, sonra "Bu parayla ne yapacaksın?"
+function turBasla() {
+  feed.innerHTML = "";
+  for (const c of S.cocuklar) {
+    const y = S.yil - c;
+    if (y >= 22 && !S.ayrilan[c] && Math.random() < .2) S.bekleyen.push(() => {
+      S.ayrilan[c] = true;
+      soru("Çocuğun", `${y} yaşındaki çocuğun evleniyor ve evden ayrılıyor! Düğüne katkı?`, [
+        { t: "Katkı yok", s: "0 TL", f: () => {} },
+        { t: "Normal", s: tl(D.dugun.ort / 2), f: () => al("Çocuğun düğünü", D.dugun.ort / 2) },
+        { t: "Cömert", s: tl(D.dugun.max / 2), f: () => al("Çocuğun düğünü", D.dugun.max / 2) }], "yarısı senden, tutarlar örnek", { degisir: true, zorunlu: true });
+    });
+    if (y === 6 && S.okul[c] === undefined) S.bekleyen.push(() => soru("Okul", "Çocuğun 6 yaşında. Hangi okul? (yıllık)", [
+      { t: "Devlet", s: "0 TL", f: () => { S.okul[c] = D.okul.min; } },
+      { t: "Özel", s: tl(D.okul.ort), f: () => { S.okul[c] = D.okul.ort; } },
+      { t: "Seçkin özel", s: tl(D.okul.max), f: () => { S.okul[c] = D.okul.max; } }], D.okul.src, { degisir: true, zorunlu: true }));
+    if (y === 18 && S.uni[c] === undefined) S.bekleyen.push(() => soru("Üniversite", "Çocuğun üniversiteyi kazandı. Hangisi? (yıllık)", [
+      { t: "Devlet", s: "0 TL", f: () => { S.uni[c] = D.uni.min; } },
+      { t: "Vakıf", s: tl(D.uni.ort), f: () => { S.uni[c] = D.uni.ort; } },
+      { t: "Yurt dışı", s: tl(D.uni.max), f: () => { S.uni[c] = D.uni.max; } }], D.uni.src, { degisir: true, zorunlu: true }));
+  }
+  S.bekleyen.push(anaSoru);
+  sonraki();
+}
+function anaSoru() {
+  soru("Sen", `Bu parayla ne yapacaksın? Elinde ${tl(nakit())} var.`, [
+    { t: "Vadeli ya da dolar", s: "reel faiz " + yuz(reel()), alt: true, f: () => S.bekleyen.unshift(vadeliYuzde) },
+    { t: "Taşınmaz al", s: "ucuz, orta, lüks", alt: true, f: () => S.bekleyen.unshift(evSec) },
+    { t: S.es ? "Tatile çık" : "Gez, eğlen", s: S.es ? (S.cocuklar.some(c => S.yil - c >= 0 && !S.ayrilan[c]) ? "ailenle" : "eşinle") : "biriyle tanışabilirsin", alt: true, f: () => S.bekleyen.unshift(eglen) },
+    rastgeleSecenek()
+  ]);
+}
+function sigortaSoru() {
+  const E = D.emeklilik;
+  soru("SGK", `Hiç çalışmayacaksın ama emekli olabilirsin: isteğe bağlı sigorta primi yatırırsan ${E.yil} yıl prim ve ${E.yas} yaş sonunda emekli maaşı alırsın (aylık ${tl(E.maas)}).`, [
+    { t: "Prim yatır", s: `aylık ${tl(E.prim)}`, f: () => { S.sigortali = true; note("SGK", "İsteğe bağlı sigortalı oldun. Prim GSS'yi de kapsar."); } },
+    { t: "Şimdilik hayır", s: `yalnız GSS, aylık ${tl(D.gss)}`, f: () => {} }], E.src);
+}
+function vadeliYuzde() {                     // birikim: vadeli ile dolar arasında tek kaydırıcı
+  dengele();
+  const top = Math.max(0, S.vadesiz) + Math.max(0, S.vadeli) + Math.max(0, S.dolar * D.kur);
+  if (!top) { note("Banka", "Bölünecek para yok."); return sonraki(); }
+  const simdi = Math.round(Math.max(0, S.dolar * D.kur) / top * 20) * 5;
+  const d = kart("Banka", `Birikimin ${tl(top)}. Ne kadarı dolarda dursun, kalanı vadeliye geçsin?<br><small>Vadeli: reel faiz ${yuz(reel())}. Dolar: faizi yok, kurla iner çıkar.</small>`, { cls: "q" });
+  const yaz = x => `%${100 - x} vadeli · %${x} dolar`;
+  d.insertAdjacentHTML("beforeend", `<div class="slide"><input type="range" min="0" max="100" step="5" value="${simdi}"><b>${yaz(simdi)}</b></div><div class="opts one"><button class="opt">UYGULA</button></div>`);
+  const rg = d.querySelector("input"), lb = d.querySelector(".slide b"), bt = d.querySelector(".opt"); odak(rg);
+  rg.oninput = () => { lb.textContent = yaz(+rg.value); };
+  bt.onclick = () => {
+    const x = rg.value / 100; rg.disabled = true; bt.disabled = true; bt.classList.add("chosen");
+    if (S.anaKutu) { [...S.anaKutu.children].forEach(x => x.disabled = true); S.anaKutu = null; }
+    S.vadesiz = 0; S.vadeli = top * (1 - x); S.dolar = top * x / D.kur;
+    note("Banka", `Vadeli ${tl(S.vadeli)} (reel ${yuz(reel())}), dolar $${Math.round(S.dolar).toLocaleString("tr-TR")}.`); ciz(); sonraki();
+  };
+}
+function evSec() {
+  const ilk = !S.evler.length;
+  soru("Emlakçı", ilk ? "İlk evin, içinde oturacaksın. Hangisi? (harç %2 dahil)" : "Kiraya vermek için hangi ev? (harç %2 dahil)", ["ucuz", "orta", "luks"].map(k => {
+    const E = D.evler[k], f = E.fiyat * (1 + D.harc);
+    const yetmez = nakit() < f;
+    return { t: { ucuz: "Ucuz", orta: "Orta", luks: "Lüks" }[k] + " · " + E.ad, s: tl(f) + (yetmez ? " · paran yetmiyor" : ilk ? "" : ` · kira ${tl(E.kira)}`), kapali: yetmez, f: () => {
+      S.evler.push(k); al("Ev alımı", f);
+      note("Emlakçı", ilk ? `${E.ad}: ilk evini aldın ve taşındın: <b class="minus">−${tl(f)}</b>. Artık kira ödemiyorsun.` : `${E.ad}: bir ev daha aldın, kiraya verdin: <b class="minus">−${tl(f)}</b>. Aylık kira geliri ${tl(E.kira)}.`, { src: E.src });
+    } };
+  }));
+}
+function arabaSec(yenile) {
+  soru("Galeri", yenile ? `Araban ${arabaYas()} yaşında, eskisi takasta gider. Yenisi hangisi?` : "Hangi araba? (yıllık masraf: MTV, sigorta, bakım, yakıt)", ["ucuz", "orta", "luks"].map(k => {
+    const A = D.arabalar[k], M = arabaMasraf(k, A.yas0, 0), y = M.mtv + M.sigorta + M.bakim + M.yakit;
+    const yetmez = nakit() + (yenile && S.araba ? satisDegeri("araba") : 0) < A.fiyat;
+    return { t: { ucuz: "Ucuz", orta: "Orta", luks: "Lüks" }[k] + " · " + A.ad + (A.yas0 ? ` (${A.yas0} yaşında)` : " (sıfır)"), s: yetmez ? `${tl(A.fiyat)} · paran yetmiyor` : `${tl(A.fiyat)} · yılda ${tl(y)}${A.yas0 > 6 ? " + arızalar" : ""}`, kapali: yetmez, f: () => {
+      if (yenile && S.araba) { const d = satisDegeri("araba"); gelir("Araba satışı", d); note("Galeri", `Eski araban takasta ${tl(d)}'ye gitti.`); }
+      S.araba = k; S.arabaYil = 0; al("Araba alımı", A.fiyat); note("Galeri", `${A.ad} aldın: <b class="minus">−${tl(A.fiyat)}</b>`, { src: A.src });
+    } };
+  }));
+}
+function eglen() {
+  const k = S.es ? D.tatil : D.eglence, ad = S.es ? "Tatil" : "Gezme ve eğlence";
+  soru(S.es ? "Eşin" : "Arkadaşlar", S.es ? "Tatil nereye?" : "Ne kadar çılgın?", [
+    { t: "Ekonomik", s: tl(k.min), f: () => { S.gezdi = true; al(ad, k.min); } },
+    { t: "Normal", s: tl(k.ort), f: () => { S.gezdi = true; al(ad, k.ort); } },
+    { t: "Lüks", s: tl(k.max), f: () => { S.gezdi = true; S.luksGez = S.yas; al(ad, k.max); } }], k.src);
+}
+// Tanışma olasılığı 35 yaşta en yüksek; 50'ye kadar %25'in altına inmez, sonra azalır (60'ta %13, 70'te %7), 85'te biter
+const evlilikAgirligi = a => a > 85 ? 0 : a <= 50 ? Math.max(.25, Math.exp(-Math.pow((a - 35) / 10, 2))) : .25 * Math.exp(-(a - 50) / 15);
+// Tanışılan kişinin yaşı: gençken yakın, yaşlandıkça aralık açılır (18'de 18; 25'te 22-26; 46'dan sonra ±10)
+function esYasFarki(a) {
+  const alt = Math.min(10, Math.round((a - 18) * .43)), ust = Math.min(10, Math.round(Math.max(0, (a - 22) * .4)));
+  return -alt + Math.floor(Math.random() * (alt + ust + 1));
+}
+function rastgeleSecenek() {          // her tur 4. seçenek: rastgele bir hayat olayı
+  const a = S.yas, havuz = [];
+  // lüks çekim: lüks ev, lüks araba, bu yıl ya da geçen yıl lüks eğlence; her biri tanışma olasılığını katlar, gezmeden de tanışılır
+  const luks = S.evler.includes("luks") + (S.araba === "luks") + (S.luksGez >= a - 1);
+  const tanisma = 1 - (1 - evlilikAgirligi(a)) * Math.pow(.4, luks);
+  if (!S.es && (S.gezdi || luks) && a <= 85 && Math.random() < tanisma) { const fark = esYasFarki(a);
+    havuz.push({ t: "Evlen", s: luks ? `lüksün etkiledi, o ${a + fark}` : `tanıştınız, o ${a + fark}`, f: () => { S.es = true; S.yasEvlilik = a; S.esFark = fark; S.bekleyen.unshift(dugun); } }); }
+  if (S.es && S.cocuklar.length < 4 && (a <= 40 || a + S.esFark <= 40)) havuz.push({ t: "Çocuk yap", s: "gelecek yıl", f: () => { S.cocuklar.push(S.yil + 1); note("Eşin", "Güzel haber: gelecek yıl aile büyüyor."); } });
+  if (!S.araba && a < 75) havuz.push({ t: "Araba al", s: "ucuz, orta, lüks", alt: true, f: () => S.bekleyen.unshift(arabaSec) });
+  if (!S.sigortali && !S.emekli && a < 55) havuz.push({ t: "Emeklilik primi yatırmaya başla", s: `aylık ${tl(D.emeklilik.prim)}`, f: () => { S.sigortali = true; note("SGK", "İsteğe bağlı sigortalı oldun."); } });
+  if (S.araba && arabaYas() >= 10 && a < 80) havuz.push({ t: "Arabayı yenile", s: `araban ${arabaYas()} yaşında`, alt: true, f: () => S.bekleyen.unshift(() => arabaSec(true)) });
+  if (!S.hayvan && a < 85) havuz.push({ t: "Hayvan sahiplen", s: "kuş, kedi, köpek", alt: true, f: () => S.bekleyen.unshift(hayvanSec) });
+  havuz.push({ t: "Dünya turuna çık", s: tl(1500000), f: () => { al("Dünya turu", 1500000); note("Pasaport", "Dünyayı gördün. (tutar örnek)"); } });
+  havuz.push({ t: "Sayısal Loto: 10 kolon", s: tl(1000), f: () => { al("Şans oyunları", 1000); note("Bayi", "Kazanma olasılığı 622.614.630'da 1'di. Kazanamadın."); } });
+  havuz.push({ t: "Kahvede tavla oyna", s: "çay parası", f: () => { al("Çay ve simit", 500); note("Kahveci", "Mars oldun ama çaylar senden."); } });
+  havuz.push({ t: "Kuzenine borç ver", s: tl(250000), f: () => { al("Kuzene borç", 250000); note("Kuzen", "\"Ay sonu kesin veririm.\" Vermedi."); } });
+  havuz.push({ t: "Hiçbir şey yapma, uyu", s: "0 TL", f: () => note("Sen", "Zzz…") });
+  const oncelik = havuz.filter(h => h.t === "Evlen" || ((h.t === "Çocuk yap" || h.t === "Arabayı yenile") && Math.random() < .5));   // hayat soruları öne
+  return oncelik[0] || havuz[Math.floor(Math.random() * havuz.length)];
+}
+function hayvanSec() {
+  soru("Barınak", "Hangisini sahipleneceksin? (mama, bakım ve veteriner)", Object.entries(D.hayvanlar).map(([k, H]) => ({ t: H.ad, s: `yılda ${tl(H.yil)}`, f: () => {
+    S.hayvan = { k, yil: 0 }; al("Hayvan sahiplenme", H.ilk);
+    note(H.isim, `${H.ses} İlk masraf ${tl(H.ilk)}, sonra yılda ${tl(H.yil)}. Ortalama ${H.omur} yıl yaşar.`, { src: D.hayvanSrc });
+  } })), D.hayvanSrc);
+}
+function dugun() {
+  soru("Düğün", "Nasıl bir düğün?", [
+    { t: "Sade", s: tl(D.dugun.min), f: () => al("Düğün", D.dugun.min) },
+    { t: "Normal", s: tl(D.dugun.ort), f: () => al("Düğün", D.dugun.ort) },
+    { t: "Görkemli", s: tl(D.dugun.max), f: () => al("Düğün", D.dugun.max) }], D.dugun.src, { degisir: true, zorunlu: true });
+}
+
+// Yıl sonu
+function haneBirim() { return 1 + (S.es ? .5 : 0) + .3 * S.cocuklar.filter(c => S.yil - c >= 0 && !S.ayrilan[c]).length; }   // evlenmeyen çocuk evde kalır, o da çalışmaz
+function yilKapat() {
+  const kiraYil = S.evler.slice(1).reduce((a, e) => a + D.evler[e].kira * 12, 0);   // ilk evde oturuluyor
+  if (!S.evler.length) ode("Kira (oturduğun ev)", D.kira * 12);
+  if (kiraYil) {
+    gelir("Kira geliri", kiraYil, S.gelirHesap);
+    ode("Kira vergisi", kademe(Math.max(0, kiraYil - D.gelirVergi.istisna) * (1 - D.gelirVergi.goturu), D.gelirVergi.dilim));
+  }
+  if (S.evler.length) ode("Emlak vergisi", evDeger() * D.emlakOran);
+  ode("Yaşam gideri", D.gecimBirim * haneBirim() * 12);
+  if (S.sigortali && !S.emekli) {
+    if (S.primYil < D.emeklilik.yil) { ode("Emeklilik primi", D.emeklilik.prim * 12); S.primYil++; if (S.primYil === D.emeklilik.yil) note("SGK", `Prim günün doldu (9.000 gün). Artık prim yok, ${D.emeklilik.yas} yaşını bekliyorsun.`); }
+    if (S.primYil >= D.emeklilik.yil && S.yas + 1 >= D.emeklilik.yas) { S.emekli = true; S.emekliYas = S.yas + 1; S.sigortali = false; note("SGK", `Tebrikler, emekli oldun! Aylık ${tl(D.emeklilik.maas)} emekli maaşı bağlandı.`, { src: D.emeklilik.src }); }
+  }
+  if (S.emekli) gelir("Emekli maaşı", D.emeklilik.maas * 12, S.gelirHesap);
+  // GSS hane için tek prim: eş ve çocuklar bakmakla yükümlü olunan kişi; isteğe bağlı prim ve emeklilik GSS'yi kapsar;
+  // prim bitip emekliliği bekleyen kişi sigortalı sayılmaz, GSS öder
+  if (!S.emekli && S.buYil["Emeklilik primi"] === undefined) ode("Sağlık sigortası (GSS)", D.gss * 12);
+  if (S.araba) {
+    S.arabaYil++;
+    const yas = arabaYas(), M = arabaMasraf(S.araba, yas, S.arabaYil);
+    ode("MTV (araba)", M.mtv); ode("Araba: sigorta", M.sigorta); ode("Araba: bakım ve servis", M.bakim); ode("Araba: yakıt", M.yakit);
+    if (Math.random() < Math.min(.8, Math.max(0, (yas - 6) * .05))) { const t = M.bakim * rnd(.2, 1); ode("Araba: arıza", t); note("Usta", `${yas} yaşındaki araban yine yolda kaldı: <b class="minus">−${tl(t)}</b>`, { src: "6 yaştan sonra arıza olasılığı her yıl %5 artar, örnek" }); }
+    if (yas >= D.arabaOmur) { note("Hurdacı", `Araban ${yas} yaşında, ömrünü doldurdu. Hurdaya ${tl(20000)}'ye verdin.`); S.araba = null; S.arabaYil = 0; gelir("Araba satışı", 20000); }
+  }
+  if (S.hayvan) { const H = D.hayvanlar[S.hayvan.k]; ode("Evcil hayvan", H.yil); if (++S.hayvan.yil >= H.omur) { note(H.isim, `${H.isim} ${H.omur} yıl seninle yaşadı ve öldü. İstersen yeni bir dost sahiplenebilirsin.`); S.hayvan = null; } }
+  for (const c of S.cocuklar) {
+    const y = S.yil - c;
+    if (y >= 6 && y < 18 && S.okul[c]) ode("Okul", S.okul[c]);
+    if (y >= 18 && y < 22 && S.uni[c]) ode("Üniversite", S.uni[c]);
+  }
+  dengele();
+  // kriz: ilk yılı habersiz gelir, sonraki yılları tepede görünür
+  const tarih = S.yil < 2026 && TARIH[S.yil];
+  const yeniKriz = !tarih && !S.eko.kriz && Math.random() < .06;
+  if (yeniKriz) { S.eko.kriz = 1 + Math.floor(Math.random() * 3); ekoKur(true); }
+  const kriz = S.eko.kriz > 0, r = reel();
+  // kriz sayacı: modelde yeni kriz; geçmiş yıllarda reel faizin −%15'in altına indiği her dönem bir kriz
+  if (yeniKriz) S.krizSay++;
+  if (tarih) { if (r <= -.15 && !S.tarihKrizde) { S.krizSay++; S.tarihKrizde = true; note("Ekonomi", `${S.yil} krizi: mevduat faizi ${yuz(S.eko.faiz)}, enflasyon ${yuz(S.eko.enf)}. Vadeli reel ${yuz(r)} eridi.`, { src: TARIH_SRC }); } else if (r > -.15) S.tarihKrizde = false; }
+  if (S.vadeli > 0) { const f = S.vadeli * r; S.vadeli += f; kaydet("Vadeli: faiz − enflasyon", f); }
+  if (S.vadesiz > 0) { const k = S.vadesiz * S.eko.enf / (1 + S.eko.enf); S.vadesiz -= k; kaydet("Vadesiz: faiz yok, enflasyonla erir", -k); }
+  // doların reel getirisi: krizde çoğunlukla kazandırır, normal yılda biraz kaybettirir; kur uzun vadede ortalamaya döner
+  const dr = tarih ? (TARIH[S.yil][2] / TARIH[S.yil - 1][2]) / (1 + S.eko.enf) - 1   // gerçek kur değişimi, enflasyondan arındırılmış
+    : (kriz ? rnd(-.15, .35) : rnd(-.12, .06)) - .25 * Math.log(D.kur / S.kur0);
+  if (S.dolar > 0) kaydet("Dolar: kur − enflasyon", S.dolar * D.kur * dr);
+  D.kur *= 1 + dr;
+  // nominal kur: enflasyon ve doların reel değişimi birlikte; her yıl yükselir
+  S.endeks *= 1 + S.eko.enf; S.kurArtis = (1 + S.eko.enf) * (1 + dr) - 1;   // fiyat endeksi: bütün fiyatlar zamlanır
+  if (tarih && S.yil === 2004) {
+    S.endeks /= 1e6;
+    const m = `1 Ocak 2005: Yeni Türk Lirası! Liradan 6 sıfır atıldı, 1.000.000 TL artık 1 YTL.<br>1 $ = ${(D.kur * S.endeks).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} YTL.`;
+    note("Merkez Bankası", m, { src: "TCMB, 5083 sayılı Kanun" }); popup("Merkez Bankası", m);
+  } else if (!tarih && D.kur * S.endeks >= 1e6) {
+    const once = D.kur * S.endeks; S.endeks /= 1e6;
+    const m = `Liradan 6 sıfır atıldı! 1.000.000 TL artık 1 TL.<br>1 $ ${tlR(once)} idi, şimdi ${(D.kur * S.endeks).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TL.<br><small>Türkiye bunu 2005'te de yaptı: 1 $ = 1.350.000 TL idi.</small>`;
+    note("Merkez Bankası", m, { src: "TCMB, 1 Ocak 2005 Yeni Türk Lirası" }); popup("Merkez Bankası", m);
+  }
+  if (yeniKriz) note("Ekonomi", `KRİZ! Enflasyon ${yuz(S.eko.enf)}, mevduat faizi ${yuz(S.eko.faiz)}: vadeli reel ${yuz(r)} eridi. Dolar ▲${yuz(S.kurArtis)} (reel ${yuz(dr)}). Kriz ${S.eko.kriz} yıl sürecek gibi.`, { src: D.ekoSrc });
+  if (kriz && --S.eko.kriz === 0 && !yeniKriz) note("Ekonomi", "Kriz bitti, faizler enflasyonu yeniden yakalıyor.");
+  const sonra = TARIH[S.yil + 1];
+  if (S.yil + 1 < 2026 && sonra) { S.eko.enf = sonra[0] / 100; S.eko.faiz = sonra[1] / 100; }
+  else if (S.yil + 1 === 2026) { S.eko.enf = D.enflasyon; S.eko.faiz = D.faizNet; }
+  else ekoKur(S.eko.kriz > 0);
+}
+$("go").onclick = () => {
+  if (S.bitti || S.acil) return;
+  // zorunlu seçim yapılmadan yıl ilerlemez
+  const eksik = feed.querySelector(".opts[data-zorunlu]:not([data-secildi])");
+  if (eksik) { eksik.closest(".note").classList.add("alarm"); eksik.scrollIntoView({ block: "nearest" }); odak(eksik.querySelector(".opt")); return; }
+  // değiştirilebilir seçimler şimdi uygulanır
+  S.secimler.forEach(box => { box._f(); [...box.children].forEach(x => x.disabled = true); }); S.secimler = [];
+  // cevaplanmamış sorular: boş geçilir
+  const acik = [...feed.querySelectorAll(".opt:not(:disabled)")];
+  if (acik.length) { acik.forEach(b => b.disabled = true); note("Sen", "Bu yıl hiçbir şey yapmadın."); }
+  S.bekleyen = [];
+  for (const c of S.cocuklar) { const y = S.yil - c;
+    if (y >= 6 && S.okul[c] === undefined) { S.okul[c] = D.okul.min; note("Okul", "Karar vermedin, çocuk devlet okuluna yazıldı."); }
+    if (y >= 18 && S.uni[c] === undefined) { S.uni[c] = D.uni.min; note("Üniversite", "Karar vermedin, çocuk devlet üniversitesine gidiyor."); } }
+  const e0 = S.endeks;
+  yilKapat();
+  yilListesi("gelir", e0); yilListesi("gider", e0);
+  const net = Object.values(S.buYil).reduce((a, b) => a + b, 0);
+  const VARLIK = ["Ev alımı", "Ev satışı", "Araba satışı"];   // varlık değişimi, kazanç ya da gider sayılmaz
+  const kaz = Object.entries(S.buYil).filter(([k, v]) => v > 0 && !VARLIK.includes(k)).reduce((a, [, v]) => a + v, 0);
+  const gid = Object.entries(S.buYil).filter(([k, v]) => v < 0 && !VARLIK.includes(k)).reduce((a, [, v]) => a - v, 0);
+  S.gecmis.push({ yas: S.yas, kaz, gid, servet: nakit() + evDeger() });
+  S.sonYil = S.buYil; S.buYil = {};
+  S.yas++; S.yil++;
+  S.cocuklar.forEach(c => { if (S.yil - c === 0) note("Hayat", "Bebeğiniz dünyaya geldi!", { cls: "year" }); });
+  const enfNet = ENF.reduce((a, k) => a + (S.sonYil[k] || 0), 0), nakitNet = net - enfNet;
+  const ps = v => `<b class="${v >= 0 ? "plus" : "minus"}">${v >= 0 ? "+" : "−"}${tl(Math.abs(v))}</b>`;
+  note("Yıl sonu", `Yaş: ${S.yas}. Geçen yıl gelir − gider: ${ps(nakitNet)}. Enflasyon karşısında: ${ps(enfNet)}.`, { cls: "year" });
+  ciz();
+  if (S.yas >= 100 && nakit() >= 0) return son(true, "Tebrikler, hiç çalışmadan 100 yaşına kadar yaşadın.");
+  if (nakit() < 0) {
+    S.acil = true; $("go").disabled = true; feed.innerHTML = "";
+    const varlik = S.evler.length || S.araba;
+    const d = kart("ACİL", `Paran eksiye düştü: <b class="minus">${tl(nakit())}</b>.<br>${varlik ? "Kontrol ekranında bir varlığına dokun ve sat. Açık kapanmadan yıl ilerlemez." : "Satacak bir şeyin kalmadı."}`, { cls: "alarm" });
+    if (!varlik) {
+      d.insertAdjacentHTML("beforeend", `<div class="opts one"><button class="opt isBtn">İŞE BAŞLA</button></div>`);
+      d.querySelector(".isBtn").onclick = () => son(false, `${S.yas} yaşında işe başladın. Çalışmadan geçen ömür burada bitti.`);
+    }
+    if (varlik && matchMedia("(max-width:760px)").matches) document.querySelector('#tabs button[data-t=varliklar]').click();
+    return;
+  }
+  turBasla();
+};
+
+function son(kazandi, msg) {
+  S.bitti = true; $("go").disabled = true;
+  // başlık: parası yetmedi · ne evlendi ne çocuk yaptı · idareli yaşayıp 100'e erişti
+  const baslik = !kazandi ? "Hazıra dağ dayanmadı!" : !S.es && !S.cocuklar.length ? "Tebrikler, ot gibi yaşadın." : "Hiç çalışmadan yaşlanmayı başardın!";
+  if (kazandi) msg = !S.es && !S.cocuklar.length ? "Hiç çalışmadan 100 yaşına geldin." : "Umarım artan vaktinde büyük işler başarmışsındır.";
+  feed.innerHTML = "";
+  const kalan = Math.max(0, nakit()) + evDeger() + (S.araba ? satisDegeri("araba") : 0);
+  const kime = S.es && S.cocuklar.length ? "ailene" : S.es ? "eşine" : S.cocuklar.length ? "çocuklarına" : "akrabalarına";
+  const n = S.cocuklar.length;
+  const hayat = `${S.es ? `${S.yasEvlilik} yaşında evlendin.` : "Hiç evlenmedin."} ${n ? `${n} çocuğun oldu` : "Çocuğun olmadı"}${S.emekli ? `, ${S.emekliYas} yaşında emekli oldun.` : ", emekli olmadın."}`;
+  const parca = [`<b>$${Math.round(kalan / D.kur).toLocaleString("tr-TR")}</b> (${tlTL(kalan)})`];
+  if (S.evler.length) parca.push(`${S.evler.length} ev`);
+  if (S.araba) parca.push("1 araba");
+  const miras = kalan > 0 ? `Geride bıraktığın servet: ${parca.join(", ")}, ${kime} kaldı.` : "Geride bir servet kalmadı.";
+  // puan: yaş × 1.000 + evlilik 5.000 + çocuk başına 3.000 + kriz başına 2.000 + geride bırakılan servetin her 2.000 TL'si (2026 parasıyla) için 1
+  const P = [["Yaş", S.yas, S.yas * 1000], ["Evlilik", S.es ? "evli" : "bekâr", S.es ? 5000 : 0], ["Çocuk", n, n * 3000], ["Atlatılan ekonomik kriz", S.krizSay, S.krizSay * 2000], ["Miras (2026 parasıyla)", tlR(kalan), Math.round(kalan / 2000)]];
+  const puan = P.reduce((a, x) => a + x[2], 0);
+  const tablo = `<table class="puan">${P.map(x => `<tr><td>${x[0]}</td><td>${x[1]}</td><td>+${x[2].toLocaleString("tr-TR")}</td></tr>`).join("")}</table>`;
+  const metin = `${msg}<br>${hayat}<br>${miras}<br><br><b>Puan hesabı</b>${tablo}<span style="font-family:'Jersey 10';font-size:40px;color:var(--gold)">${puan.toLocaleString("tr-TR")} PUAN</span>`;
+  kart(baslik, metin, { cls: "q" });
+  const temizAd = (S.ad || "Torun").replace(/[<>&"]/g, "").trim().slice(0, 16);
+  const kayit = { isim: temizAd && isimUygunMu(temizAd) ? temizAd : "Torun", yas: S.yas, puan: Math.min(10000000, Math.round(puan)), bas: S.bas, baslik, tarih: Date.now() };
+  popup(baslik, metin + `<div id="seref" class="seref"></div>`, "YENİDEN OYNA", () => location.reload());
+  serefKaydet(kayit).then(r => serefGoster("seref", r && r.id, kayit.tarih));
+}
+
+// Klavye: yön tuşları seçer, Enter onaylar, P posta, Esc kapatır
+document.addEventListener("keydown", e => {
+  const ac = el => el.classList.contains("open");
+  if (ac($("popup"))) { if (e.key === "Escape" && !S.bitti) { e.preventDefault(); $("popOk").click(); } return; }
+  if (ac($("mailBox"))) {
+    if (e.key === "Escape" || e.key === "p" || e.key === "P") { e.preventDefault(); $("mailClose").click(); $("go").focus(); }
+    if (e.key === "ArrowLeft" || e.key === "ArrowRight") { e.preventDefault(); const F = ["hepsi", "gelir", "gider"]; S.postaFiltre = F[(F.indexOf(S.postaFiltre) + (e.key === "ArrowRight" ? 1 : 2)) % 3]; postaAc(); }
+    return;
+  }
+  if ($("start")) return;
+  const a = document.activeElement;
+  if (e.key === "Enter" && a && a.matches(".box.sell")) { e.preventDefault(); a.click(); const sb = $("people").querySelector(".satBtn"); if (sb) sb.focus(); return; }
+  if (e.key === "p" || e.key === "P") { e.preventDefault(); postaAc(); return; }
+  if (e.key === "Enter" && (!a || a === document.body)) { e.preventDefault(); $("go").click(); return; }
+  if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) return;
+  if (a && (a.type === "radio" || (a.type === "range" && (e.key === "ArrowLeft" || e.key === "ArrowRight")))) return;
+  const L = [...document.querySelectorAll("#feed .opt:not(:disabled), #feed input[type=range]:not(:disabled), #go:not(:disabled)")].filter(el => el.offsetParent);
+  if (!L.length) return;
+  e.preventDefault();
+  let i = L.indexOf(a);
+  if (i < 0) i = 0;
+  else if (e.key === "ArrowLeft") i = Math.max(0, i - 1);
+  else if (e.key === "ArrowRight") i = Math.min(L.length - 1, i + 1);
+  else {                                     // yukarı/aşağı: ızgarada bir satır
+    const box = a.parentElement, cols = box.classList.contains("opts") ? getComputedStyle(box).gridTemplateColumns.split(" ").length : 1;
+    const k = L.filter(el => el.parentElement === box), j = k.indexOf(a), hedef = j + (e.key === "ArrowDown" ? cols : -cols);
+    if (j >= 0 && hedef >= 0 && hedef < k.length) i = L.indexOf(k[hedef]);
+    else if (e.key === "ArrowDown") { const son = L.indexOf(k[k.length - 1]); i = Math.min(L.length - 1, (son < 0 ? i : son) + 1); }
+    else { const ilk = L.indexOf(k[0]); i = Math.max(0, (ilk < 0 ? i : ilk) - 1); }
+  }
+  L[i].focus(); L[i].scrollIntoView({ block: "nearest" });
+});
+
+document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("#tabs button").forEach(x => x.classList.toggle("on", x === b));
+  ["notes", "varliklar", "control"].forEach(id => $(id).classList.toggle("hide", b.dataset.t !== id));
+});
+if (matchMedia("(max-width:760px)").matches) { $("varliklar").classList.add("hide"); $("control").classList.add("hide"); }
+
+(async () => {
+  try {
+    const c = new AbortController(); setTimeout(() => c.abort(), 3000);
+    const j = await (await fetch("https://api.frankfurter.app/latest?from=USD&to=TRY", { signal: c.signal })).json();
+    if (j.rates && j.rates.TRY && !S.kur0) { D.kur = j.rates.TRY; D.kurSrc = `canlı, Avrupa Merkez Bankası (${j.date})`; }
+  } catch (e) {}
+  ciz();
+})();
+</script>
+</body>
+</html>
