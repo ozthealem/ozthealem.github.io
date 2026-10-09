@@ -68,7 +68,8 @@ button, input { font-family:inherit; color:inherit; }
 #varliklar { overflow-y:auto; }
 #aile { display:flex; flex-wrap:wrap; gap:6px; padding:4px 2px 8px; border-bottom:1px dashed var(--rule); }
 
-#feed { flex:1; min-height:0; overflow-y:auto; padding:8px 2px; display:flex; flex-direction:column; gap:8px; }
+#notes { overflow-y:auto; }
+#feed { padding:8px 2px; display:flex; flex-direction:column; gap:8px; }
 .note { background:var(--card); border:1.5px solid var(--rule); border-radius:6px; box-shadow:0 2px 0 var(--rule); padding:7px 9px; animation:pop .25s ease-out; }
 @keyframes pop { from { transform:translateY(8px); opacity:0; } to { transform:none; opacity:1; } }
 .note .who { font-family:var(--fh); font-weight:900; font-size:17px; }
@@ -1037,6 +1038,15 @@ function gazeteKupuru() {
   $("haber").innerHTML = html;
   note("Ekonomi", `<div class="gazete">${html}</div>`, { sessiz: true, src: S.yil >= 2014 ? LAHMACUN_SRC : "" });
 }
+// "Düşünmüyorum" dediysen fikrini değiştirmek için menüde Evlen ya da Çocuk yap çıkar (pencere bir daha açılmaz)
+function fikirSecenekleri() {
+  const a = S.yas, L = [];
+  if (S.evlenmeIstemez && !S.es && a <= 85) { const fark = esYasFarki(a);
+    L.push({ t: "Evlen", s: `tanıştınız, o ${a + fark}`, cls: "genis", f: () => { S.evlenmeIstemez = false; S.es = true; S.yasEvlilik = a; S.esFark = fark; S.dugunBekle = true; note("Aşk", `${a} yaşında evlenmeye karar verdin. Eşin ${a + fark} yaşında.`); } }); }
+  if (S.es && S.cocukIstemez && S.cocuklar.length < 4 && !S.cocuklar.some(c => c >= S.yil) && (a <= 40 || a + S.esFark <= 40))
+    L.push({ t: "Çocuk yap", s: "gelecek yıl", cls: "genis", f: () => { S.cocukIstemez = false; S.cocukHayir = false; S.cocuklar.push(S.yil + 1); note("Eşin", "Güzel haber: gelecek yıl aile büyüyor."); } });
+  return L;
+}
 // Karar menüsü (GDD > Karar menüsü): Yatırım, Gayrimenkul, Araba, Tatil, Saçmala
 function anaSoru() {
   soru("Bazı Kararlar", `Bu parayla ne yapacaksın? Elinde ${tl(nakit())} var.`, [
@@ -1044,7 +1054,7 @@ function anaSoru() {
     { t: "Gayrimenkul", s: S.evler.length ? "kiraya ev al" : "ev al", alt: true, f: () => S.bekleyen.unshift(evSec) },
     { t: S.araba ? "Araba değiştir" : "Araba al", s: S.araba ? `araban ${arabaYas()} yaşında` : "konforu artırır", alt: true, f: () => S.bekleyen.unshift(() => arabaSec(!!S.araba)) },
     { t: S.es ? "Tatile çık" : "Gez, eğlen", s: S.es ? (S.cocuklar.some(c => S.yil - c >= 0 && !S.ayrilan[c]) ? "ailenle" : "eşinle") : "sosyalleş", alt: true, f: () => S.bekleyen.unshift(eglen) },
-    S.evlenmeIstemez && !S.es && S.yas <= 85 ? { t: "Fikrimi değiştirdim, evleneceğim", s: "gelecek yıl biriyle tanışırsın", cls: "genis", f: () => { S.evlenmeIstemez = false; S.askGaranti = true; note("Aşk", "Evlenmeye karar verdin. Gelecek yıl biriyle tanışacaksın."); } } : null,
+    ...fikirSecenekleri(),
     { t: "Saçmala", s: "bu yıl aklına esenler", alt: true, f: () => S.bekleyen.unshift(sacmala) }
   ].filter(Boolean), "", { cls: "bes" });
 }
@@ -1149,13 +1159,13 @@ function hayatOlayi() {
     return () => soru("Aşk", `${luks >= 1 ? "Konforun etkiledi: biriyle" : "Biriyle"} tanıştın, o ${a + fark} yaşında. Evlenecek misiniz?`, [
       { t: "Evlenelim", s: "düğün gelecek yıl", f: () => { S.es = true; S.yasEvlilik = a; S.esFark = fark; S.dugunBekle = true; note("Aşk", `${a} yaşında evlenmeye karar verdin. Eşin ${a + fark} yaşında.`); } },
       { t: "Hayır", s: "bekâr kal", f: () => note("Aşk", "Evlenmedin.") },
-      { t: "Evlenmeyi düşünmüyorum", s: "bir daha sorulmaz", f: () => { S.evlenmeIstemez = true; note("Aşk", "Evlenmeyi düşünmüyorsun. Fikrini değiştirirsen Bazı Kararlar'da \"Fikrimi değiştirdim\" düğmesi var."); } }], "", { degisir: true, zorunlu: true }); }
+      { t: "Evlenmeyi düşünmüyorum", s: "bir daha sorulmaz", f: () => { S.evlenmeIstemez = true; note("Aşk", "Evlenmeyi düşünmüyorsun. Fikrini değiştirirsen Bazı Kararlar'da \"Evlen\" seçeneği çıkar."); } }], "", { degisir: true, zorunlu: true }); }
   const bebek = S.cocuklar.some(c => c >= S.yil);
   if (S.es && !bebek && !S.cocukIstemez && S.cocuklar.length < 4 && (a <= 40 || a + S.esFark <= 40) && Math.random() < .35)
     return () => soru("Eşin", "Çocuk düşünüyor musunuz?", [
       { t: "Evet", s: "gelecek yıl doğar", f: () => { S.cocukHayir = false; S.cocuklar.push(S.yil + 1); note("Eşin", "Güzel haber: gelecek yıl aile büyüyor."); } },
       { t: "Şimdilik hayır", s: "", f: () => { S.cocukHayir = true; } },
-      { t: "Artık düşünmüyoruz", s: "bir daha sorulmaz", f: () => { S.cocukIstemez = true; note("Eşin", "Çocuk konusunu kapattınız. (Kazalar olur.)"); } }], "", { degisir: true, zorunlu: true });
+      { t: "Artık düşünmüyoruz", s: "bir daha sorulmaz", f: () => { S.cocukIstemez = true; note("Eşin", "Çocuk konusunu kapattınız. Fikriniz değişirse Bazı Kararlar'da \"Çocuk yap\" çıkar. (Kazalar olur.)"); } }], "", { degisir: true, zorunlu: true });
   if (S.araba && arabaYas() >= 10 && a < 80 && Math.random() < .3) {
     // idare et · iki farklı model ile yenile (biri aynı segmentten, biri başka segmentten) · sat
     const L = arabaSecenek(true), ayni = L.find(o => o.k === S.araba), baska = L.filter(o => o.k !== S.araba)[Math.floor(Math.random() * 2)];
