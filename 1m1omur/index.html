@@ -831,7 +831,6 @@ function ciz() {
   const pl = (ad, deger, cls = "") => `<span class="pl ${cls}"><i>${ad}</i> ${deger}</span>`;
   $("kurLine").innerHTML = [
     S.eko.kriz ? pl("", "<b>KRİZ</b>", "kriz") : "",
-    S.yil < 2026 ? pl("", "gerçek veri", "gercek") : "",
     pl("1 $ =", `<b>${kf(nom)} TL</b>${S.kurArtis ? ` <span class="${S.kurArtis >= 0 ? "yuk" : "dus"}">${S.kurArtis >= 0 ? "▲" : "▼"}${yuz(Math.abs(S.kurArtis))}</span>` : ""}`),
     pl("Asgari ücret", `<b>${tlTL(asgariReel(S.yil))}</b>`),
     pl("Enflasyon", `<b>${yuz(S.eko.enf)}</b>`),
@@ -1094,8 +1093,9 @@ function anaSoru() {
     { t: "Yatırım", s: "paranı yönlendir", alt: true, f: () => S.bekleyen.unshift(vadeliYuzde) },
     { t: "Gayrimenkul", s: S.evler.length ? "kiraya ev al" : "ev al", alt: true, f: () => S.bekleyen.unshift(evSec) },
     { t: S.araba ? "Araba değiştir" : "Araba al", s: S.araba ? `araban ${arabaYas()} yaşında` : "konforu artırır", alt: true, f: () => S.bekleyen.unshift(() => arabaSec(!!S.araba)) },
-    { t: S.es ? "Tatile çık" : "Gez, eğlen", s: (S.es ? (S.cocuklar.some(c => S.yil - c >= 0 && !S.ayrilan[c]) ? "ailenle" : "eşinle") : "sosyalleş") + (!S.hayvan && S.yas < 85 ? " · hayvan sahiplen" : ""), alt: true, f: () => S.bekleyen.unshift(eglen) },
+    { t: S.es ? "Tatile çık" : "Gez, eğlen", s: (S.es ? (S.cocuklar.some(c => S.yil - c >= 0 && !S.ayrilan[c]) ? "ailenle" : "eşinle") : "sosyalleş"), alt: true, f: () => S.bekleyen.unshift(eglen) },
     ...fikirSecenekleri(),
+    !S.hayvan && S.yas < 85 && { t: "Hayvan sahiplen", s: "balık, kuş, kedi, köpek", cls: "genis", alt: true, f: () => S.bekleyen.unshift(hayvanSec) },
     { t: "Saçmala", s: "bu yıl aklına esenler", alt: true, f: () => S.bekleyen.unshift(sacmala) }
   ].filter(Boolean), "", { cls: "bes" });
 }
@@ -1176,12 +1176,12 @@ function arabaSecenek(yenile) {
 }
 function eglen() {
   const k = S.es ? D.tatil : D.eglence, ad = S.es ? "Tatil" : "Gezme ve eğlence";
-  soru(S.es ? "Eşin" : "Arkadaşlar", (S.es ? "Tatil nereye?" : "Ne kadar çılgın?") + (!S.hayvan && S.yas < 85 ? " Ya da bir dost sahiplen." : ""), [
+  soru(S.es ? "Eşin" : "Arkadaşlar", S.es ? "Tatil nereye?" : "Ne kadar çılgın?", [
     { t: "Ekonomik", s: tl(k.min), tutar: k.min, f: () => { S.gezdi = true; S.gez[S.yas] = 1; al(ad, k.min); } },
     { t: "Normal", s: tl(k.ort), tutar: k.ort, f: () => { S.gezdi = true; S.gez[S.yas] = 2; al(ad, k.ort); } },
-    { t: "Lüks", s: tl(k.max), tutar: k.max, f: () => { S.gezdi = true; S.gez[S.yas] = 3; al(ad, k.max); } },
-    ...(!S.hayvan && S.yas < 85 ? hayvanSecenek().map((o, i) => i ? o : { ...o, cls: "satirBasi" }) : [])], k.src, { degisir: true });   // 4. düğme: Gez eğlen / Hayvan sahiplen
+    { t: "Lüks", s: tl(k.max), tutar: k.max, f: () => { S.gezdi = true; S.gez[S.yas] = 3; al(ad, k.max); } }], k.src, { degisir: true });
 }
+function hayvanSec() { soru("Barınak", "Hangi dostu sahipleneceksin?", hayvanSecenek(), D.hayvanSrc, { degisir: true }); }
 // Tanışma olasılığı 35 yaşta en yüksek; 50'ye kadar %25'in altına inmez, sonra azalır (60'ta %13, 70'te %7), 85'te biter
 // Konfor (0-10): oturduğun ev (kira 0, ucuz 1, orta 2, lüks 3) + araba (yok 0, ucuz 1, orta 2, lüks 3)
 // + bu yıl ya da geçen yıl gezme ve tatil (yok 0, ekonomik 1, normal 2, lüks 3) + bu yıl ya da geçen yıl dünya turu 1
