@@ -332,9 +332,10 @@ const D = {
   veraset: { istisna: 2907136, dilim: [[3e6, .01], [10e6, .03], [25e6, .05], [55e6, .07], [Infinity, .10]], src: "GİB, 2026 tarifesi" },
   harc: .02,
   evler: {
-    ucuz: { ad: "Esenyurt", fiyat: 3044392, kira: 22800, src: "Endeksa, Esenyurt ortalaması (Mart 2026); kira 100 m² (2026)" },
-    orta: { ad: "İstanbul ortalaması", fiyat: 7158000, kira: 45510, src: "Endeksa, İstanbul ortalaması (Temmuz 2026); kira Eylül 2026" },
-    luks: { ad: "Sarıyer", fiyat: 22035461, kira: 59000, src: "Endeksa, Sarıyer ortalaması (Mart 2026); kira 100 m² (2026)" } },
+    // fiyat ve kira = segmentin m² fiyatı ve kirası × evin büyüklüğü (oda tipine göre). Tip ve m² GDD > İçerik listeleri > Semtler.
+    ucuz: { ad: "Esenyurt", m2: 29273, m2Kira: 228, tipler: [["1+1", 65], ["2+1", 95]], src: "Endeksa: Esenyurt m² satış 29.273 TL (Mart 2026), m² kira 228 TL (2026); oda büyüklükleri varsayım" },
+    orta: { ad: "İstanbul ortalaması", m2: 63907, m2Kira: 463.9, tipler: [["3+1", 125], ["4+1", 160]], src: "Emlakjet: İstanbul m² satış 63.907 TL (Temmuz 2026); sahibindex m² kira 463,9 TL (Eylül 2026); oda büyüklükleri varsayım" },
+    luks: { ad: "Sarıyer", m2: 154980, m2Kira: 590, tipler: [["4+2", 200], ["5+2", 260], ["Villa", 350]], src: "Emlakjet: Sarıyer m² satış 154.980 TL (Temmuz 2026); Endeksa m² kira 590 TL (2026); oda büyüklükleri varsayım" } },
   kira: 45510, kiraSrc: "Endeksa, İstanbul ortalama kirası, Eylül 2026",
   // semt adları süs (arabalardaki model adları gibi): fiyat ve kira segmentin. Liste GDD > İçerik listeleri > Semtler.
   semtler: { ucuz: ["Esenyurt", "Sultanbeyli", "Arnavutköy", "Sultangazi", "Esenler"],
@@ -342,7 +343,7 @@ const D = {
     luks: ["Sarıyer", "Beşiktaş", "Kadıköy", "Bebek", "Nişantaşı"] },
   // gecekondu: ucuz seçeneklerde ara sıra çıkar, fiyatı ucuz segmentin; alındıktan 2-5 yıl sonra kentsel dönüşümle yıkılır,
   // 3 yıl inşaat (kira geliri yok; oturuyorsan kiraya çıkarsın), sonra yerine orta segment yeni daire verilir
-  gecekondu: { olasilik: .3, yikimMin: 2, yikimMax: 5, insaat: 3, src: "gecekondu ve kentsel dönüşüm süreleri varsayım; fiyat ucuz segmentin" },
+  gecekondu: { olasilik: .3, m2: 80, teslimTip: ["3+1", 125], yikimMin: 2, yikimMax: 5, insaat: 3, src: "gecekondu ve kentsel dönüşüm süreleri varsayım; fiyat ucuz segmentin" },
   // ev sahibinin payı: kiracı çıkınca ev 2-6 ay boş kalır; her ev için yılda değerinin binde 5'i bakım ve tadilat.
   // Kira yılda bir, geçen yılın enflasyonuyla artar (TBK 344: on iki aylık TÜFE ortalaması; Haziran 2022-Temmuz 2024 arası en çok %25);
   // bu yılın enflasyonu daha yüksekse kira reel geriler, yeni kiracıyla piyasaya döner.
@@ -492,8 +493,10 @@ const KAYNAKLAR = [
     ["GİB, veraset ve intikal vergisi 2026", "istisna ve dilimler", "https://www.vergidegundem.com/sirkuler/136082"],
     ["PwC, 2026 gelir vergisi", "kira geliri istisnası, götürü gider, dilimler", "https://www.pwc.com.tr/tr/hizmetlerimiz/vergi/bultenler/2026/2026-yili-bazi-gelir-vergisi-rakamlari.html"],
     ["Harçlar Kanunu", "tapu harcı alıcı ve satıcı payı %2", "https://www.mevzuat.gov.tr/"],
-    ["Endeksa", "İstanbul konut fiyatı (Temmuz 2026) ve kira (Eylül 2026)", "https://istanbulticaretgazetesi.com/istanbulda-ortalama-konut-fiyatlari-belli-oldu-bir-yilda-1-milyon-300-bin-tl-artti"],
-    ["Betam sahibindex", "kiralık konut, Eylül 2026", "https://betam.bahcesehir.edu.tr/2026/09/sahibindex-kiralik-konut-piyasasi-gorunumu/"],
+    ["Endeksa", "İstanbul ortalama kira (Eylül 2026)", "https://istanbulticaretgazetesi.com/istanbulda-ortalama-konut-fiyatlari-belli-oldu-bir-yilda-1-milyon-300-bin-tl-artti"],
+    ["Endeksa, ilçe m² fiyatları", "ucuz ev: Esenyurt m² satış 29.273 TL (Mart 2026); m² kira Esenyurt 228 TL, Sarıyer 590 TL (2026)", "https://www.armagankocabas.com/post/istanbul-satilik-daire-fiyatlari-2026-ilce-tablosu"],
+    ["Emlakjet", "orta ev: İstanbul m² satış 63.907 TL; lüks ev: Sarıyer m² satış 154.980 TL (Temmuz 2026)", "https://www.emlakjet.com/emlak-piyasasi/satilik-daire/istanbul"],
+    ["Betam sahibindex", "kiralık konut, Eylül 2026 (orta ev m² kira 463,9 TL)", "https://betam.bahcesehir.edu.tr/2026/09/sahibindex-kiralik-konut-piyasasi-gorunumu/"],
     ["Türk-İş", "yoksulluk sınırı, Eylül 2026 (geçim gideri)", "https://www.turkis.org.tr/turk-is-eylul-2026-aclik-ve-yoksulluk-siniri/"],
     ["iyiokullar", "İstanbul özel okul ücretleri 2026-2027", "https://iyiokullar.com.tr/istanbul-ozel-okul-fiyatlari"],
     ["Renault ve BMW", "Ekim 2026 liste fiyatları", "https://www.donanimhaber.com/renault-fiyat-listesi-sifir-renault-araba-fiyatlari--159147"],
@@ -574,14 +577,20 @@ const SABIT_GIDER = ["Kira (kiracısın)", "Yaşam gideri", "Sağlık sigortası
 const GRUP = [{ ad: "Vergiler", k: ["Kira vergisi", "Emlak vergisi", "MTV (araba)"] }, { ad: "Araba", k: ["Araba: sigorta", "Araba: bakım ve servis", "Araba: yakıt", "Araba: arıza"] }];
 // bina yıpranması: ev her yıl reel olarak %1,5 değer ve kira kaybeder, arsa payı yüzünden %40'ın altına inmez
 const yip = i => Math.max(D.arsaPayi, Math.pow(1 - D.yipranma, S.evYas[i] || 0));
-const evDeger = () => S.evler.reduce((a, e, i) => a + D.evler[e].fiyat * yip(i), 0);
-// her evin semti ve gecekondu durumu (S.evler ile aynı sırada): { ad, gk: { yikim, teslim } }
-const evAdi = i => (S.evBilgi[i] || {}).ad || D.evler[S.evler[i]].ad;
-const insaatta = i => { const g = (S.evBilgi[i] || {}).gk; return !!(g && g.teslim); };   // yıkıldı, yeni daire bekleniyor
-function evSecenegi(k, haric) {   // bu seçenek için semt; ucuzda ara sıra gecekondu
-  const L = D.semtler[k].filter(s => s !== haric), semt = L[Math.floor(Math.random() * L.length)], G = D.gecekondu;
-  if (k === "ucuz" && Math.random() < G.olasilik) return { ad: "Gecekondu, " + semt, gk: { yikim: S.yil + G.yikimMin + Math.floor(Math.random() * (G.yikimMax - G.yikimMin + 1)) } };
-  return { ad: semt, gk: null };
+// her evin semti, oda tipi, büyüklüğü ve gecekondu durumu (S.evler ile aynı sırada): { ad, tip, m2, gk: { yikim, teslim } }
+const evB = i => S.evBilgi[i] || {};
+const evM2 = i => evB(i).m2 || D.evler[S.evler[i]].tipler[0][1];
+const evFiyat = i => D.evler[S.evler[i]].m2 * evM2(i), evKira = i => D.evler[S.evler[i]].m2Kira * evM2(i);
+const evDeger = () => S.evler.reduce((a, e, i) => a + evFiyat(i) * yip(i), 0);
+const evAdi = i => { const b = evB(i); return b.ad ? `${b.ad} ${b.tip}` : D.evler[S.evler[i]].ad; };   // "Sultanbeyli 2+1"
+const insaatta = i => { const g = evB(i).gk; return !!(g && g.teslim); };   // yıkıldı, yeni daire bekleniyor
+// bu seçenek için semt ve oda tipi; ucuzda ara sıra gecekondu. fiyat ve kira büyüklükten
+function evSecenegi(k, haric, gkYok) {
+  const E = D.evler[k], L = D.semtler[k].filter(s => s !== haric), semt = L[Math.floor(Math.random() * L.length)], G = D.gecekondu;
+  let tip, m2, gk = null;
+  if (k === "ucuz" && !gkYok && Math.random() < G.olasilik) { tip = "gecekondu"; m2 = G.m2; gk = { yikim: S.yil + G.yikimMin + Math.floor(Math.random() * (G.yikimMax - G.yikimMin + 1)) }; }
+  else [tip, m2] = E.tipler[Math.floor(Math.random() * E.tipler.length)];
+  return { ad: semt, tip, m2, gk, fiyat: E.m2 * m2, kira: E.m2Kira * m2 };
 }
 function kaydet(kalem, t) { S.kayit[kalem] = (S.kayit[kalem] || 0) + t; S.buYil[kalem] = (S.buYil[kalem] || 0) + t; }
 function gelir(kalem, t, hesap = "vadesiz") { if (hesap === "dolar") S.dolar += t / D.kur; else S[hesap] += t; kaydet(kalem, t); }
@@ -801,7 +810,7 @@ function satisDegeri(id) {
   if (id === "araba") return D.arabalar[S.araba].fiyat * Math.pow(1 - D.satis.arabaYillikKayip, S.arabaYil);
   if (id === "kafe") return S.kafe.para * D.sacmala.kafeSatis;
   if (id === "tarla") return S.tarla.para * D.sacmala.tarlaSatis;
-  const i = +id.slice(2); return D.evler[S.evler[i]].fiyat * yip(i) * (1 - D.satis.evKesinti);
+  const i = +id.slice(2); return evFiyat(i) * yip(i) * (1 - D.satis.evKesinti);
 }
 function sat(id) {
   const d = satisDegeri(id);
@@ -876,8 +885,8 @@ function ciz() {
   const satKutu = (id, b, t, deger, degis = true) => `<div class="box thing sell tikla ${S.secili === id ? "open" : ""}" data-id="${id}" tabindex="0" role="button"><b>${b}</b>${t}${S.secili === id ? `<button class="satBtn" data-id="${id}">SAT +${tl(deger)}</button>${S.acil || !degis ? "" : `<button class="satBtn degBtn" data-id="${id}">DEĞİŞTİR</button>`}` : `<span class="tap">dokun: sat${degis ? " ya da değiştir" : ""}</span>`}</div>`;
   if (!S.evler.length) v += kutu("Ev", `${gorsel("ev", null, 2, "kiradaki ev")}Kiradasın<br><small>kira ${tl(D.kira)}/ay</small>`, "thing");   // evi yokken kirada oturur
   S.evler.forEach((e, i) => { const E = D.evler[e], ins = insaatta(i);
-    v += satKutu("ev" + i, ins ? "Kentsel dönüşümde" : i === 0 ? "Oturduğun ev" : "Kiradaki ev", `${gorsel("ev", null, 2, "ev")}${evAdi(i)}<br>${tl(E.fiyat * yip(i))}${S.evYas[i] ? ` <small>(${S.evYas[i]} yıldır sende)</small>` : ""}`
-      + (ins ? `<br><small>yıkıldı, ${S.evBilgi[i].gk.teslim} yılında orta segment daire teslim</small>` : i ? `<br>kira ${tl(E.kira * yip(i) * (S.evKat[i] ?? 1))}/ay` : ""), satisDegeri("ev" + i)); });
+    v += satKutu("ev" + i, ins ? "Kentsel dönüşümde" : i === 0 ? "Oturduğun ev" : "Kiradaki ev", `${gorsel("ev", null, 2, "ev")}${evAdi(i)}<br>${tl(evFiyat(i) * yip(i))}${S.evYas[i] ? ` <small>(${S.evYas[i]} yıldır sende)</small>` : ""}`
+      + (ins ? `<br><small>yıkıldı, ${S.evBilgi[i].gk.teslim} yılında orta segment daire teslim</small>` : i ? `<br>kira ${tl(evKira(i) * yip(i) * (S.evKat[i] ?? 1))}/ay` : ""), satisDegeri("ev" + i)); });
   if (S.araba) v += satKutu("araba", "Araba", `${gorsel("araba", RENK[S.araba], 2, "araba")}${arabaAdi()}<br>${arabaYas()} yaşında<br><small>${S.arabaYil} yıldır sende</small>`, satisDegeri("araba"));
   if (S.kafe) v += satKutu("kafe", "Kafe ortaklığı", `${S.kafe.yil} yıldır ortaksın<br><small>${S.kafe.yil < 2 ? "az da olsa kazandırıyor" : "zarar ediyor"}</small>`, satisDegeri("kafe"), false);
   if (S.tarla) v += satKutu("tarla", "Tarla", `Köyde organik tarım<br><small>${S.tarla.yil} yıldır sende</small>`, satisDegeri("tarla"), false);
@@ -1175,28 +1184,28 @@ const SEG = { ucuz: "Ucuz", orta: "Orta", luks: "Lüks" };
 function degistir(id) {
   S.secili = null; ciz();
   if (id === "araba") return zorunluSor("Galeri", `${arabaAdi()} ${arabaYas()} yaşında, eskisi takasta gider. Yenisi hangisi?`, arabaSecenek(true), "", { iptal: true });
-  const i = +id.slice(2), eskiAd = evAdi(i), sd = satisDegeri(id), surum = S.evSurum;
+  const i = +id.slice(2), eskiAd = evAdi(i), eskiSemt = evB(i).ad, sd = satisDegeri(id), surum = S.evSurum;
   zorunluSor("Emlakçı", `${eskiAd} evini satıp hangisine geçeceksin? (harç %2 dahil)`, ["ucuz", "orta", "luks"].map(k => {
-    const E = D.evler[k], f = E.fiyat * (1 + D.harc), yetmez = harcanabilir() + sd < f, yeni = evSecenegi(k, eskiAd);
-    return { t: SEG[k] + " · " + yeni.ad, s: tl(f) + (yetmez ? " · paran yetmiyor" : ""), kapali: yetmez, tutar: f - sd, f: () => {
+    const E = D.evler[k], yeni = evSecenegi(k, eskiSemt), f = yeni.fiyat * (1 + D.harc), yetmez = harcanabilir() + sd < f;
+    return { t: `${SEG[k]} · ${yeni.ad} ${yeni.tip}`, s: tl(f) + (yetmez ? " · paran yetmiyor" : ""), kapali: yetmez, tutar: f - sd, f: () => {
       // arada bir ev satıldıysa ya da değiştirildiyse liste kaymıştır: yanlış evi satmamak için iptal
       if (S.evSurum !== surum || S.evler[i] === undefined) return note("Emlakçı", `Ev listen değişti, ${eskiAd} evini değiştirme iptal edildi.`);
       if (nakit() + satisDegeri("ev" + i) < f) return note("Emlakçı", `Paran yetmedi, ${eskiAd} evini değiştiremedin.`);
       S.evSurum++;
       gelir("Ev satışı", satisDegeri("ev" + i)); S.evler[i] = k; S.evKat[i] = 1; S.evYas[i] = 0; S.evBilgi[i] = yeni; al("Ev alımı", f);
-      note("Emlakçı", `${eskiAd} evini sattın, ${yeni.ad} evine ${i === 0 ? "taşındın" : "geçtin, kiraya verdin"}: <b class="minus">−${tl(f)}</b>${yeni.gk ? " Gecekondu: bir gün kentsel dönüşüme girebilir." : ""}`, { src: E.src + "; semt adı süs, fiyat segmentin" });
+      note("Emlakçı", `${eskiAd} evini sattın, ${yeni.ad} ${yeni.tip} evine ${i === 0 ? "taşındın" : "geçtin, kiraya verdin"}: <b class="minus">−${tl(f)}</b>${yeni.gk ? " Gecekondu: bir gün kentsel dönüşüme girebilir." : ""}`, { src: E.src + "; semt adı süs, fiyat segmentin" });
     } };
   }), "", { iptal: true });
 }
 function evSec() {
   const ilk = !S.evler.length;
   soru("Emlakçı", ilk ? "İlk evin, içinde oturacaksın. Hangisi? (harç %2 dahil)" : "Kiraya vermek için hangi ev? (harç %2 dahil)", ["ucuz", "orta", "luks"].map(k => {
-    const E = D.evler[k], f = E.fiyat * (1 + D.harc), yeni = evSecenegi(k);
+    const E = D.evler[k], yeni = evSecenegi(k), f = yeni.fiyat * (1 + D.harc), ad = `${yeni.ad} ${yeni.tip}`;
     const yetmez = harcanabilir() < f;
-    return { t: SEG[k] + " · " + yeni.ad, s: tl(f) + (yetmez ? " · paran yetmiyor" : ilk ? "" : ` · kira ${tl(E.kira)}`), kapali: yetmez, tutar: f, f: () => {
-      if (nakit() < f) return note("Emlakçı", `Paran yetmedi, ${yeni.ad} evini alamadın.`);
+    return { t: `${SEG[k]} · ${ad}`, s: tl(f) + (yetmez ? " · paran yetmiyor" : ilk ? "" : ` · kira ${tl(yeni.kira)}`), kapali: yetmez, tutar: f, f: () => {
+      if (nakit() < f) return note("Emlakçı", `Paran yetmedi, ${ad} evini alamadın.`);
       S.evler.push(k); S.evYas[S.evler.length - 1] = 0; S.evBilgi[S.evler.length - 1] = yeni; al("Ev alımı", f);
-      note("Emlakçı", (ilk ? `${yeni.ad}: ilk evini aldın ve taşındın: <b class="minus">−${tl(f)}</b>. Artık kira ödemiyorsun.` : `${yeni.ad}: bir ev daha aldın, kiraya verdin: <b class="minus">−${tl(f)}</b>. Aylık kira geliri ${tl(E.kira)}.`)
+      note("Emlakçı", (ilk ? `${ad}: ilk evini aldın ve taşındın: <b class="minus">−${tl(f)}</b>. Artık kira ödemiyorsun.` : `${ad}: bir ev daha aldın, kiraya verdin: <b class="minus">−${tl(f)}</b>. Aylık kira geliri ${tl(yeni.kira)}.`)
         + (yeni.gk ? " Gecekondu: bir gün kentsel dönüşüme girebilir." : ""), { src: E.src + "; semt adı süs, fiyat segmentin" });
     } };
   }), "", { degisir: true });
@@ -1291,7 +1300,7 @@ function sacmala() {
     !S.estetik && (() => { const ad = pick(["Saç ektir", "Göğüs diktir"]);
       return { t: ad, s: `${tl(Z.estetik)} · konfor +1`, tutar: Z.estetik, f: () => { S.estetik = true; al("Estetik", Z.estetik); note("Klinik", "Aynaya bakınca keyfin yerine geldi. Konfor kalıcı olarak +1. (tutar örnek)"); } }; })(),
     { t: "Komşunun düğününe çeyrek altın tak", s: tl(Z.ceyrek), f: () => { al("Düğün takısı", Z.ceyrek); note("Komşu", "Takı töreninde adın anons edildi: \"Bir çeyrek!\" Alkışlar biraz cılız.", { src: D.ceyrekSrc }); } },
-    S.es && (() => { const E = D.evler.ucuz, f = E.fiyat * (1 + D.harc), yetmez = harcanabilir() < f, semt = evSecenegi("ucuz").ad.replace("Gecekondu, ", "");
+    S.es && (() => { const E = D.evler.ucuz, ev = evSecenegi("ucuz", null, true), f = ev.fiyat * (1 + D.harc), yetmez = harcanabilir() < f, semt = `${ev.ad} ${ev.tip}`;
       return { t: "Kayınvalideye ev al", s: `${tl(f)} · ${semt}${yetmez ? " · paran yetmiyor" : ""}`, kapali: yetmez, tutar: f, f: () => {
         if (nakit() < f) return note("Emlakçı", "Paran yetmedi, kayınvalideye ev alamadın.");
         al("Kayınvalideye ev", f); note("Kayınvalide", `Semt: ${semt}. Artık her bayram sizde. Ev onun, senin varlığın değil.`, { src: E.src }); } }; })(),
@@ -1320,21 +1329,21 @@ function haneBirim() { return 1 + (S.es ? .5 : 0) + .3 * S.cocuklar.filter(c => 
 function yilKapat() {
   // kentsel dönüşüm: gecekondu yıkılır; inşaat bitince yerine orta segment yeni daire (anahtar teslim, bina sıfır)
   S.evler.forEach((e, i) => { const g = (S.evBilgi[i] || {}).gk; if (!g) return;
-    const semt = evAdi(i).replace("Gecekondu, ", "");
+    const semt = evB(i).ad, T3 = D.gecekondu.teslimTip;
     if (!g.teslim && S.yil >= g.yikim) {
       g.teslim = S.yil + D.gecekondu.insaat; S.evSurum++;
       note("Belediye", `Kentsel dönüşüm! ${semt} gecekondun yıkıldı. ${g.teslim} yılında yerine orta segment yeni bir daire teslim edilecek. ${i === 0 ? "O zamana kadar kiradasın." : "O zamana kadar kira geliri yok."}`, { src: D.gecekondu.src });
     } else if (g.teslim && S.yil >= g.teslim) {
-      S.evler[i] = "orta"; S.evBilgi[i] = { ad: semt + " (dönüşüm)", gk: null }; S.evYas[i] = 0; S.evKat[i] = 1; S.evSurum++;
-      note("Belediye", `Anahtar teslim: kentsel dönüşümden yeni dairen hazır (${semt}, orta segment, ${tl(D.evler.orta.fiyat)}). ${i === 0 ? "Taşındın." : "Kiraya verdin."}`, { src: D.gecekondu.src });
+      S.evler[i] = "orta"; S.evBilgi[i] = { ad: semt, tip: T3[0] + " (dönüşüm)", m2: T3[1], gk: null }; S.evYas[i] = 0; S.evKat[i] = 1; S.evSurum++;
+      note("Belediye", `Anahtar teslim: kentsel dönüşümden yeni dairen hazır (${semt} ${T3[0]}, orta segment, ${tl(D.evler.orta.m2 * T3[1])}). ${i === 0 ? "Taşındın." : "Kiraya verdin."}`, { src: D.gecekondu.src });
     } });
   // kiradaki evler (ilk evde oturuluyor): kiracı çıkarsa ev 2-6 ay boş kalır, yeni kiracıyla kira piyasaya döner
   let kiraYil = 0;
   S.evler.forEach((e, i) => { if (!i || insaatta(i)) return; const E = D.evler[e];
     let ay = 12;
     if (Math.random() < D.bosKalma) { ay -= 2 + Math.floor(Math.random() * 5); S.evKat[i] = 1;
-      note("Emlakçı", `Kiracı çıktı, ${evAdi(i)} evin ${12 - ay} ay boş kaldı: <b class="minus">−${tl(E.kira * (12 - ay))}</b> kira. Yeni kiracıyla kira piyasa fiyatına döndü.`, { src: D.evSahibiSrc }); }
-    kiraYil += E.kira * yip(i) * (S.evKat[i] ?? 1) * ay; });
+      note("Emlakçı", `Kiracı çıktı, ${evAdi(i)} evin ${12 - ay} ay boş kaldı: <b class="minus">−${tl(evKira(i) * (12 - ay))}</b> kira. Yeni kiracıyla kira piyasa fiyatına döndü.`, { src: D.evSahibiSrc }); }
+    kiraYil += evKira(i) * yip(i) * (S.evKat[i] ?? 1) * ay; });
   if (S.evler.length) ode("Ev bakımı ve tadilat", evDeger() * D.bakim);
   // kira yılda bir geçen yılın enflasyonuyla artar (2022-2023'te en çok %25); bu yılın enflasyonu yüksekse reel geriler, piyasayı geçmez
   const artis = Math.min(S.enfGecen ?? S.eko.enf, S.yil < 2026 && D.kiraSinir[S.yil] || Infinity);
