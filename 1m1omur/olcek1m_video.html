@@ -17,10 +17,8 @@ html, body { margin:0; background:var(--bg); color:var(--ink); font-family:var(-
 .masthead h1 small { display:block; font-family:var(--fb); font-weight:700; font-size:14px; color:var(--red); letter-spacing:0; }
 .masthead a { color:var(--ink); font-weight:700; font-size:16px; }
 #stage { position:relative; display:flex; justify-content:center; background:var(--paper); border:1.5px solid var(--ink); border-radius:4px; box-shadow:4px 4px 0 var(--red); }
-#stage:fullscreen { align-items:center; border-radius:0; border:0; box-shadow:none; }
-#stage:fullscreen #big { display:none !important; }
 canvas { width:min(100%, calc((100vh - 190px) * 16 / 9)); aspect-ratio:16/9; display:block; background:var(--paper); cursor:pointer; }
-#big { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+#big { position:absolute; top:0; left:0; right:0; bottom:0; display:flex; align-items:center; justify-content:center; }
 #big button { font-family:var(--fh); font-weight:900; font-size:28px; padding:18px 36px; background:var(--ink); color:var(--card); box-shadow:4px 4px 0 var(--red); }
 #bar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:14px; }
 button { background:var(--card); color:var(--ink); border:1.5px solid var(--ink); border-radius:5px; padding:8px 12px; font:inherit; font-size:16px; cursor:pointer; }
@@ -31,7 +29,8 @@ button.on { background:var(--ink); color:var(--card); }
 body.dik #wrap { padding:8px 10px; }
 body.dik .masthead { margin-bottom:8px; padding-bottom:6px; }
 body.dik .masthead h1 { font-size:22px; }
-body.dik canvas { width:min(100%, calc((100dvh - 150px) * 9 / 16)); aspect-ratio:9/16; }
+body.dik canvas { width:min(100%, calc((100vh - 150px) * 9 / 16)); width:min(100%, calc((100dvh - 150px) * 9 / 16)); aspect-ratio:9/16; }   /* dvh'yi tanımayan eski iOS vh'de kalır */
+#hata { display:none; margin-top:10px; padding:8px 10px; border:1.5px solid var(--red); border-radius:5px; background:var(--card); color:var(--red); font-size:15px; }
 body.dik #bar { gap:6px; margin-top:8px; }
 body.dik #bar button { padding:6px 9px; font-size:14px; }
 body.dik #seek { min-width:120px; }
@@ -51,9 +50,13 @@ body.dik #seek { min-width:120px; }
     <button id="sub" class="on">Altyazı</button>
     <button id="sfx" class="on">Ses efekti</button>
     <button id="voice" class="on">Seslendirme</button>
-    <button id="fs">Tam ekran (F)</button>
   </div>
 </div>
+<div id="hata"></div>
+<script>
+// bir hata olursa sayfada yazılı görünsün (telefonda konsol yok; ekran görüntüsüyle bildirilebilir)
+window.addEventListener("error", e => { const h = document.getElementById("hata"); h.style.display = "block"; h.textContent = "Hata: " + e.message + " (satır " + e.lineno + ") · " + navigator.userAgent; });
+</script>
 <script>
 "use strict";
 // Dikey sürüm: telefon dik tutulunca tuval 1080×1920 olur (yine Full HD, aynı 2.073.600 piksel). Dünya (pikseller, bloklar,
@@ -68,9 +71,13 @@ const cv = document.getElementById("cv");
 cv.width = W; cv.height = H;
 document.body.classList.toggle("dik", DIK);
 // telefon döndürülünce aynı saniyeden öbür yönde yeniden açılır (yön ?yon= ile zorlandıysa açılmaz)
-if (!Q.get("yon")) matchMedia("(orientation: portrait)").addEventListener("change", () => {
-  const u = new URL(location.href); u.searchParams.set("t", t.toFixed(1)); location.replace(u.href);
-});
+if (!Q.get("yon")) {
+  const mq = matchMedia("(orientation: portrait)"), yonDegisti = () => {
+    if (mq.matches === DIK) return;   // yön gerçekten değişmediyse (adres çubuğu açılıp kapanınca) yeniden açma
+    const u = new URL(location.href); u.searchParams.set("t", t.toFixed(1)); location.replace(u.href);
+  };
+  if (mq.addEventListener) mq.addEventListener("change", yonDegisti); else if (mq.addListener) mq.addListener(yonDegisti);   // eski iOS: addListener
+}
 const ctx = cv.getContext("2d");
 const FONT = "'Atkinson Hyperlegible', Arial, sans-serif", FH = "'Fraunces', Georgia, serif";
 // gazete teması: AMBER vurgu kırmızı, COOL mürekkep, BG kâğıt; INK koyu bantların üstündeki yazı (kâğıt rengi)
@@ -736,8 +743,17 @@ function setPlaying(p) {
   playing = p;
   playBtn.textContent = p ? "Durdur" : "Oynat";
   big.style.display = p ? "none" : "flex";
-  if (p) { A().resume(); if (t >= DUR) jump(0); prevNow = performance.now(); lastT = t; }
+  if (p) { kilitAc(); if (t >= DUR) jump(0); prevNow = performance.now(); lastT = t; }
   else hush();
+}
+// iPhone: ses ve seslendirme ancak dokunuşun içinde başlatılırsa açılır; ilk Oynat'ta ikisi de burada açılır.
+// Hata olursa oynatma yine sürer (ses sessiz kalır, görüntü akar).
+let kilitAcik = false;
+function kilitAc() {
+  try { const a = A(); if (a.resume) a.resume();
+    if (!kilitAcik) { const s = a.createBufferSource(); s.buffer = a.createBuffer(1, 1, 22050); s.connect(a.destination); s.start(0); } } catch (e) {}
+  try { if (!kilitAcik && "speechSynthesis" in window) { const u = new SpeechSynthesisUtterance(" "); u.volume = 0; speechSynthesis.speak(u); } } catch (e) {}
+  kilitAcik = true;
 }
 function jump(nt) { t = clamp(nt, 0, DUR); lastT = t; hush(); }
 function frame(now) {
@@ -761,29 +777,10 @@ seek.oninput = () => jump(parseFloat(seek.value));
   const b = document.getElementById(id);
   b.onclick = () => { b.classList.toggle("on"); if (!b.classList.contains("on")) hush(); };
 });
-const stage = document.getElementById("stage");
-// Tam ekranda tuval ekranin fiziksel pikseline 1:1 oturur (1920 x 1080 ekranda tam dolar)
-function fitCanvas() {
-  if (document.fullscreenElement === stage) {
-    const dpr = window.devicePixelRatio || 1, w = W / dpr, h = H / dpr;
-    const k = Math.min(1, innerWidth / w, innerHeight / h);
-    cv.style.width = w * k + "px"; cv.style.height = h * k + "px";
-  } else { cv.style.width = ""; cv.style.height = ""; }
-}
-function toggleFS() {          // telefonlarda tam ekran olmayabilir; o zaman sessizce gecer
-  try {
-    const p = document.fullscreenElement ? document.exitFullscreen() : stage.requestFullscreen ? stage.requestFullscreen() : null;
-    if (p && p.catch) p.catch(() => {});
-  } catch (e) {}
-}
-document.addEventListener("fullscreenchange", fitCanvas);
-window.addEventListener("resize", fitCanvas);
-document.getElementById("fs").onclick = toggleFS;
+// tam ekran düğmesi yok (oyunda da yok; iPhone zaten izin vermiyor)
 cv.onclick = () => setPlaying(!playing);
-cv.ondblclick = toggleFS;
 document.addEventListener("keydown", e => {
   if (e.code === "Space") { e.preventDefault(); setPlaying(!playing); }
-  else if (e.code === "KeyF") toggleFS();
   else if (e.code === "ArrowRight") jump(t + 5);
   else if (e.code === "ArrowLeft") jump(t - 5);
 });
