@@ -942,7 +942,7 @@ function grafik() {
     <path d="${yol(A, fA)}" fill="none" stroke="#2a6fd1" stroke-width="2" stroke-linejoin="round"/>
     <circle cx="${x(son)}" cy="${fN(N[son])}" r="4" fill="#b3261e" stroke="#f4efe3" stroke-width="2"/>
     <circle cx="${x(son)}" cy="${fA(A[son])}" r="4" fill="#2a6fd1" stroke="#f4efe3" stroke-width="2"/>
-    <text x="${R + 8}" y="${yR}" fill="#b3261e">${buyuk(N[son])} TL</text>
+    <text x="${R + 8}" y="${yR}" fill="#b3261e">${buyuk(N[son])}</text>
     <text x="${R + 8}" y="${yB}" fill="#2a6fd1">${Math.round(A[son]).toLocaleString("tr-TR")}</text>
     ${G.map((g, i) => `<rect x="${x(i) - W / G.length / 2}" y="0" width="${W / G.length}" height="100" fill="transparent"><title>Yaş ${g.yas}: servet ${buyuk(N[i])} TL (o yılın parası) · alım gücü ${Math.round(A[i]).toLocaleString("tr-TR")} asgari maaş</title></rect>`).join("")}
     ${etiketX()}
