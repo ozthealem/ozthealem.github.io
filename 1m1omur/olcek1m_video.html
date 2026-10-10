@@ -10,29 +10,30 @@
 /* 1M$ Bir Ömür gazete teması: kâğıt zemin, mürekkep, kırmızı vurgu (oyunla aynı renkler ve yazı tipleri) */
 :root { color-scheme:only light; --bg:#e9e6dc; --paper:#f4efe3; --card:#fffaf0; --ink:#1a1a1a; --muted:#6a6157; --red:#b3261e;
   --fh:'Fraunces', Georgia, serif; --fb:'Atkinson Hyperlegible', system-ui, sans-serif; }
-html, body { margin:0; background:var(--bg); color:var(--ink); font-family:var(--fb); font-size:16px; }
-#wrap { margin:0 auto; padding:16px; box-sizing:border-box; max-width:1400px; }
-.masthead { display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; border-bottom:3px double var(--ink); padding-bottom:8px; margin-bottom:12px; }
+html, body { margin:0; height:100%; background:var(--bg); color:var(--ink); font-family:var(--fb); font-size:16px; }
+/* tam responsive: sayfa ekranın boyunu doldurur, video kutusu başlık ve düğmelerden kalan bütün alanı alır, tuval kutunun oranına uyar */
+#wrap { margin:0 auto; padding:16px; box-sizing:border-box; max-width:1400px; height:100vh; height:100dvh; display:flex; flex-direction:column; }
+.masthead { flex:none; display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; border-bottom:3px double var(--ink); padding-bottom:8px; margin-bottom:12px; }
 .masthead h1 { font-family:var(--fh); font-weight:900; font-size:28px; margin:0; letter-spacing:.02em; }
-.masthead h1 small { display:block; font-family:var(--fb); font-weight:700; font-size:14px; color:var(--red); letter-spacing:0; }
 .masthead a { color:var(--ink); font-weight:700; font-size:16px; }
-#stage { position:relative; display:flex; justify-content:center; background:var(--paper); border:1.5px solid var(--ink); border-radius:4px; box-shadow:4px 4px 0 var(--red); }
-canvas { width:min(100%, calc((100vh - 190px) * 16 / 9)); aspect-ratio:16/9; display:block; background:var(--paper); cursor:pointer; }
+#stage { flex:1; min-height:0; position:relative; background:var(--paper); border:1.5px solid var(--ink); border-radius:4px; box-shadow:4px 4px 0 var(--red); overflow:hidden; }
+canvas { position:absolute; top:0; left:0; width:100%; height:100%; display:block; background:var(--paper); cursor:pointer; }
 #big { position:absolute; top:0; left:0; right:0; bottom:0; display:flex; align-items:center; justify-content:center; }
 #big button { font-family:var(--fh); font-weight:900; font-size:28px; padding:18px 36px; background:var(--ink); color:var(--card); box-shadow:4px 4px 0 var(--red); }
-#bar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:14px; }
+#bar { flex:none; display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:14px; }
 button { background:var(--card); color:var(--ink); border:1.5px solid var(--ink); border-radius:5px; padding:8px 12px; font:inherit; font-size:16px; cursor:pointer; }
 button.on { background:var(--ink); color:var(--card); }
 #seek { flex:1; min-width:200px; accent-color:var(--red); }
 #time { font-variant-numeric:tabular-nums; color:var(--muted); min-width:110px; }
-/* dikey: tuval 9:16, ekranın boyuna sığar; başlık ve düğmeler sıkışır */
-body.dik #wrap { padding:8px 10px; }
-body.dik .masthead { margin-bottom:8px; padding-bottom:6px; }
-body.dik .masthead h1 { font-size:22px; }
-body.dik canvas { width:min(100%, calc((100vh - 150px) * 9 / 16)); width:min(100%, calc((100dvh - 150px) * 9 / 16)); aspect-ratio:9/16; }   /* dvh'yi tanımayan eski iOS vh'de kalır */
-body.dik #bar { gap:6px; margin-top:8px; }
-body.dik #bar button { padding:6px 9px; font-size:14px; }
-body.dik #seek { min-width:120px; }
+/* dar ekran (telefon dik): başlık ve düğmeler sıkışır, video kutusuna yer kalır */
+@media (max-width:600px) {
+  #wrap { padding:8px 10px; }
+  .masthead { margin-bottom:8px; padding-bottom:6px; }
+  .masthead h1 { font-size:22px; }
+  #bar { gap:6px; margin-top:8px; }
+  #bar button { padding:6px 9px; font-size:14px; }
+  #seek { min-width:120px; }
+}
 </style>
 </head>
 <body>
@@ -53,25 +54,38 @@ body.dik #seek { min-width:120px; }
 </div>
 <script>
 "use strict";
-// Dikey sürüm: telefon dik tutulunca tuval 1080×1920 olur (yine Full HD, aynı 2.073.600 piksel). Dünya (pikseller, bloklar,
-// çerçeve, kamera) köşegen boyunca çevrilir: yatay tasarım olduğu gibi dikeye oturur. Yazılar dik kalır, son sahnenin
-// bantları dikeyde satır satır dolar. ?yon=dik ya da ?yon=yatay ile zorlanır; telefon döndürülünce sayfa aynı saniyeden yeniden açılır.
+// Tam responsive. Tasarım çerçevesi bir Full HD ekran: yatayda 1920×1080, dikeyde 1080×1920 (aynı 2.073.600 piksel).
+// Video kutusu boyu eninden uzunsa dikey tasarım. Tuval kutunun oranını alır, tasarım çerçevesi ortasına sığar; kalan boşlukta
+// dünya (pikseller, bloklar) devam eder. Dikeyde dünya (pikseller, bloklar, çerçeve, kamera) köşegen boyunca çevrilir: yatay
+// tasarım dikeye birebir oturur, yazılar dik kalır, son sahnenin bantları satır satır dolar.
+// Kutu boyutu değişince tuval yeniden boyutlanır; yön değişince (dik ↔ yatay) sayfa aynı saniyeden yeniden açılır.
+// ?yon=dik ya da ?yon=yatay ile yön zorlanır.
 const Q = new URLSearchParams(location.search);
-const DIK = Q.get("yon") === "dik" || (Q.get("yon") !== "yatay" && innerHeight > innerWidth);
+const stage = document.getElementById("stage");
+const kutuDik = () => { const r = stage.getBoundingClientRect(); return r.height > r.width; };
+const DIK = Q.get("yon") === "dik" || (Q.get("yon") !== "yatay" && kutuDik());
 const LW = 1920, LH = 1080;                     // yatay tasarım ölçüsü (dünya ve kamera bu ölçüde kurulu)
-const W = DIK ? LH : LW, H = DIK ? LW : LH;     // tuval
-const Y = y => DIK ? y + (H - LH) / 2 : y;      // ekran yazıları: dikeyde ortaya göre aynı yerde
+const W0 = DIK ? LH : LW, H0 = DIK ? LW : LH;   // tasarım çerçevesi (ekranda)
+let W = W0, H = H0;                             // tuval: tasarım çerçevesi + kutunun oranına göre fazlası
+const DX = () => (W - W0) / 2, DY = () => (H - H0) / 2;   // tasarım çerçevesinin tuvaldeki sol üst köşesi
+const Y = y => y + (H - LH) / 2;                // ekran yazıları: ortaya göre aynı yerde (yatay tasarımın y'si)
 const cv = document.getElementById("cv");
-cv.width = W; cv.height = H;
-document.body.classList.toggle("dik", DIK);
-// telefon döndürülünce aynı saniyeden öbür yönde yeniden açılır (yön ?yon= ile zorlandıysa açılmaz)
-if (!Q.get("yon")) {
-  const mq = matchMedia("(orientation: portrait)"), yonDegisti = () => {
-    if (mq.matches === DIK) return;   // yön gerçekten değişmediyse (adres çubuğu açılıp kapanınca) yeniden açma
-    const u = new URL(location.href); u.searchParams.set("t", t.toFixed(1)); location.replace(u.href);
-  };
-  if (mq.addEventListener) mq.addEventListener("change", yonDegisti); else if (mq.addListener) mq.addListener(yonDegisti);   // eski iOS: addListener
+function boyutla() {
+  const r = stage.getBoundingClientRect(), A = r.width / Math.max(1, r.height);
+  if (A > W0 / H0) { H = H0; W = Math.round(H0 * A); } else { W = W0; H = Math.round(W0 / A); }
+  if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
 }
+boyutla();
+let boyutBekle = 0;
+window.addEventListener("resize", () => {
+  clearTimeout(boyutBekle);
+  boyutBekle = setTimeout(() => {
+    if (!Q.get("yon") && kutuDik() !== DIK) {   // yön değişti: aynı saniyeden yeniden aç
+      const u = new URL(location.href); u.searchParams.set("t", t.toFixed(1)); location.replace(u.href); return;
+    }
+    boyutla();
+  }, 150);
+});
 const ctx = cv.getContext("2d");
 const FONT = "'Atkinson Hyperlegible', Arial, sans-serif", FH = "'Fraunces', Georgia, serif";
 // gazete teması: AMBER vurgu kırmızı, COOL mürekkep, BG kâğıt; INK koyu bantların üstündeki yazı (kâğıt rengi)
@@ -296,16 +310,16 @@ function cntAt(t) {
 
 // Ekran etiketleri: [t0, t1, ana, alt, x, y]
 const LABELS = [
-  [TIGN + 0.6, T.b12, "1 px", W / 2, 700],
-  [T.b12 + 1.4, T.b21, "1px = $1M", W / 2, 640],
-  [T.b21 + 0.3, TE.b22 - 1.0, "$1M", W / 2, 960],
-  [TE.b22 - 1.0, T.b31, "1 nokta = 1 ömür", W / 2, 640],
-  [T.b31 + 0.4, T.b41, "$10M = 10 ömür", W / 2, 860],
-  [T.b41 + 1.5, T.b51, "$100M = 100 ömür", W / 2, 860],
-  [T.b51 + 1.5, T.b52, "$1B = 1.000 ömür", W / 2, 860],
-  [T.b61 + 1.0, T.b71, "$10B = 10.000 ömür", W / 2, 860],
+  [TIGN + 0.6, T.b12, "1 px", "c", 700],
+  [T.b12 + 1.4, T.b21, "1px = $1M", "c", 640],
+  [T.b21 + 0.3, TE.b22 - 1.0, "$1M", "c", 960],
+  [TE.b22 - 1.0, T.b31, "1 nokta = 1 ömür", "c", 640],
+  [T.b31 + 0.4, T.b41, "$10M = 10 ömür", "c", 860],
+  [T.b41 + 1.5, T.b51, "$100M = 100 ömür", "c", 860],
+  [T.b51 + 1.5, T.b52, "$1B = 1.000 ömür", "c", 860],
+  [T.b61 + 1.0, T.b71, "$10B = 10.000 ömür", "c", 860],
   [T.b71 + 2.2, T.b72, "$100B = 100.000 ömür", 380, 540, 56],
-  [T.b82 + 2.6, TE.b82, "$1M = 1 ömür", W / 2, 860]
+  [T.b82 + 2.6, TE.b82, "$1M = 1 ömür", "c", 860]
 ];
 
 // Desen: 2 x 2, sol ustte tek piksel
@@ -406,7 +420,8 @@ function frameRect(cx, cy, rot, alpha, p, glow) {
 
 function render(t) {
   const cm = camAt(t), z = cm.z, cx = cm.c[0], cy = cm.c[1];
-  const ox = LW / 2 - cx * z, oy = LH / 2 - cy * z;     // yatay tasarım uzayında; dikeyde ekran = bunun köşegen çevriği
+  const SW = DIK ? H : W, SH = DIK ? W : H;            // tuvalin yatay tasarım uzayındaki ölçüsü (dikeyde çevrik)
+  const ox = SW / 2 - cx * z, oy = SH / 2 - cy * z;     // yatay tasarım uzayında; dikeyde ekran = bunun köşegen çevriği
   const toS = (x, y) => DIK ? [oy + y * z, ox + x * z] : [ox + x * z, oy + y * z];
   const dunya = () => DIK ? ctx.setTransform(0, z, z, 0, oy, ox) : ctx.setTransform(z, 0, 0, z, ox, oy);
   // dünyaya bağlı yazı: dikeyde yeri çevrilir, harfler dik kalır
@@ -417,7 +432,7 @@ function render(t) {
 
   const WF = 1 - ramp(t, T.b103 - 1.4, 1.2);           // 10.3'te her sey soner
   const MF = 1 - ramp(t, T.b101, 1.2);                 // Musk 10.1'de cekilir
-  const vx0 = -ox / z, vy0 = -oy / z, vx1 = (LW - ox) / z, vy1 = (LH - oy) / z;
+  const vx0 = -ox / z, vy0 = -oy / z, vx1 = (SW - ox) / z, vy1 = (SH - oy) / z;
 
   // Dunya
   dunya();
@@ -455,7 +470,7 @@ function render(t) {
   const la = ramp(t, T.b72 + 0.4, 0.4) * (1 - ramp(t, T.b81 + 0.1, 0.5));
   if (la > 0) {
     // dikeyde liste dünyada değil ekranda, $100B bandının üstündeki boşlukta (aynı çizim, ölçekli)
-    if (DIK) { const s = 0.88; ctx.save(); ctx.setTransform(s, 0, 0, s, W / 2 - (500 + 320) * s, 28 - 60 * s); }
+    if (DIK) { const s = 0.88; ctx.save(); ctx.setTransform(s, 0, 0, s, W / 2 - (500 + 320) * s, DY() + 28 - 60 * s); }
     ctx.globalAlpha = la;
     ctx.fillStyle = PAPER; ctx.fillRect(500, 60, 640, 800); ctx.strokeStyle = COOL; ctx.lineWidth = 2; ctx.strokeRect(500, 60, 640, 800);
     textW("Dünyanın en zenginleri, 2026", 530, 120, 34, COOL, 700, "left", 1);
@@ -559,11 +574,13 @@ function render(t) {
   ctx.imageSmoothingEnabled = true;
 
   // 1.2: ekranin kenari ve piksel hesabi
-  const e0 = ramp(t, T.b1f - 0.3, 0.6) * (1 - ramp(t, T.b12 - 0.3, 0.4));
+  // kutu Full HD oranından farklıysa ekranın kenarı (tasarım çerçevesi) görünmez: çerçeve oklarla birlikte belirir, oklar ona değer
+  const erken = W > W0 || H > H0 ? ramp(t, T.b11 + 2.4, 0.3) : 0;
+  const e0 = Math.max(ramp(t, T.b1f - 0.3, 0.6), erken) * (1 - ramp(t, T.b12 - 0.3, 0.4));
   if (e0 > 0) {
     ctx.save(); ctx.globalAlpha = e0; ctx.strokeStyle = BLUE; ctx.lineWidth = 6; ctx.shadowColor = BLUE; ctx.shadowBlur = 30;
-    ctx.strokeRect(5, 5, W - 10, H - 10); ctx.restore();
-    const s1 = `${W} × ${H} = 2.073.600 piksel`;
+    ctx.strokeRect(DX() + 5, DY() + 5, W0 - 10, H0 - 10); ctx.restore();
+    const s1 = `${W0} × ${H0} = 2.073.600 piksel`;
     textW(s1.slice(0, Math.ceil(ramp(t, T.b1f + 0.3, 1.6) * s1.length)), W / 2, Y(340), DIK ? 58 : 76, COOL, 700, "center", e0);
   }
 
@@ -571,7 +588,7 @@ function render(t) {
   const ar = ramp(t, T.b11 + 2.4, 0.3) * (1 - ramp(t, T.b12 - 0.4, 0.4));
   if (ar > 0) {
     const g = eo(ramp(t, T.b11 + 2.4, 0.8)), HS = 22;
-    const gx = lerp(150, W / 2 - 2, g), gy = lerp(120, H / 2 - 2, g);   // ok uçları ekranın kenarına değer (çizgi kalınlığının yarısı kadar içerde)
+    const gx = lerp(150, W0 / 2 - 2, g), gy = lerp(120, H0 / 2 - 2, g), ky = DY() + 70, kx = DX() + 70;   // ok uçları ekranın kenarına değer (çizgi kalınlığının yarısı kadar içerde)
     ctx.save(); ctx.globalAlpha = ar; ctx.strokeStyle = COOL; ctx.lineWidth = 4; ctx.lineCap = ctx.lineJoin = "round";
     const arm = (a, b, dx, dy) => {       // kol ve ucundaki ok basi (dx, dy: ok yonu)
       poly([a, b], 1);
@@ -579,12 +596,12 @@ function render(t) {
             [b[0] - dx * HS + dy * HS * 0.6, b[1] - dy * HS + dx * HS * 0.6]], 1);
     };
     if (g > 0) {
-      arm([W / 2 - 150, 70], [W / 2 - gx, 70], -1, 0); arm([W / 2 + 150, 70], [W / 2 + gx, 70], 1, 0);
-      arm([70, H / 2 - 120], [70, H / 2 - gy], 0, -1); arm([70, H / 2 + 120], [70, H / 2 + gy], 0, 1);
+      arm([W / 2 - 150, ky], [W / 2 - gx, ky], -1, 0); arm([W / 2 + 150, ky], [W / 2 + gx, ky], 1, 0);
+      arm([kx, H / 2 - 120], [kx, H / 2 - gy], 0, -1); arm([kx, H / 2 + 120], [kx, H / 2 + gy], 0, 1);
     }
     ctx.restore();
-    textW(W + "px", W / 2, 86, 46, COOL, 700, "center", ar);
-    ctx.save(); ctx.translate(86, H / 2); ctx.rotate(-Math.PI / 2); textW(H + "px", 0, 0, 46, COOL, 700, "center", ar); ctx.restore();
+    textW(W0 + "px", W / 2, DY() + 86, 46, COOL, 700, "center", ar);
+    ctx.save(); ctx.translate(DX() + 86, H / 2); ctx.rotate(-Math.PI / 2); textW(H0 + "px", 0, 0, 46, COOL, 700, "center", ar); ctx.restore();
   }
 
   // 1.1: gercek boyuttaki piksel daire icinde
@@ -611,8 +628,8 @@ function render(t) {
   // 8.1 dalgalanma: canli tutar
   if (fw > 0) {
     const mv = muskB(t), d = Math.round(mv - 839);
-    textW("$" + Math.round(mv) + "B", W / 2, 130, 96, AMBER, 700, "center", fw);
-    textW(d === 0 ? "±0" : (d > 0 ? "+" : "−") + Math.abs(d) + "B", W / 2, 195, 50, d >= 0 ? COOL : MUTED, 700, "center", fw);
+    textW("$" + Math.round(mv) + "B", W / 2, DY() + 130, 96, AMBER, 700, "center", fw);
+    textW(d === 0 ? "±0" : (d > 0 ? "+" : "−") + Math.abs(d) + "B", W / 2, DY() + 195, 50, d >= 0 ? COOL : MUTED, 700, "center", fw);
   }
 
   // Seviye etiketleri
@@ -621,13 +638,13 @@ function render(t) {
     if (t0 > T.b103) al *= 1 - ramp(t, TE.b104 + 0.4, 1.2);
     if (al <= 0) continue;
     // dikeyde: ortalı etiketler ortaya göre aynı yerde; $100B etiketi (yatayda bandın solunda) bandın üstünde
-    const yan = DIK && x !== W / 2, lx = yan ? W / 2 : x, ly = yan ? 700 : DIK && y === 860 ? H - 290 : Y(y);
+    const orta = x === "c", yan = DIK && !orta, lx = orta || yan ? W / 2 : DX() + x, ly = yan ? DY() + 700 : DIK && y === 860 ? DY() + H0 - 290 : Y(y);
     if (DIK) kupur(lx, ly, fs || 80, al);
     textW(a, lx, ly, fs || 80, a.startsWith("$") || a.startsWith("1px") ? COOL : AMBER, 700, "center", al);
   }
   // 6.2: unicorn sartlari ekranda
   const cd = 1 - ramp(t, TE.b52 - 0.6, 0.6);
-  const uy = y => DIK ? y + (H - 290 - 860) - 60 : y;   // dikeyde etiketlerin yerinde, ızgaranın altında
+  const uy = y => DIK ? y + (DY() + H0 - 290 - 860) - 60 : Y(y);   // dikeyde etiketlerin yerinde, ızgaranın altında
   if (DIK) { const ua = ramp(t, T.b52 + 0.2, 0.4) * cd; if (ua > 0) { ctx.save(); ctx.globalAlpha = ua * 0.92; ctx.fillStyle = PAPER; ctx.fillRect(W / 2 - 420, uy(726) - 50, 840, 236); ctx.restore(); } }
   textW("Unicorn olmak:", W / 2, uy(726), 44, COOL, 700, "center", ramp(t, T.b52 + 0.2, 0.4) * cd);
   ["1. Girişim olmak", "2. Borsada olmamak", "3. Bir yatırım turunda $1B'yi geçmek"].forEach((c, i) => {
@@ -638,7 +655,7 @@ function render(t) {
   const ca = ramp(t, T.b21 + 0.3, 0.4) * (1 - ramp(t, T.b72, 0.4) + ramp(t, T.b81 + 2.6, 0.4)) * (1 - ramp(t, M39T, 0.4));
   if (ca > 0) {
     const v = cntAt(t);
-    const sy = DIK ? 70 : 985;   // dikeyde sağ üstte (altta altyazıyla çakışmasın)
+    const sy = DY() + (DIK ? 70 : 985);   // dikeyde sağ üstte (altta altyazıyla çakışmasın)
     textW("$" + Math.round(v).toLocaleString("tr-TR"), W - 50, sy, 38, COOL, 700, "right", ca);
     textW(Math.floor(v / 1e6 + 1e-6).toLocaleString("tr-TR") + " ömür", W - 50, sy + 42, 28, AMBER, 400, "right", ca);
   }
