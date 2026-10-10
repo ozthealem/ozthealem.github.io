@@ -506,7 +506,7 @@ function render(t) {
   const ar = ramp(t, T.b11 + 2.4, 0.3) * (1 - ramp(t, T.b12 - 0.4, 0.4));
   if (ar > 0) {
     const g = eo(ramp(t, T.b11 + 2.4, 0.8)), HS = 22;
-    const gx = lerp(150, W / 2 - 24, g), gy = lerp(120, H / 2 - 24, g);
+    const gx = lerp(150, W / 2 - 2, g), gy = lerp(120, H / 2 - 2, g);   // ok uçları ekranın kenarına değer (çizgi kalınlığının yarısı kadar içerde)
     ctx.save(); ctx.globalAlpha = ar; ctx.strokeStyle = COOL; ctx.lineWidth = 4; ctx.lineCap = ctx.lineJoin = "round";
     const arm = (a, b, dx, dy) => {       // kol ve ucundaki ok basi (dx, dy: ok yonu)
       poly([a, b], 1);
