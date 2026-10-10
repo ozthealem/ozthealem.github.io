@@ -919,31 +919,35 @@ function ciz() {
 }
 // Grafikler: üstte servet (çizgi), altta yıllık kazanç (yukarı) ve gider (aşağı). Aynı yaş ekseni.
 const kisa = n => { const a = Math.abs(n); return (n < 0 ? "−" : "") + (a >= 1e6 ? (a / 1e6).toLocaleString("tr-TR", { maximumFractionDigits: 1 }) + " mn" : Math.round(a / 1e3) + " bin"); };
-// Servet grafiği: kırmızı servet o yılın TL'siyle (Bilanço'daki rakam: enflasyonla şişer, sıfır atılınca düşer),
+// Servet grafiği: kırmızı servet o yılın fiyatlarıyla TL (Bilanço'daki rakam, enflasyonla şişer; sıfır atma öncesi bugünkü liraya çevrili),
 // mavi alım gücü bugünün doluyla (tepedeki rakam). Biri çıkarken öbürü inebilir: grafiğin anlattığı bu.
-// Büyüklükleri çok farklı, iki ölçek: sol kırmızının, sağ mavinin. Aynı yaş ekseni.
+// Birimleri farklı: her çizgi kendi en düşük ve en yüksek değerine göre ölçeklenir (sıfırdan başlamaz); mavi biraz altta
+// durur (kırmızı üst bantta, mavi alt bantta, bantlar kısmen örtüşür). Son değerler sağda, çizgilerin ucunda.
 function grafik() {
-  const G = S.gecmis, L = 46, R = 290, W = R - L;
+  const G = S.gecmis, L = 8, R = 266, W = R - L;
   if (G.length < 2) { $("chServet").innerHTML = `<text x="10" y="55">İlk yıllar geçince grafik oluşur</text>`; return; }
   const x = i => L + i * W / (G.length - 1);
   const etiketX = () => { const ad = Math.max(1, Math.ceil(G.length / 6)); return G.map((g, i) => (i % ad === 0 && G.length - 1 - i >= ad / 2) || i === G.length - 1 ? `<text x="${x(i)}" text-anchor="middle" y="104">${g.yas}</text>` : "").join(""); };
-  const olcek = V => { const mx = Math.max(...V, 1), mn = Math.min(0, ...V); return { mx, f: v => 8 + (1 - (v - mn) / (mx - mn)) * 84 }; };
+  const olcek = (V, ust, alt) => { let mn = Math.min(...V), mx = Math.max(...V); if (mx - mn < Math.abs(mx) * 1e-6 + 1e-9) { mn -= 1; mx += 1; }
+    return v => ust + (1 - (v - mn) / (mx - mn)) * (alt - ust); };
   const buyuk = n => { const a = Math.abs(n), f = v => v.toLocaleString("tr-TR", { maximumFractionDigits: 1 });
     return (n < 0 ? "−" : "") + (a >= 1e12 ? f(a / 1e12) + " trn" : a >= 1e9 ? f(a / 1e9) + " mr" : a >= 1e6 ? f(a / 1e6) + " mn" : Math.round(a / 1e3) + " bin"); };
-  const N = G.map(g => g.nom !== undefined ? g.nom : g.servet), A = G.map(g => g.ag !== undefined ? g.ag : g.servet / S.kur2026);
-  const oN = olcek(N), oA = olcek(A), yol = (V, o) => V.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${o.f(v).toFixed(1)}`).join(" ");
+  // kırmızı bugünkü lirayla: sıfır atılmadan önceki yıllar da yeni liraya çevrilir, çizgi kopmaz
+  const N = G.map(g => g.nom !== undefined ? g.nom / Math.pow(1e6, (S.sifirSay || 0) - (g.sifir || 0)) : g.servet), A = G.map(g => g.ag !== undefined ? g.ag : g.servet / S.kur2026);
+  const fN = olcek(N, 8, 66), fA = olcek(A, 34, 92), yol = (V, f) => V.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${f(v).toFixed(1)}`).join(" ");
   const son = G.length - 1;
-  $("chServet").innerHTML = `<line x1="${L}" x2="${R}" y1="${oN.f(0)}" y2="${oN.f(0)}" stroke="#b9ae9c"/>
-    <text x="${L - 4}" y="${oN.f(oN.mx) + 4}" text-anchor="end" fill="#b3261e">${buyuk(oN.mx)}</text><text x="${L - 4}" y="${oN.f(0) + 4}" text-anchor="end">0</text>
-    <text x="${R + 4}" y="${oA.f(oA.mx) + 4}" fill="#2a6fd1">$${buyuk(oA.mx)}</text>
-    <path d="${yol(N, oN)}" fill="none" stroke="#b3261e" stroke-width="2" stroke-linejoin="round"/>
-    <path d="${yol(A, oA)}" fill="none" stroke="#2a6fd1" stroke-width="2" stroke-linejoin="round"/>
-    <circle cx="${x(son)}" cy="${oN.f(N[son])}" r="4" fill="#b3261e" stroke="#f4efe3" stroke-width="2"/>
-    <circle cx="${x(son)}" cy="${oA.f(A[son])}" r="4" fill="#2a6fd1" stroke="#f4efe3" stroke-width="2"/>
+  let yR = fN(N[son]) + 4, yB = fA(A[son]) + 4;   // sağdaki iki rakam üst üste binmesin
+  if (Math.abs(yR - yB) < 12) { if (yR <= yB) yB = yR + 12; else yR = yB + 12; }
+  $("chServet").innerHTML = `<path d="${yol(N, fN)}" fill="none" stroke="#b3261e" stroke-width="2" stroke-linejoin="round"/>
+    <path d="${yol(A, fA)}" fill="none" stroke="#2a6fd1" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="${x(son)}" cy="${fN(N[son])}" r="4" fill="#b3261e" stroke="#f4efe3" stroke-width="2"/>
+    <circle cx="${x(son)}" cy="${fA(A[son])}" r="4" fill="#2a6fd1" stroke="#f4efe3" stroke-width="2"/>
+    <text x="${R + 8}" y="${yR}" fill="#b3261e">${buyuk(N[son])} TL</text>
+    <text x="${R + 8}" y="${yB}" fill="#2a6fd1">$${buyuk(A[son])}</text>
     ${G.map((g, i) => `<rect x="${x(i) - W / G.length / 2}" y="0" width="${W / G.length}" height="100" fill="transparent"><title>Yaş ${g.yas}: servet ${buyuk(N[i])} TL (o yılın parası) · alım gücü $${Math.round(A[i]).toLocaleString("tr-TR")} (bugünün doları)</title></rect>`).join("")}
     ${etiketX()}
-    <rect x="${L}" y="113" width="10" height="3" fill="#b3261e"/><text x="${L + 14}" y="118">Servet (o yılın TL'si, sol)</text>
-    <rect x="${L + 150}" y="113" width="10" height="3" fill="#2a6fd1"/><text x="${L + 164}" y="118">Alım gücü ($, sağ)</text>`;
+    <rect x="${L}" y="113" width="10" height="3" fill="#b3261e"/><text x="${L + 14}" y="118">Servet (o yılın TL'si)</text>
+    <rect x="${L + 150}" y="113" width="10" height="3" fill="#2a6fd1"/><text x="${L + 164}" y="118">Alım gücü (bugünün $)</text>`;
 }
 let anim = null;
 function sayac() {
@@ -1455,7 +1459,7 @@ $("go").onclick = () => {
   const VARLIK = ["Ev alımı", "Ev satışı", "Araba satışı", "Kafe ortaklığı", "Kafe satışı", "Tarla alımı", "Tarla satışı"];   // varlık değişimi, kazanç ya da gider sayılmaz
   const kaz = Object.entries(S.buYil).filter(([k, v]) => v > 0 && !VARLIK.includes(k)).reduce((a, [, v]) => a + v, 0);
   const gid = Object.entries(S.buYil).filter(([k, v]) => v < 0 && !VARLIK.includes(k)).reduce((a, [, v]) => a - v, 0);
-  S.gecmis.push({ yas: S.yas, kaz, gid, servet: servet(), nom: servet() * S.endeks, ag: servetAG(), konfor: konfor() });   // nom: o yılın TL'si, ag: alım gücü $
+  S.gecmis.push({ yas: S.yas, kaz, gid, servet: servet(), nom: servet() * S.endeks, sifir: S.sifirSay || 0, ag: servetAG(), konfor: konfor() });   // nom: o yılın TL'si, ag: alım gücü $
   S.sonYil = S.buYil; S.buYil = {};
   S.yas++; S.yil++;
   S.cocuklar.forEach(c => { if (S.yil - c === 0) note("Hayat", "Bebeğiniz dünyaya geldi!", { cls: "year" }); });
