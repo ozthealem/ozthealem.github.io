@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>1M$ Bir Ömür · Ölçek</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* 1M$ Bir Ömür gazete teması: kâğıt zemin, mürekkep, kırmızı vurgu (oyunla aynı renkler ve yazı tipleri) */
+:root { color-scheme:only light; --bg:#e9e6dc; --paper:#f4efe3; --card:#fffaf0; --ink:#1a1a1a; --muted:#6a6157; --red:#b3261e;
+  --fh:'Fraunces', Georgia, serif; --fb:'Atkinson Hyperlegible', system-ui, sans-serif; }
+html, body { margin:0; background:var(--bg); color:var(--ink); font-family:var(--fb); font-size:16px; }
+#wrap { margin:0 auto; padding:16px; box-sizing:border-box; max-width:1400px; }
+.masthead { display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; border-bottom:3px double var(--ink); padding-bottom:8px; margin-bottom:12px; }
+.masthead h1 { font-family:var(--fh); font-weight:900; font-size:28px; margin:0; letter-spacing:.02em; }
+.masthead h1 small { display:block; font-family:var(--fb); font-weight:700; font-size:14px; color:var(--red); letter-spacing:0; }
+.masthead a { color:var(--ink); font-weight:700; font-size:16px; }
+#stage { position:relative; display:flex; justify-content:center; background:var(--paper); border:1.5px solid var(--ink); border-radius:4px; box-shadow:4px 4px 0 var(--red); }
+#stage:fullscreen { align-items:center; border-radius:0; border:0; box-shadow:none; }
+#stage:fullscreen #big { display:none !important; }
+canvas { width:min(100%, calc((100vh - 190px) * 16 / 9)); aspect-ratio:16/9; display:block; background:var(--paper); cursor:pointer; }
+#big { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+#big button { font-family:var(--fh); font-weight:900; font-size:28px; padding:18px 36px; background:var(--ink); color:var(--card); box-shadow:4px 4px 0 var(--red); }
+#bar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:14px; }
+button { background:var(--card); color:var(--ink); border:1.5px solid var(--ink); border-radius:5px; padding:8px 12px; font:inherit; font-size:16px; cursor:pointer; }
+button.on { background:var(--ink); color:var(--card); }
+#seek { flex:1; min-width:200px; accent-color:var(--red); }
+#time { font-variant-numeric:tabular-nums; color:var(--muted); min-width:110px; }
+#scenes { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; }
+#scenes button { padding:6px 10px; font-size:15px; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div class="masthead"><h1>ÖMÜR POSTASI<small>1M$ Bir Ömür · Bir nokta, bir ömür</small></h1><a href="./">← Oyuna dön</a></div>
+  <div id="stage">
+    <canvas id="cv"></canvas>
+    <div id="big"><button id="bigPlay">Oynat</button></div>
+  </div>
+  <div id="bar">
+    <button id="play">Oynat</button>
+    <input id="seek" type="range" min="0" max="100" step="0.01" value="0">
+    <span id="time">0:00 / 0:00</span>
+    <button id="sub" class="on">Altyazı</button>
+    <button id="sfx" class="on">Ses efekti</button>
+    <button id="voice" class="on">Seslendirme</button>
+    <button id="fs">Tam ekran (F)</button>
+  </div>
+  <div id="scenes"></div>
+</div>
+<script>
+"use strict";
+const W = 1920, H = 1080;
+const cv = document.getElementById("cv");
+cv.width = W; cv.height = H;
+const ctx = cv.getContext("2d");
+const FONT = "'Atkinson Hyperlegible', Arial, sans-serif", FH = "'Fraunces', Georgia, serif";
+// gazete teması: AMBER vurgu kırmızı, COOL mürekkep, BG kâğıt; INK koyu bantların üstündeki yazı (kâğıt rengi)
+const AMBER = "#b3261e", COOL = "#1a1a1a", COOL2 = "#4a4540", BLUE = "#2a6fd1", MUTED = "#6a6157", BG = "#f4efe3", INK = "#fffaf0", PAPER = "#fffaf0";
+
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, u) => a + (b - a) * u;
+const es = u => u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+const eo = u => 1 - Math.pow(1 - u, 3);
+const ramp = (t, t0, d) => clamp((t - t0) / d);
+const L10 = Math.log10;
+
+// Vuruslar: [id, sahne, konusma, onceki sessizlik, en az sure]
+const BEATS = [
+  ["b11", "S01", "Bu bir piksel. Ekranınızın gösterebildiği en küçük nokta.", 1.6, 5],
+  ["b1f", "S01", "Şu an baktığınız ekran, Full HD ise iki milyondan fazla nokta bulunmaktadır.", 0.2, 4],
+  ["b12", "S01", "Bundan sonra her piksel 1 milyon doları temsil etsin.", 0.2, 3],
+  ["b21", "S02", "Bu tek nokta ile üç ev ve bir araba alabilirsiniz. Birinde oturursunuz, ikisini kiraya verirsiniz. İyi maaşlı bir memur kadar da geliriniz olur.", 0.2, 0],
+  ["b22", "S02", "Bu para ömrünüz boyunca hiç çalışmadan yaşamanıza yeter, hatta ailenize de bakarsınız. Evet, bir nokta, bir ömür.", 0.2, 0],
+  ["b31", "S03", "On milyon dolar. On ömür.", 0.3, 3.5],
+  ["b41", "S04", "Yüz milyon dolar. 100 milyon dolar değerleme almış, üç ortaklı bir oyun stüdyosu düşünün. Masraflar çıktıktan sonra bile iyi para.", 0.2, 0],
+  ["b51", "S05", "Bu da 1 milyar dolar, bin ömürlük ‘unicorn’ bariyeri. Türkiye'nin 8 unicorn olmuş şirketi var, 3'ü oyun firması.", 0.2, 5.2],
+  ["b52", "S05", "Unicorn olmanın üç şartı var. Girişim olmak. Borsada olmamak. Bir yatırım turunda 1 milyar doları geçmek. Özetle zenginler için keşif bekleyen bir maden; girişimciler için de bir üst lige çıkma bileti.", 0.2, 0],
+  ["b61", "S06", "On milyar. On bin ömür.", 0.2, 2.8],
+  ["b71", "S07", "Yüz milyar dolar. İşte Full HD ölçeğimizin sınırlarına dayandık.", 0.2, 4.5],
+  ["b72", "S07", "Ve bu kadar parayla hâlâ dünyanın en zengin on kişisi arasına giremiyorsunuz.", 0.2, 7],
+  ["b81", "S08", "En tepedeki isim Elon Musk'un serveti 839 milyar dolar. Bu rakam tek bir haftada yüz milyarlarca dolar oynayabiliyor.", 1.2, 12.5],
+  ["b82", "S08", "İşte bu da o bizim tatlı 1 milyon dolar… Devler içinse bir yuvarlama hatası.", 0.3, 5.5],
+  ["b91", "S09", "Bir insanın, harcayamayacağı kadar çok parası olmalı mı?", 0.8, 0],
+  ["b92", "S09", "Bu insanlar devlet değil, ihtiyaç duyunca para basmıyorlar. Kıskanmayın çünkü: hizmetlerini satın alarak bu paraları onlara siz veriyorsunuz.", 0.2, 0],
+  ["b93", "S09", "Duygularınıza oynuyorlar; size özel hissettirecek markalar oluşturup güzelce paketleyip ederinin üstünde satıyorlar.", 0.2, 0],
+  ["b101", "S10", "En zengin 10 kişinin servetini toplasak, yaklaşık 2 trilyon 591 milyar dolar ediyor.", 0.5, 8.8],
+  ["b102", "S10", "Toplamda bu ekrandaki tüm piksellerden 1.25 kat daha fazla nokta.", 0.2, 3.5],
+  ["b103", "S10", "Peki ya siz? Sizin bir noktanız var mı?", 0.8, 4.5],
+  ["b104", "S10", "Artık ne kadar fakir olduğunuzu biliyorsunuz.", 0.5, 4]
+];
+const CPS = 14;
+const T = {}, TE = {}, SCENE_START = {};
+let clock = 0;
+for (const [id, sc, txt, pre, mn] of BEATS) {
+  if (!(sc in SCENE_START)) SCENE_START[sc] = sc === "S01" ? 0 : clock;
+  clock += pre;
+  T[id] = clock;
+  clock += Math.max(mn, txt.length / 15 + 0.3);
+  TE[id] = clock;
+}
+const DUR = clock + 1.5;
+
+// Olaylar (ses, konusma): yalniz oynatirken, zaman cizgisini gecince
+const EVS = [];
+const EV = (t, f) => EVS.push({ t, f });
+
+// Altyazi kartlari: 42 karakterlik tek satirlar
+const CARDS = [];
+for (const [id, sc, txt] of BEATS) {
+  const words = txt.split(" "), lines = [];
+  let cur = "";
+  for (const w of words) {
+    if ((cur + " " + w).trim().length > 42) { lines.push(cur.trim()); cur = w; } else cur += " " + w;
+  }
+  if (cur.trim()) lines.push(cur.trim());
+  const span = Math.min(TE[id] - T[id] - 0.1, txt.length / 15);
+  let t = T[id];
+  for (const ln of lines) {
+    const d = span * ln.length / txt.length;
+    CARDS.push([t, t + d + 0.25, ln]);
+    t += d;
+  }
+  EV(T[id], () => speak(txt));
+}
+
+// Kamera: log olcekli zoom, merkez. Her hareket bir capa noktasini ekranda dogrusal tasir.
+const SC = [W / 2, H / 2];
+const cam0 = { z: L10(1), c: [0.5, 0.5] };   // video gercek boyutta, 1 px ile acilir
+const SEG = [];
+let camCur = { z: cam0.z, c: cam0.c };
+function move(t0, t1, z, c, P, ease) {
+  SEG.push({ t0, t1, z0: camCur.z, z1: L10(z), c0: camCur.c, c1: c, P: P || c, ease: ease || "s" });
+  camCur = { z: L10(z), c };
+}
+function camAt(t) {
+  let st = cam0;
+  for (const s of SEG) {
+    if (t < s.t0) break;
+    if (t >= s.t1) { st = { z: s.z1, c: s.c1 }; continue; }
+    const u = (t - s.t0) / (s.t1 - s.t0), e = s.ease === "l" ? u : es(u);
+    const z = Math.pow(10, lerp(s.z0, s.z1, e)), za = Math.pow(10, s.z0), zb = Math.pow(10, s.z1);
+    const S0 = [SC[0] + (s.P[0] - s.c0[0]) * za, SC[1] + (s.P[1] - s.c0[1]) * za];
+    const S1 = [SC[0] + (s.P[0] - s.c1[0]) * zb, SC[1] + (s.P[1] - s.c1[1]) * zb];
+    const S = [lerp(S0[0], S1[0], e), lerp(S0[1], S1[1], e)];
+    return { z, c: [s.P[0] - (S[0] - SC[0]) / z, s.P[1] - (S[1] - SC[1]) / z] };
+  }
+  return { z: Math.pow(10, st.z), c: st.c };
+}
+
+// Dunya: piksel (i,j) = [2i, 2i+1] x [2j, 2j+1]; bosluklu izgara. Sizin pikseliniz (0,0).
+const OWN = [0.5, 0.5];
+const LV = [[1, 1], [5, 2], [10, 10], [50, 20], [100, 100], [200, 500]];
+const BASE = [0, 660, 523, 440, 330, 262];
+const PENTA = [1, 9 / 8, 5 / 4, 3 / 2, 5 / 3];
+const BLOCKS = [];
+function level(L, t0, step, drop) {
+  const [pw, ph] = LV[L - 1], [w, h] = LV[L];
+  let k = 0;
+  for (let r = 0; r < h / ph; r++) for (let c = 0; c < w / pw; c++) {
+    if (!r && !c) continue;
+    const t = t0 + k * step, kk = k;
+    BLOCKS.push({ x: c * pw, y: r * ph, w: pw, h: ph, t, drop: drop || 0, dd: 0.35 });
+    EV(t, () => tone(BASE[L] * PENTA[kk % 5] * (kk >= 5 ? 2 : 1), 0.7, "triangle", 0.07));
+    k++;
+  }
+}
+level(1, T.b31 + 0.5, 0.28);
+level(2, T.b41 + 1.0, 0.22);
+level(3, T.b51 + 1.0, 0.2);
+level(4, T.b61 + 0.6, 0.1, 150);
+level(5, T.b71 + 0.6, 0.14);
+
+// Musk: 8 birim ($100B, 200 x 500 piksel) + $39B (200 x 195)
+const MU0 = T.b81 + 2.7, MUS = 0.4;
+for (let k = 0; k < 8; k++) {
+  const t = MU0 + k * MUS;
+  BLOCKS.push({ x: 400 + 230 * (k % 4), y: -230 + 510 * Math.floor(k / 4), w: 200, h: 500, t, drop: 1600, dd: 0.5, musk: true, base: 100 * k, cap: 100 });
+  EV(t + 0.5, thud);
+}
+const M39T = MU0 + 8 * MUS + 0.2;
+BLOCKS.push({ x: 1320, y: -230, w: 200, h: 195, t: M39T, drop: 1600, dd: 0.5, musk: true, base: 800, cap: 205 });
+EV(M39T + 0.5, () => thud(0.5));
+const MEND = M39T + 0.8;
+// Dalgalanma: "oynayabiliyor" denince servet artip azalir, sonra yine $839B (her $1B = 5 satir)
+const B81 = BEATS.find(b => b[0] === "b81")[2];
+const TW = Math.max(T.b81 + B81.indexOf("oynayabiliyor") / 15, MEND + 0.2);
+const FLK = [[0, 0], [1, 160], [2, -140], [3, 70], [4, -40], [5, 0]];
+function muskB(t) {
+  const u = t - TW;
+  if (u <= 0 || u >= 5) return 839;
+  const i = Math.floor(u), f = es(u - i);
+  return 839 + lerp(FLK[i][1], FLK[i + 1][1], f);
+}
+FLK.slice(1).forEach(([d, v]) => EV(TW + d - 0.5, () => tone(v > 0 ? 660 : v < 0 ? 220 : 440, 0.6, "sine", 0.06)));
+const PL = [2 * (1320 + 199) + 0.5, 2 * (-230 + 194) + 0.5];   // devin son pikseli
+
+// Kamera plani
+move(T.b12, T.b12 + 1.2, 40, OWN);
+move(T.b21 + 0.2, T.b21 + 1.6, 700, [0.5, 0.62], OWN);
+move(TE.b22 - 2.4, TE.b22 - 1.0, 40, OWN, OWN);
+move(T.b31, T.b31 + 0.9, 50, [4.5, 1.5 + 3], OWN);
+move(T.b41, T.b41 + 1.0, 32, [9.5, 9.5 + 5], OWN);
+move(T.b51, T.b51 + 1.0, 15, [49.5, 19.5 + 10], OWN);
+move(T.b61, T.b61 + 0.8, 3.4, [99.5, 99.5 + 45], OWN);
+const FA = [200, 500];
+move(T.b71, T.b71 + 1.6, 1, FA, OWN);
+const C4 = [1500, 500];
+move(T.b81 + 0.3, T.b81 + 2.6, 0.5, C4);
+move(T.b82, T.b82 + 2.5, 260, [PL[0], PL[1] + 0.15], PL);
+move(TE.b82 - 0.3, TE.b93 - 0.5, 0.5, C4, PL, "l");          // S09 boyunca sabit hizla geri cekilis
+move(T.b103 - 0.5, T.b103 + 3.5, 40, OWN, OWN);
+move(T.b104 + 0.3, TE.b104 - 0.3, 1, OWN, OWN);   // 10.4: 1.1'in tersi, gercek boyuta
+
+// Sesler
+const TIGN = 0.6;                             // piksel kibrit gibi yanar
+EV(T.b1f - 0.3, () => tick());
+EV(T.b12, () => whoosh());
+EV(T.b12 + 1.4, () => tone(523, 1.4, "sine", 0.08));
+EV(TE.b22 - 2.4, () => whoosh());
+EV(T.b71 + 2.0, () => tone(196, 2.5, "sine", 0.06));
+for (let i = 0; i < 10; i++) EV(T.b72 + 1.0 + (9 - i) * 0.55, click);
+EV(T.b81 + 0.3, () => whoosh(1.5));
+EV(T.b82, () => whoosh(2.2));
+EV(T.b82 + 2.3, () => tone(523, 1.6, "sine", 0.07));
+EV(T.b91, droneOn);
+EV(T.b101, droneOff);
+const B52 = BEATS.find(b => b[0] === "b52")[2];
+const COND = ["Girişim", "Borsada", "Bir yatırım"].map(w => B52.indexOf(w) / 15);   // sartlarin soylendigi an
+COND.forEach(d => EV(T.b52 + d, () => bell(988)));
+// 6.1: bin piksel bir anligina kalkar, sirayla yerine oturur
+const LIFT = T.b51 + 3.2;
+EV(LIFT, () => [0, 1, 2, 3].forEach(i => setTimeout(() => tone(1568 * PENTA[i], 0.5, "sine", 0.04), i * 70)));
+for (let i = 0; i < 10; i++) EV(LIFT + 1.0 + i * 0.08, click);
+function pulseSize(t) {
+  const g = eo(ramp(t, T.b11 + 0.6, 0.5)), b = es(ramp(t, T.b11 + 1.75, 0.5));
+  return 1 + 23 * (g - b);
+}
+function liftOff(t, x) {
+  const up = eo(ramp(t, LIFT, 0.35)), down = es(ramp(t, LIFT + 0.75 + x / 50 * 0.8, 0.25));
+  return -8 * (up - down);
+}
+EV(TIGN + 0.4, () => tone(880, 1.0, "sine", 0.05));
+
+// S10 bantlari
+const RICH = [["Elon Musk", 839], ["Larry Page", 257], ["Sergey Brin", 237], ["Jeff Bezos", 224],
+  ["Mark Zuckerberg", 222], ["Larry Ellison", 190], ["Bernard Arnault ve ailesi", 171],
+  ["Jensen Huang", 154], ["Warren Buffett", 149], ["Amancio Ortega", 148]];
+const RPB = 1000 / W;
+let TOTAL = 0;
+const BANDS = RICH.map(([n, v]) => { const a = TOTAL; TOTAL += v * RPB; return { n, v, a, b: TOTAL }; });
+const SA = [1840, 80], SB = [1840, 80 + H + 120];
+const TOPS = [SA[1] - H / 2, SB[1] - H / 2], SX0 = SA[0] - W / 2;
+const F0 = T.b101 + 1.8, F1 = T.b101 + 8.3;
+const rowT = r => F0 + (F1 - F0) * r / TOTAL;
+EV(F0, () => pour(F1 - F0));
+EV(rowT(H), splash);
+
+// Sayac
+const CNT = [[T.b21 + 0.3, 1e6, 0.6], [T.b31 + 0.5, 1e7, 2.5], [T.b41 + 1.0, 1e8, 2], [T.b51 + 1.0, 1e9, 2],
+  [T.b61 + 0.6, 1e10, 1.2], [T.b71 + 0.6, 1e11, 1.4], [MU0, 839e9, MEND - MU0]];
+function cntAt(t) {
+  let v = 0, prev = 0;
+  for (const [t0, val, d] of CNT) {
+    if (t < t0) break;
+    const u = clamp((t - t0) / d);
+    v = prev ? Math.pow(10, lerp(L10(prev), L10(val), u)) : val * u;
+    prev = val;
+  }
+  return v;
+}
+
+// Ekran etiketleri: [t0, t1, ana, alt, x, y]
+const LABELS = [
+  [TIGN + 0.6, T.b12, "1 px", W / 2, 700],
+  [T.b12 + 1.4, T.b21, "1px = $1M", W / 2, 640],
+  [T.b21 + 0.3, TE.b22 - 1.0, "$1M", W / 2, 960],
+  [TE.b22 - 1.0, T.b31, "1 nokta = 1 ömür", W / 2, 640],
+  [T.b31 + 0.4, T.b41, "$10M = 10 ömür", W / 2, 860],
+  [T.b41 + 1.5, T.b51, "$100M = 100 ömür", W / 2, 860],
+  [T.b51 + 1.5, T.b52, "$1B = 1.000 ömür", W / 2, 860],
+  [T.b61 + 1.0, T.b71, "$10B = 10.000 ömür", W / 2, 860],
+  [T.b71 + 2.2, T.b72, "$100B = 100.000 ömür", 380, 540, 56],
+  [T.b82 + 2.6, TE.b82, "$1M = 1 ömür", W / 2, 860]
+];
+
+// Desen: 2 x 2, sol ustte tek piksel
+const pc = document.createElement("canvas");
+pc.width = pc.height = 2;
+const pctx = pc.getContext("2d");
+pctx.fillStyle = COOL; pctx.fillRect(0, 0, 1, 1);
+const PAT = ctx.createPattern(pc, "repeat");
+
+// Cizgi cizimi: noktalar boyunca ilerleme
+function poly(pts, p, close) {
+  if (p <= 0) return;
+  const P = close ? pts.concat([pts[0]]) : pts;
+  let total = 0;
+  for (let i = 1; i < P.length; i++) total += Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1]);
+  let left = total * clamp(p);
+  ctx.beginPath(); ctx.moveTo(P[0][0], P[0][1]);
+  for (let i = 1; i < P.length && left > 0; i++) {
+    const d = Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1]), u = Math.min(1, left / d);
+    ctx.lineTo(lerp(P[i - 1][0], P[i][0], u), lerp(P[i - 1][1], P[i][1], u));
+    left -= d;
+  }
+  ctx.stroke();
+}
+function circlePts(cx, cy, r, n = 16) {
+  const a = [];
+  for (let i = 0; i <= n; i++) a.push([cx + r * Math.cos(i / n * 2 * Math.PI), cy + r * Math.sin(i / n * 2 * Math.PI)]);
+  return a;
+}
+function multi(list, p) {          // sirayla cizilen cizgiler
+  const n = list.length;
+  list.forEach((pts, i) => poly(pts, p * n - i));
+}
+
+// Ev ve araba cizimi (karenin icinde)
+function house(x, y, s) {
+  const q = (u, v) => [x + u * s, y + v * s];
+  return [[q(0, .5), q(.5, .05), q(1, .5)], [q(.1, .45), q(.1, 1), q(.9, 1), q(.9, .45)],
+    [q(.56, 1), q(.56, .72), q(.72, .72), q(.72, 1)], [q(.15, .52), q(.37, .52), q(.37, .74), q(.15, .74), q(.15, .52)]];
+}
+function car(x, y, w, h) {
+  const q = (u, v) => [x + u * w, y + v * h];
+  return [[q(0, .7), q(.05, .45), q(.25, .42), q(.35, .15), q(.7, .15), q(.82, .42), q(1, .48), q(1, .7), q(0, .7)],
+    circlePts(x + .22 * w, y + .72 * h, .1 * w), circlePts(x + .78 * w, y + .72 * h, .1 * w)];
+}
+function sketch(sx, sy, s, p, alpha, light) {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.strokeStyle = PAPER; ctx.lineWidth = Math.max(1.5, s * 0.008); ctx.lineJoin = ctx.lineCap = "round";
+  const hs = s * 0.26, parts = [];
+  [0.06, 0.37, 0.68].forEach(u => parts.push(house(sx + u * s, sy + 0.1 * s, hs)));
+  parts.push(car(sx + 0.25 * s, sy + 0.55 * s, 0.5 * s, 0.3 * s));
+  parts.forEach((pp, i) => multi(pp, p * parts.length - i));
+  if (light > 0) {
+    ctx.fillStyle = "#fff6c8"; ctx.shadowColor = "#fff2a0"; ctx.shadowBlur = 30 * light; ctx.globalAlpha = alpha * light;
+    const wx = sx + 0.06 * s + 0.15 * hs, wy = sy + 0.1 * s + 0.52 * hs, ww = 0.22 * hs, wh = 0.22 * hs;
+    ctx.fillRect(wx, wy, ww, wh);
+    ctx.shadowBlur = 0;
+    // pencereden bakan insan: bas ve omuzlar
+    ctx.globalAlpha = alpha * clamp(light * 2 - 1);
+    ctx.fillStyle = "#3a2410";
+    ctx.beginPath(); ctx.arc(wx + ww / 2, wy + wh * 0.42, wh * 0.2, 0, 2 * Math.PI); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(wx + ww / 2, wy + wh, ww * 0.3, wh * 0.32, 0, Math.PI, 2 * Math.PI); ctx.fill();
+  }
+  ctx.globalAlpha = alpha * clamp(p * 4 - 3);
+  ctx.fillStyle = PAPER; ctx.textAlign = "center"; ctx.font = `700 ${Math.round(s * 0.04)}px ${FONT}`;
+  ["siz", "kira", "kira"].forEach((w, i) => ctx.fillText(w, sx + (0.06 + 0.31 * i) * s + hs / 2, sy + 0.1 * s + hs + s * 0.05));
+  ctx.restore();
+}
+
+function textW(str, x, y, size, color, weight, align, alpha) {
+  if (alpha <= 0) return;
+  ctx.save();
+  ctx.globalAlpha *= alpha;
+  ctx.font = `${weight || 700} ${size}px ${size >= 76 && (weight || 700) >= 700 ? FH : FONT}`;   // büyük başlıklar gazete manşeti gibi Fraunces
+  ctx.fillStyle = color; ctx.textAlign = align || "center"; ctx.textBaseline = "alphabetic";
+  ctx.fillText(str, x, y);
+  ctx.restore();
+}
+
+function frameRect(cx, cy, rot, alpha, p, glow) {
+  if (alpha <= 0 || p <= 0) return;
+  ctx.save();
+  ctx.translate(cx, cy); ctx.rotate(rot);
+  ctx.globalAlpha *= alpha;
+  ctx.strokeStyle = BLUE; ctx.lineWidth = 8; ctx.shadowColor = BLUE; ctx.shadowBlur = glow;
+  const w = W / 2, h = H / 2;
+  poly([[0, -h], [w, -h], [w, h], [-w, h], [-w, -h], [0, -h]], p);
+  ctx.restore();
+}
+
+function render(t) {
+  const cm = camAt(t), z = cm.z, cx = cm.c[0], cy = cm.c[1];
+  const ox = W / 2 - cx * z, oy = H / 2 - cy * z;
+  const toS = (x, y) => [ox + x * z, oy + y * z];
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.fillStyle = BG;
+  ctx.fillRect(0, 0, W, H);
+
+  const WF = 1 - ramp(t, T.b103 - 1.4, 1.2);           // 10.3'te her sey soner
+  const MF = 1 - ramp(t, T.b101, 1.2);                 // Musk 10.1'de cekilir
+  const vx0 = -ox / z, vy0 = -oy / z, vx1 = (W - ox) / z, vy1 = (H - oy) / z;
+
+  // Dunya
+  ctx.setTransform(z, 0, 0, z, ox, oy);
+  ctx.imageSmoothingEnabled = false;
+  for (const b of BLOCKS) {
+    if (t < b.t) continue;
+    let a = ramp(t, b.t, 0.15) * WF * (b.musk ? MF : 1);
+    if (a <= 0) continue;
+    let dy = b.drop ? -(1 - eo(ramp(t, b.t, b.dd))) * b.drop : 0;
+    if (!b.musk && b.x < 50 && b.y < 20) dy += liftOff(t, b.x);
+    const rows = b.musk ? clamp(muskB(t) - b.base, 0, b.cap) * 5 : b.h;
+    if (rows <= 0) continue;
+    const x = 2 * b.x, y = 2 * b.y + dy, w = 2 * b.w - 1, h = 2 * rows - 1;
+    if (x > vx1 || y > vy1 || x + w < vx0 || y + h < vy0) continue;
+    ctx.globalAlpha = z >= 1 ? a : a * 0.4;
+    ctx.fillStyle = z >= 1 ? PAT : COOL;
+    ctx.fillRect(x, y, w, h);
+  }
+  ctx.globalAlpha = 1;
+
+  // Ekranin kenari (dikey doner, S10'da yerinde kalir)
+  const rot = es(ramp(t, T.b81 + 0.3, 1.5)) * Math.PI / 2;
+  frameRect(FA[0], FA[1], rot, WF, ramp(t, T.b71 + 2.0, 1.2), 30);
+
+  // 7.2 listesi
+  const la = ramp(t, T.b72 + 0.4, 0.4) * (1 - ramp(t, T.b81 + 0.1, 0.5));
+  if (la > 0) {
+    ctx.globalAlpha = la;
+    ctx.fillStyle = PAPER; ctx.fillRect(500, 60, 640, 800); ctx.strokeStyle = COOL; ctx.lineWidth = 2; ctx.strokeRect(500, 60, 640, 800);
+    textW("Dünyanın en zenginleri, 2026", 530, 120, 34, COOL, 700, "left", 1);
+    RICH.forEach(([n, v], i) => {
+      const tr = T.b72 + 1.0 + (9 - i) * 0.55, a = ramp(t, tr, 0.3);
+      if (a <= 0) return;
+      const y = 190 + i * 62, col = i === 0 ? AMBER : COOL, amt = "$" + v + "B";
+      textW(String(i + 1), 540, y, 30, MUTED, 400, "left", a);
+      textW(n, 590, y, 30, col, i === 0 ? 700 : 400, "left", a);
+      textW(amt.slice(0, Math.ceil(ramp(t, tr, 0.35) * amt.length)), 1110, y, 30, col, 700, "right", a);
+    });
+    textW("Kaynak: Wikipedia, \"The World's Billionaires\" (CC BY-SA 4.0), Forbes 2026", 530, 840, 18, MUTED, 400, "left", 1);
+    ctx.globalAlpha = 1;
+  }
+
+  // Musk yazilari
+  const fw = ramp(t, TW - 0.2, 0.3) * (1 - ramp(t, TW + 5, 0.4));    // dalgalanma suresince
+  const ma = ramp(t, MEND, 0.5) * MF * WF * (1 - 0.85 * fw);
+  const mb = Math.round(muskB(t));
+  textW("Elon Musk", 2840, 820, 100, COOL, 700, "center", ma);
+  textW("$" + mb + "B", 2840, 960, 110, AMBER, 700, "center", ma);
+  textW((mb * 1000).toLocaleString("tr-TR") + " ömür", 2840, 1060, 56, MUTED, 400, "center", ma);
+  textW("Kaynak: Forbes, 10 Mart 2026", 2840, 1130, 32, MUTED, 400, "center", ma);
+
+  // Devin son pikseli kehribar olur, S09 boyunca izlenir
+  const pla = ramp(t, T.b82 + 1.6, 0.6) * MF;
+  if (pla > 0) {
+    ctx.save(); ctx.globalAlpha = pla; ctx.fillStyle = AMBER;
+    ctx.shadowColor = AMBER; ctx.shadowBlur = Math.min(60, 10 + z * 0.5);
+    ctx.fillRect(PL[0] - 0.5, PL[1] - 0.5, 1, 1); ctx.restore();
+  }
+
+  // S10: iki ekran ve bantlar
+  if (t > T.b101) {
+    frameRect(SA[0], SA[1], 0, WF * ramp(t, T.b101 + 1.0, 0.4), ramp(t, T.b101 + 1.0, 0.8), 30);
+    frameRect(SB[0], SB[1], 0, WF * ramp(t, T.b101 + 1.3, 0.4), ramp(t, T.b101 + 1.3, 0.8), 30);
+    const filled = TOTAL * ramp(t, F0, F1 - F0);
+    ctx.globalAlpha = WF;
+    BANDS.forEach((bd, i) => {
+      const end = Math.min(bd.b - (i < BANDS.length - 1 ? 2 : 0), filled);
+      if (end <= bd.a) return;
+      ctx.fillStyle = i % 2 ? COOL2 : COOL;
+      const a0 = bd.a, a1 = Math.min(end, H);
+      if (a1 > a0) ctx.fillRect(SX0, TOPS[0] + a0, W, a1 - a0);
+      const b0 = Math.max(bd.a, H);
+      if (end > b0) ctx.fillRect(SX0, TOPS[1] + (b0 - H), W, end - b0);
+    });
+    BANDS.forEach(bd => {
+      const a = ramp(t, rowT(bd.b), 0.5) * WF;
+      if (a <= 0) return;
+      let pa = bd.a, pb = bd.b;
+      if (pa < H && pb > H) { if (H - pa >= pb - H) pb = H; else pa = H; }
+      const s = pa < H ? 0 : 1, mid = (pa + pb) / 2 - s * H, fs = Math.min(110, Math.max(56, (pb - pa) * 0.5));
+      textW(bd.n + "   $" + bd.v + "B", SA[0], TOPS[s] + mid + fs * 0.35, fs, INK, 700, "center", a);
+    });
+    const pulse = ramp(t, T.b102, 0.3) * (1 - ramp(t, T.b102 + 3, 0.5));
+    if (pulse > 0) {
+      ctx.save(); ctx.globalAlpha = pulse * (0.6 + 0.4 * Math.sin(t * 6)) * WF;
+      ctx.strokeStyle = AMBER; ctx.lineWidth = 10; ctx.shadowColor = AMBER; ctx.shadowBlur = 40;
+      ctx.strokeRect(SX0, TOPS[1], W, TOTAL - H); ctx.restore();
+    }
+    const yTot = (TOPS[1] + (TOTAL - H) + C4[1] + H) / 2 + 20;
+    textW("İlk 10: $2.59T = 1.25 ekran", SA[0], yTot, 110, AMBER, 700, "center", ramp(t, F1 + 0.2, 0.6) * WF);
+    textW("Kaynak: Forbes, 10 Mart 2026", SA[0], yTot + 80, 40, MUTED, 400, "center", ramp(t, F1 + 0.6, 0.6) * WF);
+    ctx.globalAlpha = 1;
+  }
+
+  // Sizin pikseliniz
+  const tm = TIGN;
+  let own = t < tm ? 0 : t < tm + 0.5 ? ramp(t, tm, 0.35) * (0.75 + 0.25 * Math.sin((t - tm) * 60)) : 1;
+  if (own > 0) {
+    ctx.save(); ctx.globalAlpha = own; ctx.fillStyle = AMBER;
+    ctx.shadowColor = AMBER; ctx.shadowBlur = Math.min(70, 12 + z * 0.6);
+    const sz = pulseSize(t), j = sz > 1.5 ? (sz - 1) * 0.08 : 0;   // 1.1: buyur, titrer, kuculur
+    ctx.fillRect(0.5 - sz / 2 + j * Math.sin(t * 47), 0.5 - sz / 2 + liftOff(t, 0) + j * Math.sin(t * 59 + 1), sz, sz); ctx.restore();
+  }
+
+  // Ekran katmani
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.imageSmoothingEnabled = true;
+
+  // 1.2: ekranin kenari ve piksel hesabi
+  const e0 = ramp(t, T.b1f - 0.3, 0.6) * (1 - ramp(t, T.b12 - 0.3, 0.4));
+  if (e0 > 0) {
+    ctx.save(); ctx.globalAlpha = e0; ctx.strokeStyle = BLUE; ctx.lineWidth = 6; ctx.shadowColor = BLUE; ctx.shadowBlur = 30;
+    ctx.strokeRect(5, 5, W - 10, H - 10); ctx.restore();
+    const s1 = "1920 × 1080 = 2.073.600 piksel";
+    textW(s1.slice(0, Math.ceil(ramp(t, T.b1f + 0.3, 1.6) * s1.length)), W / 2, 340, 76, COOL, 700, "center", e0);
+  }
+
+  // 1.1 olcu oklari
+  const ar = ramp(t, T.b11 + 2.4, 0.3) * (1 - ramp(t, T.b12 - 0.4, 0.4));
+  if (ar > 0) {
+    const g = eo(ramp(t, T.b11 + 2.4, 0.8)), HS = 22;
+    const gx = lerp(150, W / 2 - 24, g), gy = lerp(120, H / 2 - 24, g);
+    ctx.save(); ctx.globalAlpha = ar; ctx.strokeStyle = COOL; ctx.lineWidth = 4; ctx.lineCap = ctx.lineJoin = "round";
+    const arm = (a, b, dx, dy) => {       // kol ve ucundaki ok basi (dx, dy: ok yonu)
+      poly([a, b], 1);
+      poly([[b[0] - dx * HS - dy * HS * 0.6, b[1] - dy * HS - dx * HS * 0.6], b,
+            [b[0] - dx * HS + dy * HS * 0.6, b[1] - dy * HS + dx * HS * 0.6]], 1);
+    };
+    if (g > 0) {
+      arm([W / 2 - 150, 70], [W / 2 - gx, 70], -1, 0); arm([W / 2 + 150, 70], [W / 2 + gx, 70], 1, 0);
+      arm([70, H / 2 - 120], [70, H / 2 - gy], 0, -1); arm([70, H / 2 + 120], [70, H / 2 + gy], 0, 1);
+    }
+    ctx.restore();
+    textW("1920px", W / 2, 86, 46, COOL, 700, "center", ar);
+    ctx.save(); ctx.translate(86, H / 2); ctx.rotate(-Math.PI / 2); textW("1080px", 0, 0, 46, COOL, 700, "center", ar); ctx.restore();
+  }
+
+  // 1.1: gercek boyuttaki piksel daire icinde
+  const rg = ramp(t, TIGN + 0.4, 0.5) * (1 - ramp(t, T.b12 - 0.3, 0.3));
+  if (rg > 0) {
+    const [px, py] = toS(0.5, 0.5);
+    ctx.save(); ctx.globalAlpha = rg; ctx.strokeStyle = AMBER; ctx.lineWidth = 5; ctx.shadowColor = AMBER; ctx.shadowBlur = 20;
+    poly(circlePts(px, py, 70, 48), ramp(t, TIGN + 0.4, 0.5)); ctx.restore();
+  }
+
+  // S03: pikselin icinde uc ev ve araba
+  const sk = 1 - ramp(t, TE.b22 - 2.6, 0.4);
+  if (t > T.b21 + 1.4 && sk > 0 && z > 150) {
+    const [sx, sy] = toS(0, 0);
+    sketch(sx, sy, z, ramp(t, T.b21 + 1.4, 1.4), sk, ramp(t, T.b22 + 0.3, 1.4));
+  }
+  // 8.2: devin son pikselinde ayni cizim, soluk
+  const sk2 = ramp(t, T.b82 + 2.2, 0.5) * (1 - ramp(t, TE.b82 - 0.3, 0.8));
+  if (sk2 > 0 && z > 100) {
+    const [sx, sy] = toS(PL[0] - 0.5, PL[1] - 0.5);
+    sketch(sx, sy, z, ramp(t, T.b82 + 2.2, 1.6), sk2 * 0.55, 1);
+  }
+
+  // 8.1 dalgalanma: canli tutar
+  if (fw > 0) {
+    const mv = muskB(t), d = Math.round(mv - 839);
+    textW("$" + Math.round(mv) + "B", W / 2, 130, 96, AMBER, 700, "center", fw);
+    textW(d === 0 ? "±0" : (d > 0 ? "+" : "−") + Math.abs(d) + "B", W / 2, 195, 50, d >= 0 ? COOL : MUTED, 700, "center", fw);
+  }
+
+  // Seviye etiketleri
+  for (const [t0, t1, a, x, y, fs] of LABELS) {
+    let al = ramp(t, t0, 0.35) * (1 - ramp(t, t1 - 0.3, 0.3));
+    if (t0 > T.b103) al *= 1 - ramp(t, TE.b104 + 0.4, 1.2);
+    if (al <= 0) continue;
+    textW(a, x, y, fs || 80, a.startsWith("$") || a.startsWith("1px") ? COOL : AMBER, 700, "center", al);
+  }
+  // 6.2: unicorn sartlari ekranda
+  const cd = 1 - ramp(t, TE.b52 - 0.6, 0.6);
+  textW("Unicorn olmak:", W / 2, 726, 44, COOL, 700, "center", ramp(t, T.b52 + 0.2, 0.4) * cd);
+  ["1. Girişim olmak", "2. Borsada olmamak", "3. Bir yatırım turunda $1B'yi geçmek"].forEach((c, i) => {
+    textW(c, W / 2, 784 + i * 56, 44, i === 2 ? AMBER : COOL, 400, "center", ramp(t, T.b52 + COND[i], 0.3) * cd);
+  });
+
+  // Sayac
+  const ca = ramp(t, T.b21 + 0.3, 0.4) * (1 - ramp(t, T.b72, 0.4) + ramp(t, T.b81 + 2.6, 0.4)) * (1 - ramp(t, M39T, 0.4));
+  if (ca > 0) {
+    const v = cntAt(t);
+    textW("$" + Math.round(v).toLocaleString("tr-TR"), W - 50, 985, 38, COOL, 700, "right", ca);
+    textW(Math.floor(v / 1e6 + 1e-6).toLocaleString("tr-TR") + " ömür", W - 50, 1027, 28, AMBER, 400, "right", ca);
+  }
+
+
+  // Altyazi
+  if (on("sub")) {
+    for (const [t0, t1, ln] of CARDS) {
+      if (t >= t0 && t < t1) {
+        ctx.font = `bold 46px ${FONT}`; ctx.textAlign = "center"; ctx.lineJoin = "round";
+        ctx.lineWidth = 10; ctx.strokeStyle = BG; ctx.strokeText(ln, W / 2, H - 60);
+        ctx.fillStyle = COOL; ctx.fillText(ln, W / 2, H - 60);
+        break;
+      }
+    }
+  }
+}
+
+// Ses motoru (Web Audio, sentez)
+let AC = null, MASTER = null, NB = null, DRONE = null;
+const on = id => document.getElementById(id).classList.contains("on");
+function A() {
+  if (!AC) {
+    AC = new (window.AudioContext || window.webkitAudioContext)();
+    MASTER = AC.createGain(); MASTER.gain.value = 0.9; MASTER.connect(AC.destination);
+    NB = AC.createBuffer(1, AC.sampleRate * 2, AC.sampleRate);
+    const d = NB.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  }
+  return AC;
+}
+function tone(f, d = 0.7, type = "triangle", v = 0.08) {
+  if (!on("sfx")) return;
+  const a = A(), o = a.createOscillator(), g = a.createGain(), t = a.currentTime;
+  o.type = type; o.frequency.value = f;
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+  o.connect(g).connect(MASTER); o.start(t); o.stop(t + d + 0.05);
+}
+function noise(d, f, q, v, f2, type = "bandpass") {
+  if (!on("sfx")) return;
+  const a = A(), s = a.createBufferSource(), fl = a.createBiquadFilter(), g = a.createGain(), t = a.currentTime;
+  s.buffer = NB; s.loop = true; fl.type = type; fl.frequency.value = f; fl.Q.value = q;
+  if (f2) fl.frequency.exponentialRampToValueAtTime(f2, t + d);
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + Math.min(0.05, d / 4));
+  g.gain.setValueAtTime(v, t + d * 0.7); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+  s.connect(fl).connect(g).connect(MASTER); s.start(t); s.stop(t + d + 0.05);
+}
+function thud(v = 1) {
+  if (!on("sfx")) return;
+  const a = A(), o = a.createOscillator(), g = a.createGain(), t = a.currentTime;
+  o.type = "sine"; o.frequency.setValueAtTime(95, t); o.frequency.exponentialRampToValueAtTime(32, t + 0.5);
+  g.gain.setValueAtTime(0.6 * v, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.8);
+  o.connect(g).connect(MASTER); o.start(t); o.stop(t + 0.85);
+  noise(0.25, 180, 0.8, 0.25 * v, null, "lowpass");
+}
+function click() { noise(0.035, 3500, 2, 0.15, null, "highpass"); }
+function tick() { noise(0.02, 5000, 4, 0.12, null, "highpass"); }
+function whoosh(d = 1.2) { noise(d, 400, 0.8, 0.12, 2500); }
+function hum() { tone(55, 1.2, "sawtooth", 0.05); }
+function matchS() { noise(0.35, 2500, 1, 0.3, 700); tone(1200, 0.4, "sine", 0.02); }
+function bell(f) { tone(f, 1.8, "sine", 0.09); tone(f * 2.01, 1.0, "sine", 0.03); }
+function pour(d) { noise(d, 300, 1.5, 0.12, 2200); }
+function splash() { noise(0.7, 900, 0.7, 0.22, 300); }
+function puff() { noise(0.9, 600, 0.8, 0.18, 120, "lowpass"); }
+function droneOn() {
+  if (!on("sfx") || DRONE) return;
+  const a = A(), g = a.createGain(), t = a.currentTime;
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.05, t + 2.5); g.connect(MASTER);
+  const os = [110, 164.8, 220.5].map(f => { const o = a.createOscillator(); o.type = "sine"; o.frequency.value = f; o.connect(g); o.start(); return o; });
+  DRONE = { g, os };
+}
+function droneOff() {
+  if (!DRONE) return;
+  const t = AC.currentTime, d = DRONE;
+  d.g.gain.cancelScheduledValues(t); d.g.gain.setValueAtTime(d.g.gain.value, t); d.g.gain.linearRampToValueAtTime(0, t + 1.5);
+  d.os.forEach(o => o.stop(t + 1.6));
+  DRONE = null;
+}
+
+// Seslendirme (tarayicinin Turkce sesi varsa)
+let VOICE = null;
+function pickVoice() {
+  if (!("speechSynthesis" in window)) return;
+  const vs = speechSynthesis.getVoices();
+  VOICE = vs.find(v => /^tr/i.test(v.lang)) || null;
+}
+if ("speechSynthesis" in window) { speechSynthesis.onvoiceschanged = pickVoice; pickVoice(); }
+function speak(txt) {
+  if (!on("voice") || !("speechSynthesis" in window)) return;
+  const u = new SpeechSynthesisUtterance(txt);
+  u.lang = "tr-TR"; if (VOICE) u.voice = VOICE; u.rate = 1.05;
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
+}
+function hush() { if ("speechSynthesis" in window) speechSynthesis.cancel(); droneOff(); }
+
+// Oynatici
+EVS.sort((a, b) => a.t - b.t);
+let t = 0, lastT = 0, playing = false, prevNow = 0;
+const seek = document.getElementById("seek"), timeEl = document.getElementById("time");
+const playBtn = document.getElementById("play"), big = document.getElementById("big");
+seek.max = DUR.toFixed(2);
+const fmt = s => Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0");
+function setPlaying(p) {
+  playing = p;
+  playBtn.textContent = p ? "Durdur" : "Oynat";
+  big.style.display = p ? "none" : "flex";
+  if (p) { A().resume(); if (t >= DUR) jump(0); prevNow = performance.now(); lastT = t; }
+  else hush();
+}
+function jump(nt) { t = clamp(nt, 0, DUR); lastT = t; hush(); }
+function frame(now) {
+  if (playing) {
+    const dt = Math.min(0.1, (now - prevNow) / 1000);
+    t = Math.min(DUR, t + dt);
+    if (t - lastT < 0.5) for (const e of EVS) { if (e.t > lastT && e.t <= t) e.f(); }
+    lastT = t;
+    if (t >= DUR) setPlaying(false);
+  }
+  prevNow = now;
+  render(t);
+  seek.value = t;
+  timeEl.textContent = fmt(t) + " / " + fmt(DUR);
+  requestAnimationFrame(frame);
+}
+playBtn.onclick = () => setPlaying(!playing);
+document.getElementById("bigPlay").onclick = () => setPlaying(true);
+seek.oninput = () => jump(parseFloat(seek.value));
+["sub", "sfx", "voice"].forEach(id => {
+  const b = document.getElementById(id);
+  b.onclick = () => { b.classList.toggle("on"); if (!b.classList.contains("on")) hush(); };
+});
+const stage = document.getElementById("stage");
+// Tam ekranda tuval ekranin fiziksel pikseline 1:1 oturur (1920 x 1080 ekranda tam dolar)
+function fitCanvas() {
+  if (document.fullscreenElement === stage) {
+    const dpr = window.devicePixelRatio || 1, w = W / dpr, h = H / dpr;
+    const k = Math.min(1, innerWidth / w, innerHeight / h);
+    cv.style.width = w * k + "px"; cv.style.height = h * k + "px";
+  } else { cv.style.width = ""; cv.style.height = ""; }
+}
+function toggleFS() {          // telefonlarda tam ekran olmayabilir; o zaman sessizce gecer
+  try {
+    const p = document.fullscreenElement ? document.exitFullscreen() : stage.requestFullscreen ? stage.requestFullscreen() : null;
+    if (p && p.catch) p.catch(() => {});
+  } catch (e) {}
+}
+document.addEventListener("fullscreenchange", fitCanvas);
+window.addEventListener("resize", fitCanvas);
+document.getElementById("fs").onclick = toggleFS;
+cv.onclick = () => setPlaying(!playing);
+cv.ondblclick = toggleFS;
+document.addEventListener("keydown", e => {
+  if (e.code === "Space") { e.preventDefault(); setPlaying(!playing); }
+  else if (e.code === "KeyF") toggleFS();
+  else if (e.code === "ArrowRight") jump(t + 5);
+  else if (e.code === "ArrowLeft") jump(t - 5);
+});
+const NAMES = { S01: "Bir nokta", S02: "Bir ömür", S03: "$10M", S04: "$100M", S05: "$1B", S06: "$10B", S07: "$100B", S08: "Musk", S09: "Soru", S10: "İlk on" };
+const sc = document.getElementById("scenes");
+Object.keys(SCENE_START).forEach(k => {
+  const b = document.createElement("button");
+  b.textContent = k.replace("S", "S") + " " + NAMES[k];
+  b.onclick = () => { jump(SCENE_START[k]); };
+  sc.appendChild(b);
+});
+(document.fonts ? document.fonts.ready : Promise.resolve()).then(() => requestAnimationFrame(frame));
+</script>
+</body>
+</html>
