@@ -55,8 +55,9 @@ body.dik #seek { min-width:120px; }
 <div id="hata"></div>
 <script>
 // bir hata olursa sayfada yazılı görünsün (telefonda konsol yok; ekran görüntüsüyle bildirilebilir)
-// "Script error." (satır 0): başka kaynaktan gelen, içeriği gizli hata (ör. Brave'in kendi kodu); bizim değil, gösterilmez
-window.addEventListener("error", e => { if (!e.lineno && /^Script error/i.test(e.message || "")) return; const h = document.getElementById("hata"); h.style.display = "block"; h.textContent = "Hata: " + e.message + " (satır " + e.lineno + ") · " + navigator.userAgent; });
+// yalnız bu sayfanın kendi kodundaki hata gösterilir; tarayıcının eklediği kodlar (ör. Brave'in cüzdanı, "Script error.") gösterilmez
+const sayfa = location.href.split(/[?#]/)[0];
+window.addEventListener("error", e => { if (!e.filename || e.filename.split(/[?#]/)[0] !== sayfa) return; const h = document.getElementById("hata"); h.style.display = "block"; h.textContent = "Hata: " + e.message + " (satır " + e.lineno + ") · " + navigator.userAgent; });
 </script>
 <script>
 "use strict";
