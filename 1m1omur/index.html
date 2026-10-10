@@ -913,14 +913,14 @@ function ciz() {
   isaret("karTot", kar);
   $("facts").innerHTML = `<button type="button" onclick="kurallarAc()">Kurallar ve kaynaklar</button>`;
   if (S.kur2026) { const asg = Math.round(Math.abs(sv) / asgariReel(S.yil)).toLocaleString("tr-TR");
-    $("servet26").textContent = sv >= 0 ? `${asg} aylık asgari ücret · 2026 parasıyla $${Math.round(sv / S.kur2026).toLocaleString("tr-TR")}` : `Borç: ${asg} aylık asgari ücret`;
+    $("servet26").textContent = sv >= 0 ? `Alım gücü ${asg} asgari maaş · 2026 parasıyla $${Math.round(sv / S.kur2026).toLocaleString("tr-TR")}` : `Borç: ${asg} asgari maaş`;
     $("servet26").title = `Bu yıl net asgari ücret ${tlTL(asgariReel(S.yil))}. Kaynak: ${ASGARI_SRC}`; }
   grafik(); sayac(); cetvel();
 }
 // Grafikler: üstte servet (çizgi), altta yıllık kazanç (yukarı) ve gider (aşağı). Aynı yaş ekseni.
 const kisa = n => { const a = Math.abs(n); return (n < 0 ? "−" : "") + (a >= 1e6 ? (a / 1e6).toLocaleString("tr-TR", { maximumFractionDigits: 1 }) + " mn" : Math.round(a / 1e3) + " bin"); };
 // Servet grafiği: kırmızı servet o yılın fiyatlarıyla TL (Bilanço'daki rakam, enflasyonla şişer; sıfır atma öncesi bugünkü liraya çevrili),
-// mavi alım gücü bugünün doluyla (tepedeki rakam). Biri çıkarken öbürü inebilir: grafiğin anlattığı bu.
+// mavi alım gücü: servet kaç aylık asgari maaş (tepedeki "Alım Gücü = N asgari maaş"). Biri çıkarken öbürü inebilir: grafiğin anlattığı bu.
 // Birimleri farklı: her çizgi kendi en düşük ve en yüksek değerine göre ölçeklenir (sıfırdan başlamaz); mavi biraz altta
 // durur (kırmızı üst bantta, mavi alt bantta, bantlar kısmen örtüşür). Son değerler sağda, çizgilerin ucunda.
 function grafik() {
@@ -933,7 +933,7 @@ function grafik() {
   const buyuk = n => { const a = Math.abs(n), f = v => v.toLocaleString("tr-TR", { maximumFractionDigits: 1 });
     return (n < 0 ? "−" : "") + (a >= 1e12 ? f(a / 1e12) + " trn" : a >= 1e9 ? f(a / 1e9) + " mr" : a >= 1e6 ? f(a / 1e6) + " mn" : Math.round(a / 1e3) + " bin"); };
   // kırmızı bugünkü lirayla: sıfır atılmadan önceki yıllar da yeni liraya çevrilir, çizgi kopmaz
-  const N = G.map(g => g.nom !== undefined ? g.nom / Math.pow(1e6, (S.sifirSay || 0) - (g.sifir || 0)) : g.servet), A = G.map(g => g.ag !== undefined ? g.ag : g.servet / S.kur2026);
+  const N = G.map(g => g.nom !== undefined ? g.nom / Math.pow(1e6, (S.sifirSay || 0) - (g.sifir || 0)) : g.servet), A = G.map(g => g.asg !== undefined ? g.asg : g.servet / asgariReel(S.bas + g.yas - 18));
   const fN = olcek(N, 8, 66), fA = olcek(A, 34, 92), yol = (V, f) => V.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${f(v).toFixed(1)}`).join(" ");
   const son = G.length - 1;
   let yR = fN(N[son]) + 4, yB = fA(A[son]) + 4;   // sağdaki iki rakam üst üste binmesin
@@ -943,11 +943,11 @@ function grafik() {
     <circle cx="${x(son)}" cy="${fN(N[son])}" r="4" fill="#b3261e" stroke="#f4efe3" stroke-width="2"/>
     <circle cx="${x(son)}" cy="${fA(A[son])}" r="4" fill="#2a6fd1" stroke="#f4efe3" stroke-width="2"/>
     <text x="${R + 8}" y="${yR}" fill="#b3261e">${buyuk(N[son])} TL</text>
-    <text x="${R + 8}" y="${yB}" fill="#2a6fd1">$${buyuk(A[son])}</text>
-    ${G.map((g, i) => `<rect x="${x(i) - W / G.length / 2}" y="0" width="${W / G.length}" height="100" fill="transparent"><title>Yaş ${g.yas}: servet ${buyuk(N[i])} TL (o yılın parası) · alım gücü $${Math.round(A[i]).toLocaleString("tr-TR")} (bugünün doları)</title></rect>`).join("")}
+    <text x="${R + 8}" y="${yB}" fill="#2a6fd1">${Math.round(A[son]).toLocaleString("tr-TR")}</text>
+    ${G.map((g, i) => `<rect x="${x(i) - W / G.length / 2}" y="0" width="${W / G.length}" height="100" fill="transparent"><title>Yaş ${g.yas}: servet ${buyuk(N[i])} TL (o yılın parası) · alım gücü ${Math.round(A[i]).toLocaleString("tr-TR")} asgari maaş</title></rect>`).join("")}
     ${etiketX()}
     <rect x="${L}" y="113" width="10" height="3" fill="#b3261e"/><text x="${L + 14}" y="118">Servet (o yılın TL'si)</text>
-    <rect x="${L + 150}" y="113" width="10" height="3" fill="#2a6fd1"/><text x="${L + 164}" y="118">Alım gücü (bugünün $)</text>`;
+    <rect x="${L + 150}" y="113" width="10" height="3" fill="#2a6fd1"/><text x="${L + 164}" y="118">Alım gücü (asgari maaş)</text>`;
 }
 let anim = null;
 function sayac() {
@@ -1459,7 +1459,7 @@ $("go").onclick = () => {
   const VARLIK = ["Ev alımı", "Ev satışı", "Araba satışı", "Kafe ortaklığı", "Kafe satışı", "Tarla alımı", "Tarla satışı"];   // varlık değişimi, kazanç ya da gider sayılmaz
   const kaz = Object.entries(S.buYil).filter(([k, v]) => v > 0 && !VARLIK.includes(k)).reduce((a, [, v]) => a + v, 0);
   const gid = Object.entries(S.buYil).filter(([k, v]) => v < 0 && !VARLIK.includes(k)).reduce((a, [, v]) => a - v, 0);
-  S.gecmis.push({ yas: S.yas, kaz, gid, servet: servet(), nom: servet() * S.endeks, sifir: S.sifirSay || 0, ag: servetAG(), konfor: konfor() });   // nom: o yılın TL'si, ag: alım gücü $
+  S.gecmis.push({ yas: S.yas, kaz, gid, servet: servet(), nom: servet() * S.endeks, sifir: S.sifirSay || 0, ag: servetAG(), asg: servet() / asgariReel(S.yil + 1),   /* tepedeki gibi: yıl sonu servet, yeni yılın asgari maaşı */ konfor: konfor() });   // nom: o yılın TL'si, ag: alım gücü $
   S.sonYil = S.buYil; S.buYil = {};
   S.yas++; S.yil++;
   S.cocuklar.forEach(c => { if (S.yil - c === 0) note("Hayat", "Bebeğiniz dünyaya geldi!", { cls: "year" }); });
