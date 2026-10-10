@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>1M$ Bir Ömür · Ölçek</title>
+<title>Bir Nokta Bir Ömür</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,900&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -30,7 +30,6 @@ body.dik #wrap { padding:8px 10px; }
 body.dik .masthead { margin-bottom:8px; padding-bottom:6px; }
 body.dik .masthead h1 { font-size:22px; }
 body.dik canvas { width:min(100%, calc((100vh - 150px) * 9 / 16)); width:min(100%, calc((100dvh - 150px) * 9 / 16)); aspect-ratio:9/16; }   /* dvh'yi tanımayan eski iOS vh'de kalır */
-#hata { display:none; margin-top:10px; padding:8px 10px; border:1.5px solid var(--red); border-radius:5px; background:var(--card); color:var(--red); font-size:15px; }
 body.dik #bar { gap:6px; margin-top:8px; }
 body.dik #bar button { padding:6px 9px; font-size:14px; }
 body.dik #seek { min-width:120px; }
@@ -38,7 +37,7 @@ body.dik #seek { min-width:120px; }
 </head>
 <body>
 <div id="wrap">
-  <div class="masthead"><h1>ÖMÜR POSTASI<small>1M$ Bir Ömür · Bir nokta, bir ömür</small></h1><a href="./">← Oyuna dön</a></div>
+  <div class="masthead"><h1>Bir Nokta Bir Ömür</h1><a href="./">← Oyuna dön</a></div>
   <div id="stage">
     <canvas id="cv"></canvas>
     <div id="big"><button id="bigPlay">Oynat</button></div>
@@ -52,13 +51,6 @@ body.dik #seek { min-width:120px; }
     <button id="voice" class="on">Seslendirme</button>
   </div>
 </div>
-<div id="hata"></div>
-<script>
-// bir hata olursa sayfada yazılı görünsün (telefonda konsol yok; ekran görüntüsüyle bildirilebilir)
-// yalnız bu sayfanın kendi kodundaki hata gösterilir; tarayıcının eklediği kodlar (ör. Brave'in cüzdanı, "Script error.") gösterilmez
-const sayfa = location.href.split(/[?#]/)[0];
-window.addEventListener("error", e => { if (!e.filename || e.filename.split(/[?#]/)[0] !== sayfa) return; const h = document.getElementById("hata"); h.style.display = "block"; h.textContent = "Hata: " + e.message + " (satır " + e.lineno + ") · " + navigator.userAgent; });
-</script>
 <script>
 "use strict";
 // Dikey sürüm: telefon dik tutulunca tuval 1080×1920 olur (yine Full HD, aynı 2.073.600 piksel). Dünya (pikseller, bloklar,
