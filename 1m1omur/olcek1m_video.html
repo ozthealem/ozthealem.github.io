@@ -27,8 +27,6 @@ button { background:var(--card); color:var(--ink); border:1.5px solid var(--ink)
 button.on { background:var(--ink); color:var(--card); }
 #seek { flex:1; min-width:200px; accent-color:var(--red); }
 #time { font-variant-numeric:tabular-nums; color:var(--muted); min-width:110px; }
-#scenes { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; }
-#scenes button { padding:6px 10px; font-size:15px; }
 /* dikey: tuval 9:16, ekranın boyuna sığar; başlık ve düğmeler sıkışır */
 body.dik #wrap { padding:8px 10px; }
 body.dik .masthead { margin-bottom:8px; padding-bottom:6px; }
@@ -37,7 +35,6 @@ body.dik canvas { width:min(100%, calc((100dvh - 150px) * 9 / 16)); aspect-ratio
 body.dik #bar { gap:6px; margin-top:8px; }
 body.dik #bar button { padding:6px 9px; font-size:14px; }
 body.dik #seek { min-width:120px; }
-body.dik #scenes { display:none; }
 </style>
 </head>
 <body>
@@ -56,7 +53,6 @@ body.dik #scenes { display:none; }
     <button id="voice" class="on">Seslendirme</button>
     <button id="fs">Tam ekran (F)</button>
   </div>
-  <div id="scenes"></div>
 </div>
 <script>
 "use strict";
@@ -790,14 +786,6 @@ document.addEventListener("keydown", e => {
   else if (e.code === "KeyF") toggleFS();
   else if (e.code === "ArrowRight") jump(t + 5);
   else if (e.code === "ArrowLeft") jump(t - 5);
-});
-const NAMES = { S01: "Bir nokta", S02: "Bir ömür", S03: "$10M", S04: "$100M", S05: "$1B", S06: "$10B", S07: "$100B", S08: "Musk", S09: "Soru", S10: "İlk on" };
-const sc = document.getElementById("scenes");
-Object.keys(SCENE_START).forEach(k => {
-  const b = document.createElement("button");
-  b.textContent = k.replace("S", "S") + " " + NAMES[k];
-  b.onclick = () => { jump(SCENE_START[k]); };
-  sc.appendChild(b);
 });
 if (Q.get("t")) jump(parseFloat(Q.get("t")) || 0);   // döndürmeden sonra kaldığı yer
 (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => requestAnimationFrame(frame));
