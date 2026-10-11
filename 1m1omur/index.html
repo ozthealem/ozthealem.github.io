@@ -86,7 +86,12 @@ button, input { font-family:inherit; color:inherit; }
 .opts.bes .opt:last-child { grid-column:span 2; background:var(--yel); }
 .opts .opt.genis { grid-column:span 2; }
 .opts .opt.satirBasi { grid-column-start:1; }   /* yeni grup yeni satırdan */
-.gizliSon { border:2px solid var(--red); border-radius:6px; padding:8px 10px; margin-bottom:8px; }
+.gizliSon { border:2px solid var(--red); border-radius:6px; padding:8px 10px; margin:10px 0 8px; text-align:center; }
+.gizliSon b { display:block; font-family:var(--fh); font-weight:900; font-size:19px; color:var(--red); }
+.gizliSon small { display:block; color:var(--muted); font-size:14px; margin-top:2px; }
+.card a.opt.izleBtn.odul, .note a.opt.izleBtn.odul { background:var(--red); color:#fff; -webkit-text-fill-color:#fff; box-shadow:0 3px 0 var(--ink); border:none; font-family:var(--fh); font-weight:900; font-size:18px; padding:10px 6px; }
+.card.ozel { border:3px double var(--rule); }
+.card.ozel #popT::before { content:attr(data-ust); display:block; font-family:var(--fn); font-weight:500; font-size:12px; letter-spacing:.14em; color:var(--red); border-bottom:1px solid var(--rule); padding-bottom:4px; margin-bottom:8px; }
 a.opt.izleBtn { display:block; text-align:center; text-decoration:none; color:inherit; }
 .opt { background:var(--card); border:1.5px solid var(--rule); border-radius:6px; box-shadow:0 2px 0 var(--rule); padding:6px; font-family:var(--fn); font-weight:500; font-size:16px; cursor:pointer; line-height:1.1; text-align:center; outline:1px dashed var(--rule); outline-offset:-5px; }
 .opt small { display:block; color:var(--muted); font-size:14px; font-weight:400; }
@@ -108,7 +113,6 @@ a.opt.izleBtn { display:block; text-align:center; text-decoration:none; color:in
 #people .box, #banka .box { flex:1 1 100%; }
 #banka { padding:4px 2px 0; }
 #varliklar > .grp { padding:6px 2px 0; }
-#varliklar #gelirHesap { padding:4px 4px 6px; }
 .tikla { cursor:pointer; } .tikla:hover { background:var(--yel); }
 .box b i.ok { float:right; font-family:var(--fb); font-weight:400; font-style:normal; font-size:14px; color:var(--red); }
 .konfor { width:100%; background:var(--card); border:1.5px solid var(--rule); border-radius:6px; box-shadow:0 2px 0 var(--rule); padding:4px 8px 6px; }
@@ -151,6 +155,8 @@ table.puan td:last-child { text-align:right; font-variant-numeric:tabular-nums; 
 table.seref { font-size:14px; margin:4px 0 10px; }
 table.seref td:first-child { width:28px; color:var(--muted); }
 table.seref tr.ben td { background:var(--yel); }
+table.seref tr.ust td { color:var(--muted); font-size:12px; border-bottom:1px solid var(--rule); }
+table.seref td.bas { color:var(--muted); text-align:right; }
 .seref b { display:block; margin-top:8px; font-family:var(--fh); font-weight:900; font-size:17px; }
 .seref .not2 { font-size:14px; color:var(--muted); }
 .isBtn { background:var(--red) !important; color:#fff; font-family:var(--fn); font-weight:600; font-size:20px; }
@@ -159,8 +165,8 @@ table.seref tr.ben td { background:var(--yel); }
 .slide b { min-width:150px; text-align:right; font-weight:400; }
 .chk { display:flex; align-items:center; gap:8px; font-size:14px; padding:6px 2px; cursor:pointer; }
 .chk input { width:18px; height:18px; accent-color:var(--red); }
-#gelirHesap { flex-direction:column; align-items:flex-start; gap:2px; cursor:default; }
-#gelirHesap label { display:flex; align-items:center; gap:8px; cursor:pointer; }
+.gh { flex-direction:column; align-items:flex-start; gap:2px; cursor:default; margin-top:10px; }
+.gh label { display:flex; align-items:center; gap:8px; cursor:pointer; }
 details.grpline summary { list-style:none; cursor:pointer; }
 details.grpline summary::-webkit-details-marker { display:none; }
 details.grpline .line { padding-left:18px; }
@@ -293,7 +299,6 @@ details.grpline .pm::before { content:"+"; } details.grpline[open] .pm::before {
       <h2>Bilanço</h2>
       <div class="chart"><h3>Servet <span class="lg" id="servet26">2026 parasıyla</span></h3><svg id="chServet" viewBox="0 0 340 126" role="img" aria-label="Yıllara göre servet"></svg></div>
       <div class="grp" id="varBas"></div><div id="banka"></div>
-      <div class="chk" id="gelirHesap" role="radiogroup"><span>Gelirini her yıl otomatik olarak:</span><label><input type="radio" name="gh" value="vadesiz"> vadesizde bırak</label><label><input type="radio" name="gh" value="vadeli"> vadeliye koy</label><label><input type="radio" name="gh" value="dolar" checked> dolara çevir</label></div>
       <div id="people"></div>
     </section>
     <section class="screen" id="control">
@@ -367,9 +372,10 @@ const D = {
     kopek: { ad: "Köpek", isim: "Karabaş", ilk: 15000, yil: 66000, omur: 12, ses: "Hav!" } },
   hayvanSrc: "veteriner 2026 İstanbul: muayene 1.750, kuduz aşısı 1.450, karma aşı 1.750 TL (karekod.org); mama, kum, kafes ve akvaryum örnek",
   // Saçmala (GDD > Saçmala listesi). Çeyrek altın gerçek fiyat; ötekiler örnek. Kafe ilk 2 yıl az kazandırır, sonra zarar eder,
-  // 6. yılda kapanır; ortaklıktan çıkış %30'una, tarla %40'ına satılır.
+  // 6. yılda kapanır; ortaklıktan çıkış %30'una satılır. Tarlanın değeri her yıl reel −%12 ile +%15 arası rastgele değişir
+  // (Endeksa 2021-2026: tarla uzun vadede enflasyonu yendi, son yıl geride kaldı; oynak), satarken %10 pazarlık ve komisyon gider.
   sacmala: { falci: 1000, bahis: 5000, bahisOlasilik: .05, bahisKat: 8, kafe: 1500000, kafeKar: .04, kafeZarar: .06, kafeOmur: 6, kafeSatis: .3,
-    halka: 3500, estetik: 100000, ceyrek: 10873, tarla: 1000000, tarlaMasraf: 30000, tarlaSatis: .4 },
+    halka: 3500, estetik: 100000, ceyrek: 10873, tarla: 1000000, tarlaMasraf: 30000, tarlaSatis: .9, tarlaOyna: [-.12, .15] },
   ceyrekSrc: "çeyrek altın satış fiyatı 10.873 TL (Ekonomim, 10 Eki 2026)",
   gelirVergi: { istisna: 58000, goturu: .15, dilim: [[190000, .15], [400000, .20], [1000000, .27], [5300000, .35], [Infinity, .40]], src: "PwC, 2026 tarifesi" },
   emlakOran: .002,
@@ -517,13 +523,13 @@ function kurallarAc() {
 <h4>Amaç</h4><p>18. doğum gününde dedenden 1 milyon dolar miras kalır. Hiç çalışmadan 100 yaşına kadar yaşamaya çalışırsın.</p>
 <h4>Bir yıl</h4><p>Her yıl Ömür Postası çıkar: ekonominin manşeti, asgari ücret, kur, lahmacun köşesi. Sonra "Bu parayla ne yapacaksın?" sorusu gelir; düğün, okul gibi zorunlu sorular pencerede sorulur. DEVAM yılı bitirir: kira, geçim, vergi ve sigorta ödenir; faiz, kur ve enflasyon işler. Her şeyin dökümü Arşiv'dedir.</p>
 <h4>Para</h4><p>Banka hesabında vadesiz (faiz yok, enflasyonla erir), vadeli (mevduat faizi) ve dolar (az faiz, kurla iner çıkar) var. Banka hesabına dokunarak paranı yönlendirirsin. Gelirin (kira, emekli maaşı) her yıl seçtiğin hesaba gider.</p>
-<h4>Alım gücü: asgari ücret</h4><p>Manşette dolarının altında "= 1.663 aylık asgari ücret" yazar: paran bir asgari ücretlinin kaç aylık maaşına denk geliyor. Dolar ya da TL rakamı enflasyonla şişer; bu sayı küçülüyorsa paran gerçekten eriyordur. Asgari ücret geçmiş yıllarda gerçek tutarıyla, 2027 sonrası uzun dönem ortalaması kadar (yılda ~%2 enflasyonun üstünde) artar.</p><h4>Para biterse</h4><p>Bilanço'da evine ya da arabana dokunup satarsın. Satacak bir şey kalmazsa ve kuzenine borç verdiysen onu ararsın (yarı yarıya öder). O da olmazsa paran biter: çocukların varsa seni yanlarına alır, emekli maaşın varsa onunla idare edersin, ikisi de yoksa ortada kalırsın.</p>
+<h4>Alım gücü</h4><p>Tepedeki dolar servetinin (nakit, evler, kafe ve tarla) bugünün doları kadar alım gücü; her başlangıç yılında $1.000.000 civarından başlar. Altında "Alım Gücü = N asgari maaş" yazar: servetin bir asgari ücretlinin kaç aylık maaşına denk geliyor. Bu sayı küçülüyorsa hayat senden hızlı pahalanıyordur. Asgari ücret geçmiş yıllarda gerçek tutarıyla, 2027 sonrası uzun dönem ortalaması kadar (yılda ~%2 enflasyonun üstünde) artar. Bilanço'daki servet grafiği ikisini yan yana çizer.</p><h4>Para biterse</h4><p>Bilanço'da evine ya da arabana dokunup satarsın. Satacak bir şey kalmazsa ve kuzenine borç verdiysen onu ararsın (yarı yarıya öder). O da olmazsa paran biter: çocukların varsa seni yanlarına alır, emekli maaşın varsa onunla idare edersin, ikisi de yoksa ortada kalırsın.</p>
 <h4>Ömür cetveli ve konfor</h4><p>Cetvel, geçen yılın harcamasıyla paranın kaç yaşında biteceğini tahmin eder. Konfor (0-10) ev, araba, son iki yılın tatili ve dünya turundan gelir: 0-1 Ot, 2-4 Mütevazı, 5-6 Orta Direk, 7-9 Rahat, 10 Görgüsüz. Konfor eş bulmayı kolaylaştırır; düşük konfor cepten sağlık harcamasını artırır (Ot ×3, Mütevazı ×1,5).</p>
 <h4>Sigorta</h4><p>İsteğe bağlı sigorta primi aylık ${tl(E.prim)}; ${E.yil} yıl prim ve ${E.yas} yaş sonunda aylık ${tl(E.maas)} emekli maaşı.</p>
 <h4>Puan</h4><p>Yaş × 1.000 (Ot gibi, konfor 0-1 geçen her yıl katsayı −1: −1.000) · evlilik 5.000 · çocuk başına 3.000 · atlatılan kriz başına 2.000 · ömür boyu ortalama konfor × 1.000 · geride kalan servet: ilk 1 milyon doların her 40 doları için 1, 1-2 milyon her 80, 2-5 milyon her 200, üstü her 1.000 dolar için 1 · borcun her 40 doları için −1 (o yılın kuruyla).</p>
 <h4>Ekonomi</h4><p>Geçmiş bir yıl seçersen 2025'e kadar yaşanmış veriler gelir; 2026 sonrası geçmişin ortalamasına dayanan tahmini bir modeldir.</p>
 <h4>Kısayollar</h4><p>Yön tuşları seçer, Enter onaylar, P Arşiv, F tam ekran, Esc kapatır.</p></div>`;
-  const notlar = S.ad ? `<div style="text-align:left"><h4>Bu yılın hesap notları (${S.yil})</h4><p>Bütün tutarlar o yılın parasıyla: ev, araba, maaş, vergi, kira her yıl enflasyon kadar zamlanır; servet grafiği karşılaştırma için 2026 parasıyla. Bu yıl vadeli reel ${yuz(reel())}; vadesiz para enflasyonla ${yuz(S.eko.enf / (1 + S.eko.enf))} erir; dolar ${yuz(dolarFaiz())} faiz alır, değeri kurla iner çıkar ve ABD enflasyonuyla (${yuz(abdEnf())}) kendi ülkesinde de erir. Yıl katsayısı: 2026'da 1 TL olan her şey bu yıl ${S.endeks.toLocaleString("tr-TR", { maximumSignificantDigits: 4 })} TL.</p></div>` : "";
+  const notlar = S.ad ? `<div style="text-align:left"><h4>Bu yılın hesap notları (${S.yil})</h4><p>Bütün tutarlar o yılın parasıyla: ev, araba, maaş, vergi, kira her yıl enflasyon kadar zamlanır; tepedeki dolar ve servet grafiği karşılaştırma için bugünün parasıyla. Bu yıl vadeli reel ${yuz(reel())}; vadesiz para enflasyonla ${yuz(S.eko.enf / (1 + S.eko.enf))} erir; dolar ${yuz(dolarFaiz())} faiz alır, değeri kurla iner çıkar ve ABD enflasyonuyla (${yuz(abdEnf())}) kendi ülkesinde de erir. Yıl katsayısı: 2026'da 1 TL olan her şey bu yıl ${S.endeks.toLocaleString("tr-TR", { maximumSignificantDigits: 4 })} TL.</p></div>` : "";
   popup("Kurallar ve kaynaklar", kural + notlar + `<h4>Kaynaklar ve veriler</h4>` + kaynakHTML());
 }
 function kaynakHTML() {
@@ -562,7 +568,7 @@ const nakit = () => S.vadesiz + S.vadeli + S.dolar * D.kur;
 // servet: nakit ve evler (2026 TL). Alım gücü: bugünün doları (2026 kuru); her başlangıç yılında miras $1.000.000 alım gücüyle başlar.
 // Tepedeki rakam, gizli son ve miras puanı bu ölçüyle.
 // kafe ortaklığı ve tarla satış değerleriyle sayılır (Saçmala)
-const digerDeger = () => (S.kafe ? S.kafe.para * D.sacmala.kafeSatis : 0) + (S.tarla ? S.tarla.para * D.sacmala.tarlaSatis : 0);
+const digerDeger = () => (S.kafe ? S.kafe.para * D.sacmala.kafeSatis : 0) + (S.tarla ? S.tarla.deger * D.sacmala.tarlaSatis : 0);
 const servet = () => nakit() + evDeger() + digerDeger();
 const varlikVar = () => !!(S.evler.length || S.araba || S.kafe || S.tarla);   // ACİL'de satılabilecek bir şey var mı
 const servetAG = () => servet() / (S.kur2026 || D.kur);
@@ -716,7 +722,7 @@ if (!(document.documentElement.requestFullscreen || document.documentElement.web
 }
 ["fullscreenchange", "webkitfullscreenchange"].forEach(ev => document.addEventListener(ev, () => { $("tamEkran").classList.toggle("acik", !!tamEkranVar()); $("tamYazi").textContent = tamEkranVar() ? "küçült" : "tam ekran"; }));
 document.addEventListener("keydown", e => { if ((e.key === "f" || e.key === "F") && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) tamEkran(); });
-function popup(baslik, metin, dugme = "TAMAM", is = null) { const pi = $("popIptal"); if (pi) pi.remove(); $("popT").textContent = baslik; $("popM").innerHTML = metin; $("popOk").textContent = dugme; $("popOk").disabled = false; popIs = is; $("popup").classList.add("open"); $("popOk").focus(); }
+function popup(baslik, metin, dugme = "TAMAM", is = null) { const pi = $("popIptal"); if (pi) pi.remove(); document.querySelector("#popup .card").classList.remove("ozel"); $("popT").textContent = baslik; $("popM").innerHTML = metin; $("popOk").textContent = dugme; $("popOk").disabled = false; popIs = is; $("popup").classList.add("open"); $("popOk").focus(); }
 $("popOk").onclick = () => { if (popIs) return popIs(); $("popup").classList.remove("open"); if (popSonra) { const f = popSonra; popSonra = null; return f(); } $("go").focus(); };
 $("mailClose").onclick = () => $("mailBox").classList.remove("open");
 $("mailBox").onclick = e => { if (e.target.id === "mailBox") $("mailBox").classList.remove("open"); };
@@ -809,14 +815,14 @@ function arabaMasraf(k, yas, yilSahip) {    // yaşa göre yıllık masraflar
 function satisDegeri(id) {
   if (id === "araba") return D.arabalar[S.araba].fiyat * Math.pow(1 - D.satis.arabaYillikKayip, S.arabaYil);
   if (id === "kafe") return S.kafe.para * D.sacmala.kafeSatis;
-  if (id === "tarla") return S.tarla.para * D.sacmala.tarlaSatis;
+  if (id === "tarla") return S.tarla.deger * D.sacmala.tarlaSatis;
   const i = +id.slice(2); return evFiyat(i) * yip(i) * (1 - D.satis.evKesinti);
 }
 function sat(id) {
   const d = satisDegeri(id);
   if (id === "araba") { note("Galeri", `${arabaAdi()} satıldı: <b class="plus">+${tl(d)}</b>`, { src: "değer kaybı yılda %10, örnek" }); S.araba = null; S.arabaYil = 0; gelir("Araba satışı", d); }
   else if (id === "kafe") { note("Arkadaşın", `Ortaklıktan çıktın, payını ancak ${tl(d)}'ye devredebildin. Koyduğun ${tl(S.kafe.para)} idi.`, { src: "örnek" }); S.kafe = null; gelir("Kafe satışı", d); }
-  else if (id === "tarla") { note("Muhtar", `Tarlayı ${tl(d)}'ye sattın. Alıcı "köy yeri, yolu yok" dedi; ${tl(S.tarla.para)}'ye almıştın.`, { src: "örnek" }); S.tarla = null; gelir("Tarla satışı", d); }
+  else if (id === "tarla") { note("Muhtar", `Tarlayı ${tl(d)}'ye sattın, ${tl(S.tarla.para)}'ye almıştın. Alıcı "köy yeri, yolu yok" diye pazarlık etti.`, { src: "Endeksa tarla m² fiyatları; tutar örnek" }); S.tarla = null; gelir("Tarla satışı", d); }
   else {
     const i = +id.slice(2), ad = evAdi(i);
     S.evler.splice(i, 1); S.evKat.splice(i, 1); S.evYas.splice(i, 1); S.evBilgi.splice(i, 1); S.evSurum++; gelir("Ev satışı", d);
@@ -827,10 +833,10 @@ function sat(id) {
   if (S.acil && nakit() >= 0) { S.acil = false; $("go").disabled = false; feed.innerHTML = ""; note("Banka", "Açık kapandı, hesap yeniden artıda."); acilBitti(); }
   ciz();
 }
-$("gelirHesap").onchange = e => { S.gelirHesap = e.target.value; note("Banka", { vadesiz: "Gelirlerin (kira, emekli maaşı) vadesiz hesapta kalacak.", vadeli: "Gelirlerin (kira, emekli maaşı) her yıl doğrudan vadeliye geçecek.", dolar: "Gelirlerin (kira, emekli maaşı) her yıl o günün kuruyla dolara çevrilecek." }[S.gelirHesap]); };
+const GELIR_NOT = { vadesiz: "Gelirlerin (kira, emekli maaşı) vadesiz hesapta kalacak.", vadeli: "Gelirlerin (kira, emekli maaşı) her yıl doğrudan vadeliye geçecek.", dolar: "Gelirlerin (kira, emekli maaşı) her yıl o günün kuruyla dolara çevrilecek." };
 $("costs").addEventListener("toggle", e => { if (e.target.matches("details.grpline")) S.acikGrup[e.target.dataset.g] = e.target.open; }, true);
 $("banka").addEventListener("click", () => {   // banka hesabına dokun: paranı yönlendir
-  if (S.bitti || S.acil || $("start") || feed.querySelector(".slide input:not(:disabled)")) return;
+  if (S.bitti || S.acil || $("start") || feed.querySelector(".slide input:not(:disabled), .gh input:not(:disabled)")) return;
   vadeliYuzde();
 });
 $("aile").addEventListener("click", e => {
@@ -889,7 +895,7 @@ function ciz() {
       + (ins ? `<br><small>yıkıldı, ${S.evBilgi[i].gk.teslim} yılında orta segment daire teslim</small>` : i ? `<br>kira ${tl(evKira(i) * yip(i) * (S.evKat[i] ?? 1))}/ay` : ""), satisDegeri("ev" + i)); });
   if (S.araba) v += satKutu("araba", "Araba", `${gorsel("araba", RENK[S.araba], 2, "araba")}${arabaAdi()}<br>${arabaYas()} yaşında<br><small>${S.arabaYil} yıldır sende</small>`, satisDegeri("araba"));
   if (S.kafe) v += satKutu("kafe", "Kafe ortaklığı", `${S.kafe.yil} yıldır ortaksın<br><small>${S.kafe.yil < 2 ? "az da olsa kazandırıyor" : "zarar ediyor"}</small>`, satisDegeri("kafe"), false);
-  if (S.tarla) v += satKutu("tarla", "Tarla", `Köyde organik tarım<br><small>${S.tarla.yil} yıldır sende</small>`, satisDegeri("tarla"), false);
+  if (S.tarla) v += satKutu("tarla", "Tarla", `Köyde organik tarım<br><small>${S.tarla.yil} yıldır sende · ${tl(S.tarla.para)}'ye aldın</small>`, satisDegeri("tarla"), false);
   const sv = servet();
   const kn = konfor();
   const konforKutu = `<div class="konfor tikla" id="konforKutu" tabindex="0" role="button" title="Konfor nasıl hesaplanır?"><b>Konfor: ${kn}/10 · ${konforAd(kn)}</b><div class="kbar">${Array.from({ length: 10 }, (_, i) => `<i class="${i < kn ? "dolu" : ""}"></i>`).join("")}</div></div>`;
@@ -919,34 +925,36 @@ function ciz() {
 }
 // Grafikler: üstte servet (çizgi), altta yıllık kazanç (yukarı) ve gider (aşağı). Aynı yaş ekseni.
 const kisa = n => { const a = Math.abs(n); return (n < 0 ? "−" : "") + (a >= 1e6 ? (a / 1e6).toLocaleString("tr-TR", { maximumFractionDigits: 1 }) + " mn" : Math.round(a / 1e3) + " bin"); };
-// Servet grafiği: kırmızı servet o yılın fiyatlarıyla TL (Bilanço'daki rakam, enflasyonla şişer; sıfır atma öncesi bugünkü liraya çevrili),
-// mavi alım gücü: servet kaç aylık asgari maaş (tepedeki "Alım Gücü = N asgari maaş"). Biri çıkarken öbürü inebilir: grafiğin anlattığı bu.
-// Birimleri farklı: her çizgi kendi en düşük ve en yüksek değerine göre ölçeklenir (sıfırdan başlamaz); mavi biraz altta
-// durur (kırmızı üst bantta, mavi alt bantta, bantlar kısmen örtüşür). Son değerler sağda, çizgilerin ucunda.
+// Servet grafiği: kırmızı servet dolar olarak (tepedeki rakam: bugünün doları, 2026 kuru), mavi alım gücü: servet kaç aylık
+// asgari maaş (tepedeki "Alım Gücü = N asgari maaş"). Asgari ücret reel olarak büyüdükçe mavi kırmızının altında kalır.
+// İkisi de ilk yıla göre kaç kat olduğuyla, ortak logaritmik ölçekte çizilir: aynı noktadan başlarlar (11 Eki 2026).
+// Son değerler sağda, çizgilerin ucunda.
 function grafik() {
   const G = S.gecmis, L = 8, R = 266, W = R - L;
   if (G.length < 2) { $("chServet").innerHTML = `<text x="10" y="55">İlk yıllar geçince grafik oluşur</text>`; return; }
   const x = i => L + i * W / (G.length - 1);
   const etiketX = () => { const ad = Math.max(1, Math.ceil(G.length / 6)); return G.map((g, i) => (i % ad === 0 && G.length - 1 - i >= ad / 2) || i === G.length - 1 ? `<text x="${x(i)}" text-anchor="middle" y="104">${g.yas}</text>` : "").join(""); };
-  const olcek = (V, ust, alt) => { let mn = Math.min(...V), mx = Math.max(...V); if (mx - mn < Math.abs(mx) * 1e-6 + 1e-9) { mn -= 1; mx += 1; }
-    return v => ust + (1 - (v - mn) / (mx - mn)) * (alt - ust); };
-  const buyuk = n => { const a = Math.abs(n), f = v => v.toLocaleString("tr-TR", { maximumFractionDigits: 1 });
-    return (n < 0 ? "−" : "") + (a >= 1e12 ? f(a / 1e12) + " trn" : a >= 1e9 ? f(a / 1e9) + " mr" : a >= 1e6 ? f(a / 1e6) + " mn" : Math.round(a / 1e3) + " bin"); };
-  // kırmızı bugünkü lirayla: sıfır atılmadan önceki yıllar da yeni liraya çevrilir, çizgi kopmaz
-  const N = G.map(g => g.nom !== undefined ? g.nom / Math.pow(1e6, (S.sifirSay || 0) - (g.sifir || 0)) : g.servet), A = G.map(g => g.asg !== undefined ? g.asg : g.servet / asgariReel(S.bas + g.yas - 18));
-  const fN = olcek(N, 8, 66), fA = olcek(A, 34, 92), yol = (V, f) => V.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${f(v).toFixed(1)}`).join(" ");
+  const buyuk = n => { const a = Math.abs(n), f = v => v.toLocaleString("tr-TR", { maximumFractionDigits: a >= 1e6 && a < 1e7 ? 2 : 1 });
+    return (n < 0 ? "−$" : "$") + (a >= 1e9 ? f(a / 1e9) + " mr" : a >= 1e6 ? f(a / 1e6) + " mn" : Math.round(a / 1e3) + " bin"); };
+  const N = G.map(g => g.ag !== undefined ? g.ag : g.servet / (S.kur2026 || D.kur)), A = G.map(g => g.asg !== undefined ? g.asg : g.servet / asgariReel(S.bas + g.yas - 18));
+  // ilk yıla göre kat, log10; servet sıfıra ya da eksiye inerse ilk değerin binde birinde tabana oturur
+  const kat = V => { const b = V.find(v => v > 0) || 1; return V.map(v => Math.log10(Math.max(v, b / 1e3) / b)); };
+  const lN = kat(N), lA = kat(A), hep = lN.concat(lA);
+  let mn = Math.min(...hep), mx = Math.max(...hep); if (mx - mn < .05) { mn -= .05; mx += .05; }
+  const f = v => 8 + (1 - (v - mn) / (mx - mn)) * 84, yol = V => V.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${f(v).toFixed(1)}`).join(" ");
   const son = G.length - 1;
-  let yR = fN(N[son]) + 4, yB = fA(A[son]) + 4;   // sağdaki iki rakam üst üste binmesin
+  let yR = f(lN[son]) + 4, yB = f(lA[son]) + 4;   // sağdaki iki rakam üst üste binmesin
   if (Math.abs(yR - yB) < 12) { if (yR <= yB) yB = yR + 12; else yR = yB + 12; }
-  $("chServet").innerHTML = `<path d="${yol(N, fN)}" fill="none" stroke="#b3261e" stroke-width="2" stroke-linejoin="round"/>
-    <path d="${yol(A, fA)}" fill="none" stroke="#2a6fd1" stroke-width="2" stroke-linejoin="round"/>
-    <circle cx="${x(son)}" cy="${fN(N[son])}" r="4" fill="#b3261e" stroke="#f4efe3" stroke-width="2"/>
-    <circle cx="${x(son)}" cy="${fA(A[son])}" r="4" fill="#2a6fd1" stroke="#f4efe3" stroke-width="2"/>
+  $("chServet").innerHTML = `<line x1="${L}" x2="${R}" y1="${f(0)}" y2="${f(0)}" stroke="#1a1a1a" stroke-opacity=".25" stroke-dasharray="2 3"/>
+    <path d="${yol(lN)}" fill="none" stroke="#b3261e" stroke-width="2" stroke-linejoin="round"/>
+    <path d="${yol(lA)}" fill="none" stroke="#2a6fd1" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="${x(son)}" cy="${f(lN[son])}" r="4" fill="#b3261e" stroke="#f4efe3" stroke-width="2"/>
+    <circle cx="${x(son)}" cy="${f(lA[son])}" r="4" fill="#2a6fd1" stroke="#f4efe3" stroke-width="2"/>
     <text x="${R + 8}" y="${yR}" fill="#b3261e">${buyuk(N[son])}</text>
     <text x="${R + 8}" y="${yB}" fill="#2a6fd1">${Math.round(A[son]).toLocaleString("tr-TR")}</text>
-    ${G.map((g, i) => `<rect x="${x(i) - W / G.length / 2}" y="0" width="${W / G.length}" height="100" fill="transparent"><title>Yaş ${g.yas}: servet ${buyuk(N[i])} TL (o yılın parası) · alım gücü ${Math.round(A[i]).toLocaleString("tr-TR")} asgari maaş</title></rect>`).join("")}
+    ${G.map((g, i) => `<rect x="${x(i) - W / G.length / 2}" y="0" width="${W / G.length}" height="100" fill="transparent"><title>Yaş ${g.yas}: servet ${buyuk(N[i])} (bugünün doları) · alım gücü ${Math.round(A[i]).toLocaleString("tr-TR")} asgari maaş</title></rect>`).join("")}
     ${etiketX()}
-    <rect x="${L}" y="113" width="10" height="3" fill="#b3261e"/><text x="${L + 14}" y="118">Servet (o yılın TL'si)</text>
+    <rect x="${L}" y="113" width="10" height="3" fill="#b3261e"/><text x="${L + 14}" y="118">Servet (bugünün doları)</text>
     <rect x="${L + 150}" y="113" width="10" height="3" fill="#2a6fd1"/><text x="${L + 164}" y="118">Alım gücü (asgari maaş)</text>`;
 }
 let anim = null;
@@ -1010,12 +1018,15 @@ function serefKaydet(k) {
   try { const L = yerelListe(); L.push(k); L.sort((a, b) => b.puan - a.puan); localStorage.setItem(SEREF_YEREL, JSON.stringify(L.slice(0, 20))); } catch (e) {}
   if (!k.puan) return Promise.resolve(null);
   return fetch(SEREF_API, { method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ oyun: SEREF_OYUN, isim: k.isim, puan: k.puan, yas: k.yas, meta: { bas: k.bas, baslik: k.baslik } }) })
+    body: JSON.stringify({ oyun: SEREF_OYUN, isim: k.isim, puan: k.puan, yas: k.yas, meta: { bas: k.bas, baslik: k.baslik, gizli: !!k.gizli } }) })
     .then(r => r.ok ? r.json() : null).catch(() => null);
 }
 function serefTablo(L, baslik, benId, benTarih) {
-  const satir = (x, i) => `<tr class="${(benId && x.id === benId) || (benTarih && x.tarih === benTarih) ? "ben" : ""}"><td>${i + 1}.</td><td>${kacis(x.isim)}</td><td>${x.yas ? x.yas + " yaş" : ""}</td><td>${Number(x.puan).toLocaleString("tr-TR")}</td></tr>`;
-  return `<b>${baslik}</b><table class="puan seref">${L.map(satir).join("") || `<tr><td></td><td>Henüz kimse yok</td></tr>`}</table>`;
+  // başlangıç yılı ek bilgi: geçmiş yıllar gerçek veriyle oynanır, puanlar yıla göre tam kıyaslanmaz
+  const bas = x => x.bas || (x.meta && x.meta.bas) || "";
+  const satir = (x, i) => `<tr class="${(benId && x.id === benId) || (benTarih && x.tarih === benTarih) ? "ben" : ""}"><td>${i + 1}.</td><td>${x.gizli || (x.meta && x.meta.gizli) ? "★ " : ""}${kacis(x.isim)}</td><td>${x.yas ? x.yas + " yaş" : ""}</td><td class="bas">${bas(x)}</td><td>${Number(x.puan).toLocaleString("tr-TR")}</td></tr>`;
+  const ust = `<tr class="ust"><td></td><td>İsim</td><td>Yaş</td><td class="bas">Başladı</td><td>Puan</td></tr>`;
+  return `<b>${baslik}</b><table class="puan seref">${L.length ? ust + L.map(satir).join("") : `<tr><td></td><td>Henüz kimse yok</td></tr>`}</table>${L.some(x => x.gizli || (x.meta && x.meta.gizli)) ? `<div class="not2">★ gizli sona ulaştı</div>` : ""}`;
 }
 async function serefGoster(hedef, benId, benTarih) {
   const el = $(hedef); if (!el) return;
@@ -1165,21 +1176,25 @@ function sgkDurum() {
     : `İsteğe bağlı sigortalısın: aylık prim ${tl(E.prim)} (GSS dahil). Prim ${S.primYil}/${E.yil} yıl. ${E.yas} yaşında emekli maaşı aylık ${tl(E.maas)}.`;
   return `Sigortasızsın: yalnız GSS, aylık ${tl(D.gss)}. Emekli maaşın olmayacak. Prim yatırırsan aylık ${tl(E.prim)}; ${E.yil} yıl ve ${E.yas} yaş sonunda aylık ${tl(E.maas)} emekli maaşı.`;
 }
-function vadeliYuzde() {                     // birikim: vadeli ile dolar arasında tek kaydırıcı
+function vadeliYuzde() {                     // birikim: vadeli ile dolar arasında tek kaydırıcı, altında gelirin yönü
   dengele();
   const top = Math.max(0, S.vadesiz) + Math.max(0, S.vadeli) + Math.max(0, S.dolar * D.kur);
-  if (!top) { note("Banka", "Bölünecek para yok."); return sonraki(); }
-  const simdi = Math.round(Math.max(0, S.dolar * D.kur) / top * 20) * 5;
-  const d = kart("Banka", `Birikimin ${tl(top)}. Ne kadarı dolarda dursun, kalanı vadeliye geçsin?<br><small>Vadeli: reel faiz ${yuz(reel())}. Dolar: az faiz alır (${yuz(dolarFaiz())}), kurla iner çıkar.</small>`, { cls: "q" });
+  const simdi = top ? Math.round(Math.max(0, S.dolar * D.kur) / top * 20) * 5 : 0;
+  const d = kart("Banka", top ? `Birikimin ${tl(top)}. Ne kadarı dolarda dursun, kalanı vadeliye geçsin?<br><small>Vadeli: reel faiz ${yuz(reel())}. Dolar: az faiz alır (${yuz(dolarFaiz())}), kurla iner çıkar.</small>` : "Bölünecek birikim yok. Gelirin nereye gitsin?", { cls: "q" });
   const yaz = x => `%${100 - x} vadeli · %${x} dolar`;
-  d.insertAdjacentHTML("beforeend", `<div class="slide"><input type="range" min="0" max="100" step="5" value="${simdi}"><b>${yaz(simdi)}</b></div><div class="opts one"><button class="opt">UYGULA</button></div>`);
-  const rg = d.querySelector("input"), lb = d.querySelector(".slide b"), bt = d.querySelector(".opt"); odak(rg);
-  rg.oninput = () => { lb.textContent = yaz(+rg.value); };
+  const sec = [["vadesiz", "vadesizde bırak"], ["vadeli", "vadeliye koy"], ["dolar", "dolara çevir"]].map(([v, t]) => `<label><input type="radio" name="gh${S.yil}" value="${v}"${S.gelirHesap === v ? " checked" : ""}> ${t}</label>`).join("");
+  d.insertAdjacentHTML("beforeend", (top ? `<div class="slide"><input type="range" min="0" max="100" step="5" value="${simdi}"><b>${yaz(simdi)}</b></div>` : "")
+    + `<div class="chk gh" role="radiogroup"><span>Gelirini her yıl otomatik olarak:</span>${sec}</div><div class="opts one"><button class="opt">UYGULA</button></div>`);
+  const rg = d.querySelector(".slide input"), lb = d.querySelector(".slide b"), bt = d.querySelector(".opt"); odak(rg || d.querySelector(".gh input:checked"));
+  if (rg) rg.oninput = () => { lb.textContent = yaz(+rg.value); };
   bt.onclick = () => {
-    const x = rg.value / 100; rg.disabled = true; bt.disabled = true; bt.classList.add("chosen");
+    d.querySelectorAll("input").forEach(x => x.disabled = true); bt.disabled = true; bt.classList.add("chosen");
     if (S.anaKutu) { [...S.anaKutu.children].forEach(x => x.disabled = true); S.anaKutu = null; }
-    S.vadesiz = 0; S.vadeli = top * (1 - x); S.dolar = top * x / D.kur;
-    note("Banka", `Vadeli ${tl(S.vadeli)} (reel ${yuz(reel())}), dolar $${Math.round(S.dolar).toLocaleString("tr-TR")}.`); ciz(); sonraki();
+    const gh = d.querySelector(".gh input:checked").value;
+    if (gh !== S.gelirHesap) { S.gelirHesap = gh; note("Banka", GELIR_NOT[gh]); }
+    if (rg) { const x = rg.value / 100; S.vadesiz = 0; S.vadeli = top * (1 - x); S.dolar = top * x / D.kur;
+      note("Banka", `Vadeli ${tl(S.vadeli)} (reel ${yuz(reel())}), dolar $${Math.round(S.dolar).toLocaleString("tr-TR")}.`); }
+    ciz(); sonraki();
   };
 }
 // Değiştir: araba için yeni model (eskisi takasta), ev için başka bir ev (bu ev satılır); seçim DEVAM'da uygulanır
@@ -1301,15 +1316,15 @@ function sacmala() {
     !S.kafe && { t: "Arkadaşının kafesine ortak ol", s: tl(Z.kafe), tutar: Z.kafe, f: () => { al("Kafe ortaklığı", Z.kafe); S.kafe = { para: Z.kafe, yil: 0 };
       note("Arkadaşın", "\"Bu iş patlar abi.\" Kafe ortaklığın Varlıklar'da. İlk yıllar az kazandırır, sonra... göreceğiz. (tutar örnek)"); } },
     { t: "Fenomen olmak için ışık halkası al", s: tl(Z.halka), f: () => { al("Işık halkası", Z.halka); note("Telefon", "Üç video çektin. 12 takipçin oldu, üçü annen. (tutar örnek)"); } },
-    !S.estetik && (() => { const ad = pick(["Saç ektir", "Göğüs diktir"]);
+    !S.estetik && (() => { const ad = "Saç ektir veya göğüs diktir";
       return { t: ad, s: `${tl(Z.estetik)} · konfor +1`, tutar: Z.estetik, f: () => { S.estetik = true; al("Estetik", Z.estetik); note("Klinik", "Aynaya bakınca keyfin yerine geldi. Konfor kalıcı olarak +1. (tutar örnek)"); } }; })(),
     { t: "Komşunun düğününe çeyrek altın tak", s: tl(Z.ceyrek), f: () => { al("Düğün takısı", Z.ceyrek); note("Komşu", "Takı töreninde adın anons edildi: \"Bir çeyrek!\" Alkışlar biraz cılız.", { src: D.ceyrekSrc }); } },
     S.es && (() => { const E = D.evler.ucuz, ev = evSecenegi("ucuz", null, true), f = ev.fiyat * (1 + D.harc), yetmez = harcanabilir() < f, semt = `${ev.ad} ${ev.tip}`;
       return { t: "Kayınvalideye ev al", s: `${tl(f)} · ${semt}${yetmez ? " · paran yetmiyor" : ""}`, kapali: yetmez, tutar: f, f: () => {
         if (nakit() < f) return note("Emlakçı", "Paran yetmedi, kayınvalideye ev alamadın.");
         al("Kayınvalideye ev", f); note("Kayınvalide", `Semt: ${semt}. Artık her bayram sizde. Ev onun, senin varlığın değil.`, { src: E.src }); } }; })(),
-    !S.tarla && { t: "Köyde organik tarım için arazi al", s: tl(Z.tarla), tutar: Z.tarla, f: () => { al("Tarla alımı", Z.tarla); S.tarla = { para: Z.tarla, yil: 0 };
-      note("Muhtar", `Tarla senin. Domatesler organik, masraflar da: yılda ${tl(Z.tarlaMasraf)}. Satarken alıcı bulmak zor. (tutar örnek)`); } },
+    !S.tarla && { t: "Köyde organik tarım için arazi al", s: tl(Z.tarla), tutar: Z.tarla, f: () => { al("Tarla alımı", Z.tarla); S.tarla = { para: Z.tarla, deger: Z.tarla, yil: 0 };
+      note("Muhtar", `Tarla senin. Domatesler organik, masraflar da: yılda ${tl(Z.tarlaMasraf)}. Tarlanın değeri yıldan yıla iner çıkar. (tutar örnek)`); } },
   ].filter(Boolean);
   if (!S.es) havuz.push({ t: "Pavyona git", s: tl(25000), f: () => { al("Pavyon", 25000); note("Garson", "Hesap geldi. Aynı şarkıyı dört kez istemişsin. (tutar örnek)"); } });
   for (let i = havuz.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [havuz[i], havuz[j]] = [havuz[j], havuz[i]]; }
@@ -1383,7 +1398,7 @@ function yilKapat() {
   if (S.kafe) { const Z = D.sacmala, y = ++S.kafe.yil, k = S.kafe.para * (y <= 2 ? Z.kafeKar : -Z.kafeZarar);
     if (k >= 0) gelir("Kafe kârı", k); else ode("Kafe zararı", -k);
     if (y >= Z.kafeOmur) { note("Kafe", "Kafe kapandı. Arkadaşın \"piyasa kötü\" dedi, demirbaşlar haciz oldu. Ortaklık bitti, eline bir şey geçmedi."); S.kafe = null; } }
-  if (S.tarla) { S.tarla.yil++; ode("Tarla masrafı", D.sacmala.tarlaMasraf); }
+  if (S.tarla) { const [a, b] = D.sacmala.tarlaOyna; S.tarla.yil++; S.tarla.deger *= 1 + a + Math.random() * (b - a); ode("Tarla masrafı", D.sacmala.tarlaMasraf); }
   if (S.hayvan) { const H = D.hayvanlar[S.hayvan.k]; ode("Evcil hayvan", H.yil); if (++S.hayvan.yil >= H.omur) { note(H.isim, `${H.isim} ${H.omur} yıl seninle yaşadı ve öldü. İstersen yeni bir dost sahiplenebilirsin.`); S.hayvan = null; } }
   for (const c of S.cocuklar) {
     const y = S.yil - c;
@@ -1546,28 +1561,26 @@ function son(kazandi, msg, ozelBaslik) {
   const gTop = gid.reduce((a, [, v]) => a - v, 0);
   const yiyen = gTop > 0 ? `<br>Paranı en çok götürenler: ${gid.slice(0, 3).map(([k, v]) => `${k.replace(": faiz yok, enflasyonla erir", " (enflasyon)").replace(": enflasyonla erir", " (enflasyon)").replace(": kur − enflasyon", " (kur farkı)")} %${Math.round(-v / gTop * 100)}`).join(", ")}.` : "";
   const metin = `${msg}<br>${hayat}<br>${miras}${yiyen}<br><br><b>Puan hesabı</b>${tablo}<span class="puanToplam">${puan.toLocaleString("tr-TR")} PUAN</span>`;
+  // Gizli son (GDD > Oyunun Gizli Sonu): 100 yaş, ömür boyu konfor ortalaması en az 2, en az 1 çocuk (servet şartı yok, 11 Eki 2026).
+  // Ayrı pencere yok: puanın hemen altında ödül videosu düğmesi.
+  const gizli = kazandi && S.yas >= 100 && kf >= 2 && S.cocuklar.some(c => c <= S.yil);
+  const izle = GIZLI_VIDEO ? `<a class="opt izleBtn odul" href="${GIZLI_VIDEO}" target="_blank" rel="noopener">ÖDÜL VİDEOSUNU İZLE</a>` : `<button class="opt izleBtn" disabled>ÖDÜL VİDEOSU<small>hazırlanıyor</small></button>`;
+  const gizliKutu = gizli ? `<div class="gizliSon"><b>Gizli sona ulaştın!</b><small>100 yaş, ${n} çocuk, konfor ortalaması ${kf.toLocaleString("tr-TR", { maximumFractionDigits: 1 })}</small><div class="opts one">${izle}</div></div>` : "";
   // ekrandaki final kartında da YENİDEN OYNA (pencere kapatılınca puanın altında kalır)
-  const fk = kart(baslik, metin, { cls: "q" });
+  const fk = kart(baslik, metin + gizliKutu, { cls: "q" });
   fk.insertAdjacentHTML("beforeend", `<div class="opts one"><button class="opt yenidenBtn">YENİDEN OYNA</button></div>`);
   fk.querySelector(".yenidenBtn").onclick = () => location.reload();
   const temizAd = (S.ad || "Mehmet").replace(/[<>&"]/g, "").trim().slice(0, 16);
-  const kayit = { isim: temizAd && isimUygunMu(temizAd) ? temizAd : "Mehmet", yas: S.yas, puan: Math.min(10000000, Math.round(puan)), bas: S.bas, baslik, tarih: Date.now() };
+  const kayit = { isim: temizAd && isimUygunMu(temizAd) ? temizAd : "Mehmet", yas: S.yas, puan: Math.min(10000000, Math.round(puan)), bas: S.bas, baslik, tarih: Date.now(), gizli };   // gizli: şeref listesinde ★
   const finalAc = () => {
-    popup(baslik, metin + `<div id="seref" class="seref"></div>`, "YENİDEN OYNA", () => location.reload());
+    popup(baslik, metin + gizliKutu + `<div id="seref" class="seref"></div>`, "YENİDEN OYNA", () => location.reload());
+    document.querySelector("#popup .card").classList.add("ozel"); $("popT").dataset.ust = `ÖMÜR POSTASI · ÖZEL BASKI · ${S.yil}`;   // gazete manşet şeridi
     const kapat = document.createElement("button"); kapat.className = "opt ikinci"; kapat.textContent = "KAPAT";   // final sahnesini görmek için
     kapat.onclick = () => { $("popup").classList.remove("open"); kapat.remove(); fk.querySelector(".yenidenBtn").scrollIntoView({ block: "end" }); };
     $("popOk").after(kapat);
     serefKaydet(kayit).then(r => serefGoster("seref", r && r.id, kayit.tarih));
   };
-  // Gizli son (GDD > Oyunun Gizli Sonu): 100 yaş, ömür boyu konfor ortalaması en az 2, en az 1 çocuk (servet şartı yok,
-  // 11 Eki 2026 kararı). Önce başarı ekranı, sonra puan.
-  const gizli = kazandi && S.yas >= 100 && kf >= 2 && S.cocuklar.some(c => c <= S.yil);
-  if (!gizli) return finalAc();
-  const ag = "$" + Math.round(servetAG()).toLocaleString("tr-TR");
-  const izle = GIZLI_VIDEO ? `<a class="opt izleBtn" href="${GIZLI_VIDEO}" target="_blank" rel="noopener">İZLE</a>` : `<button class="opt izleBtn" disabled>İZLE<small>video hazırlanıyor</small></button>`;
-  const gizliMetin = `100 yaşındasın. Ailen büyüdü, ömrün boyunca iyi yaşadın (konfor ortalaması ${kf.toLocaleString("tr-TR", { maximumFractionDigits: 1 })}). Mirasından geriye bugünün parasıyla <b>${ag}</b> kaldı.<br><br>Deden bunu görmek isterdi. Sana bir şey göstermek istiyoruz.<div class="opts one">${izle}</div>`;
-  fk.querySelector(".txt").insertAdjacentHTML("beforebegin", `<div class="gizliSon"><b>Gizli son: Dedenin mirası yaşıyor</b><div class="opts one">${izle}</div></div>`);
-  popup("Dedenin mirası yaşıyor", gizliMetin, "PUANINA BAK", () => { $("popup").classList.remove("open"); finalAc(); });
+  finalAc();
 }
 const GIZLI_VIDEO = "olcek1m_video.html";   // ölçeklendirme videosu, oyunla aynı klasörde (gazete temasına uyarlanmış kopya); boşken İZLE kapalı
 
