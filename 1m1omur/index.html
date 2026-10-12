@@ -466,9 +466,9 @@ const D = {
   // Kira yılda bir, geçen yılın enflasyonuyla artar (TBK 344: on iki aylık TÜFE ortalaması; Haziran 2022-Temmuz 2024 arası en çok %25);
   // bu yılın enflasyonu daha yüksekse kira reel geriler, yeni kiracıyla piyasaya döner.
   // konut piyasası: fiyatlar her yıl reel ±%8 dalgalanır, uzun vadede 1'e çekilir (kira etkilenmez).
-  // Deprem: yılda %0,3; hasar ev değerinin %30'u; DASK yeniden yapım bedelini (m² × 9.884 TL, en çok 2.095.462 TL) öder, kalanı onarım gideri.
-  konutOyna: .08, deprem: { olasilik: .003, hasar: .3, m2Bedel: 9884, teminat: 2095462, primOran: .0022,
-    src: "DASK 2026: betonarme m² bedeli 9.884 TL, azami teminat 2.095.462 TL (1 Ocak 2026); prim oranı (1. risk bölgesi) ve deprem olasılığı varsayım" },
+  // Deprem: yılda %0,3, büyüklüğü 5,5-7,0 (7'yi geçmez); hasar ev değerinin %5'i (5,5) ile %30'u (7,0) arası, büyüklükle artar; DASK yeniden yapım bedelini (m² × 9.884 TL, en çok 2.095.462 TL) öder, kalanı onarım gideri.
+  konutOyna: .08, deprem: { olasilik: .003, buyuk: [5.5, 7], hasar: [.05, .3], m2Bedel: 9884, teminat: 2095462, primOran: .0022,
+    src: "DASK 2026: betonarme m² bedeli 9.884 TL, azami teminat 2.095.462 TL (1 Ocak 2026); prim oranı (1. risk bölgesi), deprem olasılığı, büyüklük ve hasar oranı varsayım" },
   bosKalma: .15, bakim: .005, yipranma: .015, arsaPayi: .4, kiraSinir: { 2022: .25, 2023: .25 },
   evSahibiSrc: "boş kalma olasılığı, süre ve bakım payı varsayım; kira artış kuralı TBK 344; Haziran 2022-Temmuz 2024 arası %25 sınırı (oyunda 2022 ve 2023)",
   // model adları süs: her segmentte 5 model, fiyat ve masraf segmentin (ucuz 14 yaşında 2. el, orta ve lüks sıfır)
@@ -1288,7 +1288,8 @@ function gazeteKupuru() {
   const sifir = S.sifirHaber; S.sifirHaber = false;
   // 2023: EYT manşeti, oyuncunun durumuna göre
   const eytMans = S.yil === 2023 && !ilk ? (S.emekli && emekliKural().grup === "eyt" ? "EYT yasalaştı: sen de emekli oldun" : (S.sigortali || S.emekli) && emekliKural().grup !== "eyt" ? "EYT yasalaştı: milyonlar emekli oldu, sen değil" : "EYT yasalaştı: milyonlar emekli oldu") : "";
-  const mans = sifir ? `Liradan 6 sıfır atıldı! Tarihte ${S.sifirSay}. kez` : ilk ? "Bir torun milyoner oldu" : eytMans ? eytMans : S.eko.kriz ? "KRİZ! Mevduat eriyor" : lahMans ? `Lahmacun ${fTL} oldu!` : ka >= .5 ? `Dolar ${yuz(ka)} fırladı` : r >= .05 ? "Faiz enflasyonu ezdi geçti"
+  const dep = S.depremHaber; S.depremHaber = null;   // geçen yıl deprem olduysa manşet o
+  const mans = sifir ? `Liradan 6 sıfır atıldı! Tarihte ${S.sifirSay}. kez` : ilk ? "Bir torun milyoner oldu" : dep ? `İstanbul'da ${dep} büyüklüğünde deprem` : eytMans ? eytMans : S.eko.kriz ? "KRİZ! Mevduat eriyor" : lahMans ? `Lahmacun ${fTL} oldu!` : ka >= .5 ? `Dolar ${yuz(ka)} fırladı` : r >= .05 ? "Faiz enflasyonu ezdi geçti"
     : r >= 0 ? "Faiz enflasyonu ancak yakaladı" : r > -.05 ? "Faiz enflasyonun gerisinde kaldı" : "Mevduat sahipleri yine kaybetti";
   const pol = politika();
   const kisa = [`Enflasyon ${yuz(S.eko.enf)}, mevduat faizi ${yuz(S.eko.faiz)}: reel faiz ${yuz(r)}.`, pol !== null ? `Merkez Bankası politika faizi ${yuz(pol)}.` : "",
@@ -1600,12 +1601,18 @@ function yilKapat() {
   // DASK zorunlu; deprem olursa hasarın DASK teminatını aşan kısmı onarım gideri
   const DP = D.deprem, teminat = i => Math.min(DP.teminat, DP.m2Bedel * evM2(i));
   if (S.evler.length) ode("DASK (deprem sigortası)", S.evler.reduce((a, e, i) => a + teminat(i) * DP.primOran, 0));
-  if (S.evler.length && Math.random() < DP.olasilik) {
-    const hasar = S.evler.map((e, i) => evFiyat(i) * yip(i) * DP.hasar), odeme = S.evler.map((e, i) => Math.min(hasar[i], teminat(i)));
-    const kalan = hasar.reduce((a, h, i) => a + h - odeme[i], 0);
-    ode("Deprem onarımı", kalan);
-    const m = `İstanbul'da büyük deprem. Evlerinde hasar: ${tl(hasar.reduce((a, b) => a + b, 0))}. DASK ödedi: ${tl(odeme.reduce((a, b) => a + b, 0))}. Kalan onarım senden: <b class="minus">−${tl(kalan)}</b>`;
-    note("Deprem", m, { src: DP.src }); duyuru("Deprem!", m);
+  // deprem herkes için büyük haber: pencere, Arşiv ve gelecek yılın manşeti; evin varsa hasar büyüklüğe göre
+  if (Math.random() < DP.olasilik) {
+    const M = Math.round((DP.buyuk[0] + Math.random() * (DP.buyuk[1] - DP.buyuk[0])) * 10) / 10, Mt = M.toLocaleString("tr-TR", { minimumFractionDigits: 1 });
+    const oran = DP.hasar[0] + (M - DP.buyuk[0]) / (DP.buyuk[1] - DP.buyuk[0]) * (DP.hasar[1] - DP.hasar[0]);
+    let m = `İstanbul'da ${Mt} büyüklüğünde deprem! Şehir sallandı, herkes sokakta.`;
+    if (S.evler.length) {
+      const hasar = S.evler.map((e, i) => evFiyat(i) * yip(i) * oran), odeme = S.evler.map((e, i) => Math.min(hasar[i], teminat(i)));
+      const kalan = hasar.reduce((a, h, i) => a + h - odeme[i], 0);
+      ode("Deprem onarımı", kalan);
+      m += `<br>Evlerinde hasar (%${Math.round(oran * 100)}): ${tl(hasar.reduce((a, b) => a + b, 0))}. DASK ödedi: ${tl(odeme.reduce((a, b) => a + b, 0))}. Kalan onarım senden: <b class="minus">−${tl(kalan)}</b>`;
+    } else m += "<br>Kirada oturduğun ev hasar gördü; onarım ev sahibinin derdi, korkusu senin.";
+    S.depremHaber = Mt; note("Deprem", m, { src: DP.src }); duyuru(`DEPREM! ${Mt}`, m);
   }
   // kira yılda bir geçen yılın enflasyonuyla artar (2022-2023'te en çok %25); bu yılın enflasyonu yüksekse reel geriler, piyasayı geçmez
   const artis = Math.min(S.enfGecen ?? S.eko.enf, S.yil < 2026 && D.kiraSinir[S.yil] || Infinity);
