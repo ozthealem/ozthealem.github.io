@@ -652,7 +652,7 @@ const KAYNAKLAR = [
     ["Enflasyon ve faiz", "enflasyon %8-%80 arasında gezinir, her yıl %30 civarına biraz çekilir; kriz yılda %6 olasılıkla başlar, 1-3 yıl sürer (geçmiş krizlere göre ayarlı)", ""],
     ["Dolar", "ABD enflasyonu ve reel kur eğilimi 1990-2025 ortalaması (yılda −%2,07 reel; geçmiş −%2,03); dolar faizi 1990-2025 hazine bonosu ortalaması %2,71", ""],
     ["Asgari ücret", "1978-2025 ortalama reel artışıyla (yılda ~%2)", ""],
-    ["Örnek değerler", "tatil, eğlence, yurt dışı üniversite, araba bakım, yakıt, kasko, mama ve Saçmala tutarları henüz doğrulanmadı", ""]]],
+    ["Örnek değerler", "tatil, eğlence, yurt dışı üniversite, araba bakımı, mama ve Saçmala tutarları doğrulanamadı (araba sigortası ve yakıt 13 Eki 2026'da doğrulandı)", ""]]],
 ];
 function kurallarAc() {
   const E = D.emeklilik;
@@ -661,7 +661,7 @@ function kurallarAc() {
 <h4>Bir yıl</h4><p>Her yıl Ömür Postası çıkar: ekonominin manşeti, asgari ücret, kur, lahmacun köşesi. Sonra "Bu parayla ne yapacaksın?" sorusu gelir; düğün, okul gibi zorunlu sorular pencerede sorulur. DEVAM yılı bitirir: kira, geçim, vergi ve sigorta ödenir; faiz, kur ve enflasyon işler. Her şeyin dökümü Arşiv'dedir.</p>
 <h4>Para</h4><p>Banka hesabında vadesiz (faiz yok, enflasyonla erir), vadeli (mevduat faizi) ve dolar (az faiz, kurla iner çıkar) var. Banka hesabına dokunarak paranı yönlendirirsin. Gelirin (kira, emekli maaşı) her yıl seçtiğin hesaba gider.</p>
 <h4>Alım gücü</h4><p>Tepedeki dolar servetinin (nakit, evler, kafe ve tarla) bugünün doları kadar alım gücü; her başlangıç yılında $1.000.000 civarından başlar. Altında "Alım Gücü = N asgari maaş" yazar: servetin bir asgari ücretlinin kaç aylık maaşına denk geliyor. Bu sayı küçülüyorsa hayat senden hızlı pahalanıyordur. Asgari ücret geçmiş yıllarda gerçek tutarıyla, 2027 sonrası uzun dönem ortalaması kadar (yılda ~%2 enflasyonun üstünde) artar. Bilanço'daki servet grafiği ikisini yan yana çizer.</p><h4>Para biterse</h4><p>Bilanço'da evine ya da arabana dokunup satarsın. Satacak bir şey kalmazsa ve kuzenine borç verdiysen onu ararsın (yarı yarıya öder). O da olmazsa paran biter: çocukların varsa seni yanlarına alır, emekli maaşın varsa onunla idare edersin, ikisi de yoksa ortada kalırsın.</p>
-<h4>Ömür cetveli ve konfor</h4><p>Cetvel, geçen yılın harcamasıyla paranın kaç yaşında biteceğini tahmin eder. Konfor (0-10) ev, araba, son iki yılın tatili ve dünya turundan gelir: 0-2 Ot, 3 Mütevazı, 4-5 Orta Direk, 6-9 Rahat, 10 Görgüsüz. Konfor eş bulmayı kolaylaştırır; düşük konfor cepten sağlık harcamasını artırır (Ot ×3, Mütevazı ×1,5), yüksek konfor yaşam giderini artırır (Mütevazı ×1,25, Orta Direk ×1,5, Rahat ×2, Görgüsüz ×3).</p>
+<h4>Ömür cetveli ve konfor</h4><p>Cetvel, geçen yılın harcamasıyla paranın kaç yaşında biteceğini tahmin eder. Konfor (0-10) ev, araba, son iki yılın tatili, dünya turu, evcil hayvan (+1), saç ya da göğüs estetiği (+1) ve eşinin arabasından (+0,5) gelir: 0-2 Ot, 3 Mütevazı, 4-5 Orta Direk, 6-9 Rahat, 10 Görgüsüz. Konfor eş bulmayı kolaylaştırır; düşük konfor cepten sağlık harcamasını artırır (Ot ×3, Mütevazı ×1,5), yüksek konfor yaşam giderini artırır (Mütevazı ×1,25, Orta Direk ×1,5, Rahat ×2, Görgüsüz ×3).</p>
 <h4>Sigorta</h4><p>İsteğe bağlı sigorta primi aylık ${tl(E.prim)}; ${E.yil} yıl prim ve yaş şartından sonra aylık ${tl(E.maas)} emekli maaşı. Yaş şartı sigortanın başladığı yıla göre: 1999 ve öncesi EYT (Mart 2023\'ten sonra yaş yok), 1999-2008 arası 60, 2008 sonrası 60-65.</p>
 <h4>Puan</h4><p>Yaş × 1.000 (Ot gibi, konfor 0-2 geçen her yıl −2.000: yaştan gelen 1.000 geri alınır, 1.000 düşülür) · evlilik 5.000 · çocuk başına 3.000 · krize hazırlıklı yakalandığın her kriz 2.000 (kriz başladığında servetinin en az yarısı dolar ya da evdeyse) · ömür boyu ortalama konfor × 1.000 · geride kalan servet: ilk 1 milyon doların her 40 doları için 1, 1-2 milyon her 80, 2-5 milyon her 200, üstü her 1.000 dolar için 1 · borcun her 40 doları için −1 · en sonda başlangıç yılı katsayısı (0,7-1,4: ekonominin iyi gittiği yıllardan başlayanın puanı biraz düşer, zor yıllardan başlayanınki yükselir).</p>
 <h4>Ekonomi</h4><p>Geçmiş bir yıl seçersen 2025'e kadar yaşanmış veriler gelir; 2026 sonrası geçmişin ortalamasına dayanan tahmini bir modeldir.</p>
@@ -788,14 +788,16 @@ function aileSahnesi() {
     P.push(`<path transform="translate(${x - 2} ${yer - 30}) scale(.9)" d="M7 12 C-4 4 2 -3 7 3 C12 -3 18 4 7 12Z" fill="#b3261e" stroke="#1a1a1a" stroke-width="1.2"/>`); x += 16;
     const n = el.length; kisi(18, "#ffe08a", `${S.cocukAd[i] ? tamAd(S.cocukAd[i]) : "Çocuk " + (i + 1)}, evlendi`, 1); kisi(18, "#cfe0f5", "Çocuğunun eşi"); P.unshift(`<line x1="${el[n][0]}" y1="${el[n][2]}" x2="${el[n + 1][0]}" y2="${el[n + 1][2]}" stroke="#1a1a1a" stroke-width="1.6"/>`);
   });
-  const W = Math.max(300, x + (S.araba ? 60 : 0) + 64);
+  const W = Math.max(300, x + (S.araba ? 60 : 0) + (S.esAraba ? 60 : 0) + 64);
   let sag = W - 60;
   const kira = !S.evler.length;
   P.push(`<g><title>${kira ? "Kiradasın" : S.evler.length + " ev"}</title><rect x="${sag + 6}" y="${yer - 34}" width="44" height="34" rx="2" fill="#fffaf0" stroke="#1a1a1a" stroke-width="1.6" ${kira ? 'stroke-dasharray="4 3"' : ""}/>`
     + `<path d="M${sag} ${yer - 30} L${sag + 28} ${yer - 54} L${sag + 56} ${yer - 30} Z" fill="${kira ? "#fffaf0" : "#b3261e"}" stroke="#1a1a1a" stroke-width="1.6" stroke-linejoin="round" ${kira ? 'stroke-dasharray="4 3"' : ""}/>`
     + `<rect x="${sag + 22}" y="${yer - 20}" width="11" height="20" rx="1" fill="#1a1a1a"/>${kira ? `<text x="${sag + 28}" y="${yer - 37}" text-anchor="middle" font-size="9" font-family="Atkinson Hyperlegible, sans-serif">KİRA</text>` : S.evler.length > 1 ? `<text x="${sag + 28}" y="${yer - 37}" text-anchor="middle" font-size="10" fill="#fff" font-family="Atkinson Hyperlegible, sans-serif">×${S.evler.length}</text>` : ""}</g>`);
-  if (S.araba) { const a = sag - 58;
-    P.push(`<g><title>Araba</title><path d="M${a} ${yer - 6} v-10 l8 -9 h26 l10 9 h6 v10 Z" fill="${RENK[S.araba] || "#fffaf0"}" stroke="#1a1a1a" stroke-width="1.6" stroke-linejoin="round"/><circle cx="${a + 11}" cy="${yer - 5}" r="5" fill="#1a1a1a"/><circle cx="${a + 40}" cy="${yer - 5}" r="5" fill="#1a1a1a"/></g>`); }
+  // arabalar evin solunda: önce seninki, onun solunda eşininki
+  const araba = (a, seg, ad) => P.push(`<g><title>${ad}</title><path d="M${a} ${yer - 6} v-10 l8 -9 h26 l10 9 h6 v10 Z" fill="${RENK[seg] || "#fffaf0"}" stroke="#1a1a1a" stroke-width="1.6" stroke-linejoin="round"/><circle cx="${a + 11}" cy="${yer - 5}" r="5" fill="#1a1a1a"/><circle cx="${a + 40}" cy="${yer - 5}" r="5" fill="#1a1a1a"/></g>`);
+  if (S.araba) araba(sag - 58, S.araba, "Araba");
+  if (S.esAraba) araba(sag - (S.araba ? 118 : 58), S.esAraba.k, "Eşinin arabası");
   const defs = `<defs><pattern id="nB" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#1a1a1a"/></pattern><pattern id="nE" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.1" fill="#b3261e"/></pattern></defs>`;
   return `<div class="ciz"><div class="bas">${S.ad || "Senin"} Ailesi</div><svg viewBox="0 0 ${W} 92" aria-hidden="true">${defs}<line x1="2" y1="${yer}" x2="${W - 2}" y2="${yer}" stroke="#1a1a1a" stroke-width="1.5"/>${P.join("")}</svg></div>`;
 }
