@@ -1219,14 +1219,20 @@ $("girisSeref").onclick = () => { popup("En İyi Oyuncular", `<div id="seref" cl
 
 // Şeref listesi: önce bu cihazın listesi (localStorage), sonra ortak liste (data.cezvi.com, PocketBase).
 // Sunucu kuralları: oyun 1m_1omur, isim 1-16 harf (< > & " yok), puan 1-10.000.000 tam sayı, yaş 0-120. Ortak liste yalnız ozthealem.com'dan açılınca çalışır (CORS).
+// Sahte puan denetimi: BAŞLA'da sunucuda oturum açılır; skor yalnız o oturumla, bir kez ve oyun süresi makulse yazılır (sunucu pb_hooks).
 const SEREF_API = "https://data.cezvi.com/api/collections/skorlar/records", SEREF_OYUN = "1m_1omur", SEREF_YEREL = "1m_1omur_seref";
+const OTURUM_API = "https://data.cezvi.com/api/collections/oturumlar/records";
+function oturumAc() {
+  fetch(OTURUM_API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ oyun: SEREF_OYUN }) })
+    .then(r => r.ok ? r.json() : null).then(j => { if (j && j.id) S.oturum = j.id; }).catch(() => {});
+}
 const kacis = t => String(t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 function yerelListe() { try { return JSON.parse(localStorage.getItem(SEREF_YEREL)) || []; } catch (e) { return []; } }
 function serefKaydet(k) {
   try { const L = yerelListe(); L.push(k); L.sort((a, b) => b.puan - a.puan); localStorage.setItem(SEREF_YEREL, JSON.stringify(L.slice(0, 20))); } catch (e) {}
   if (!k.puan) return Promise.resolve(null);
   return fetch(SEREF_API, { method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ oyun: SEREF_OYUN, isim: k.isim, puan: k.puan, yas: k.yas, meta: { bas: k.bas, baslik: k.baslik, gizli: !!k.gizli } }) })
+    body: JSON.stringify({ oyun: SEREF_OYUN, isim: k.isim, puan: k.puan, yas: k.yas, oturum: S.oturum || "", meta: { bas: k.bas, baslik: k.baslik, gizli: !!k.gizli } }) })
     .then(r => r.ok ? r.json() : null).catch(() => null);
 }
 function serefTablo(L, baslik, benId, benTarih) {
@@ -1268,7 +1274,7 @@ function mirasKart(Y) {
 $("nameIn").focus();
 
 function basla(miras) {
-  $("start").remove();
+  $("start").remove(); oturumAc();
   S.kur0 = S.kur2026 = D.kur;
   if (S.bas < 2026) {                        // geçmiş yıl: fiyat endeksi o yılın başına, kur o yılın kuruna
     S.yil = S.bas; S.endeks = 1 / (1 + ENF_2026_9AY);   // Eylül 2026 = 1
