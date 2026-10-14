@@ -654,7 +654,7 @@ const lahmacunTL = () => S.yil <= 2026 ? LAHMACUN[S.yil] : LAHMACUN[2026] * S.en
 const POLITIKA = { 2010: 6.5, 2011: 5.75, 2012: 5.5, 2013: 4.5, 2014: 8.25, 2015: 7.5, 2016: 8, 2017: 8, 2018: 24, 2019: 12, 2020: 17, 2021: 14, 2022: 9, 2023: 42.5, 2024: 47.5, 2025: 38, 2026: 37 };
 // Bilgi bölümü: oyundaki her verinin kaynağı (başlık, [ad, açıklama, bağlantı])
 // Künye (GDD K13): Kurallar ve kaynaklar penceresinin sonunda. Sürüm her yeni sürümde güncellenir.
-const KUNYE = { oyun: "1M$ Bir Ömür", surum: "v95", yil: 2026, yapan: "Tasarım ve geliştirme: Özgür Alem, Cezvi Studio", veri: "Veriler: TCMB, TÜİK, SGK, DASK ve diğerleri (yukarıdaki kaynaklar)" };
+const KUNYE = { oyun: "1M$ Bir Ömür", surum: "v96", yil: 2026, yapan: "Tasarım ve geliştirme: Özgür Alem, Cezvi Studio", veri: "Veriler: TCMB, TÜİK, SGK, DASK ve diğerleri (yukarıdaki kaynaklar)" };
 const KAYNAKLAR = [
   ["Geçmiş ekonomi (1978-2025, gerçek veri)", [
     ["TÜİK TÜFE", "yıllık enflasyon; Vikipedi tablosu üzerinden", ""],
@@ -1361,7 +1361,7 @@ $("baslaBtn").onclick = girisBitti;
 $("nameIn").addEventListener("input", () => { $("isimHata").textContent = ""; });
 $("nameIn").addEventListener("focus", () => $("nameIn").select());
 $("girisKaynak").onclick = kurallarAc;
-$("girisSeref").onclick = () => { popup("En İyi Oyuncular", `<div id="seref" class="seref"></div>`); serefGoster("seref"); };
+$("girisSeref").onclick = () => { popup("En İyi Oyuncular", `<div id="seref" class="seref"></div>`); serefGoster("seref", null, null, true); };   // girişte yalnız ortak liste (ilk 20)
 
 // Şeref listesi: önce bu cihazın listesi (localStorage), sonra ortak liste (data.cezvi.com, PocketBase).
 // Sunucu kuralları: oyun 1m_1omur, isim 1-16 harf (< > & " yok), puan 1-10.000.000 tam sayı, yaş 0-120. Ortak liste yalnız ozthealem.com'dan açılınca çalışır (CORS).
@@ -1386,17 +1386,18 @@ function serefTablo(L, baslik, benId, benTarih) {
   const bas = x => x.bas || (x.meta && x.meta.bas) || "";
   const satir = (x, i) => `<tr class="${(benId && x.id === benId) || (benTarih && x.tarih === benTarih) ? "ben" : ""}"><td>${i + 1}.</td><td>${x.gizli || (x.meta && x.meta.gizli) ? "★ " : ""}${kacis(x.isim)}</td><td>${x.yas ? x.yas + " yaş" : ""}</td><td class="bas">${bas(x)}</td><td>${Number(x.puan).toLocaleString("tr-TR")}</td></tr>`;
   const ust = `<tr class="ust"><td></td><td>İsim</td><td>Yaş</td><td class="bas">Başladı</td><td>Puan</td></tr>`;
-  return `<b>${baslik}</b><table class="puan seref">${L.length ? ust + L.map(satir).join("") : `<tr><td></td><td>Henüz kimse yok</td></tr>`}</table>${L.some(x => x.gizli || (x.meta && x.meta.gizli)) ? `<div class="not2">★ gizli sona ulaştı</div>` : ""}`;
+  return `${baslik ? `<b>${baslik}</b>` : ""}<table class="puan seref">${L.length ? ust + L.map(satir).join("") : `<tr><td></td><td>Henüz kimse yok</td></tr>`}</table>${L.some(x => x.gizli || (x.meta && x.meta.gizli)) ? `<div class="not2">★ gizli sona ulaştı</div>` : ""}`;
 }
-async function serefGoster(hedef, benId, benTarih) {
+// giris: giriş ekranındaki En İyi Oyuncular (tek başlık, yalnız ortak liste, ilk 20); oyun sonunda ortak ilk 10 ve bu cihazın listesi
+async function serefGoster(hedef, benId, benTarih, giris) {
   const el = $(hedef); if (!el) return;
-  const yerel = n => serefTablo(yerelListe().slice(0, n), "Bu cihazda", null, benTarih);
+  const yerel = n => giris ? "" : serefTablo(yerelListe().slice(0, n), "Bu cihazda", null, benTarih);
   el.innerHTML = yerel(10) + `<div class="not2">Ortak liste yükleniyor…</div>`;
   try {
-    const r = await fetch(`${SEREF_API}?filter=${encodeURIComponent(`oyun='${SEREF_OYUN}'`)}&sort=-puan&perPage=10`);
+    const r = await fetch(`${SEREF_API}?filter=${encodeURIComponent(`oyun='${SEREF_OYUN}'`)}&sort=-puan&perPage=${giris ? 20 : 10}`);
     if (!r.ok) throw 0;
     const j = await r.json();
-    el.innerHTML = serefTablo(j.items, "En İyi Oyuncular (herkes)", benId) + yerel(5);
+    el.innerHTML = serefTablo(j.items, giris ? "" : "En İyi Oyuncular (herkes)", benId) + yerel(5);
   } catch (e) { el.innerHTML = yerel(10) + `<div class="not2">Ortak listeye şu an ulaşılamadı. Oyun ozthealem.com/1m1omur adresinden açılınca görünür.</div>`; }
 }
 $("startCard").addEventListener("keydown", e => { if (e.key === "Enter" && $("yilIn")) { e.preventDefault(); girisBitti(); } });
