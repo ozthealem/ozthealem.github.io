@@ -239,6 +239,7 @@ details.deste[open] > summary { box-shadow:0 2px 0 var(--rule); margin:0 0 6px; 
 .haberKose:empty { display:none; }
 .haberKose .gz-etiket { display:inline-block; font-family:var(--fn); background:var(--red); color:#fff; border:1.5px solid var(--rule); border-radius:4px; padding:0 6px; font-size:14px; }
 .haberKose .gz-baslik { font-family:var(--fh); font-weight:900; font-size:20px; color:var(--red); line-height:1.1; margin:4px 0; }
+.gz-alt { font-family:var(--fh); font-weight:700; font-size:15px; line-height:1.15; color:var(--ink, #1a1a1a); border-top:1px solid var(--rule); padding-top:3px; margin:3px 0 4px; }
 .haberKose p { margin:0; }
 /* yırtılmış çek koçanı: solda yarım daire tırtıklar ve kesikli koparma çizgisi */
 .cek { padding-left:30px; border-left:none; border-radius:0 6px 6px 0; }
@@ -496,7 +497,9 @@ const D = {
   // bu yılın enflasyonu daha yüksekse kira reel geriler, yeni kiracıyla piyasaya döner.
   // konut piyasası: fiyatlar her yıl reel ±%8 dalgalanır, uzun vadede 1'e çekilir (kira etkilenmez).
   // Deprem: yılda %0,3, büyüklüğü 5,5-7,0 (7'yi geçmez); hasar ev değerinin %5'i (5,5) ile %30'u (7,0) arası, büyüklükle artar; DASK yeniden yapım bedelini (m² × 9.884 TL, en çok 2.095.462 TL) öder, kalanı onarım gideri.
-  konutOyna: .08, deprem: { olasilik: .003, buyuk: [5.5, 7], hasar: [.05, .3], m2Bedel: 9884, teminat: 2095462, primOran: .00282,
+  // 1999 Marmara depremi gerçek tarihte olur (o yıl ve 2023'te rastgele deprem yok); DASK 2000'den önce yoktu, hasarın tamamı ev sahibinin.
+  konutOyna: .08, deprem: { olasilik: .003, buyuk: [5.5, 7], hasar: [.05, .3], m2Bedel: 9884, teminat: 2095462, primOran: .00282, daskBas: 2000, rastgeleYok: [1999, 2023],
+    marmara: { yil: 1999, buyuk: 7.4, hasar: .1, src: "17 Ağustos 1999 Gölcük merkezli Mw 7,4 (Kandilli, AFAD); resmi kayıp 17.480; İstanbul'daki ev hasarı %10 varsayım; DASK 27 Eylül 2000'de kuruldu (4743 sayılı KHK)" },
     src: "DASK 2026: betonarme m² bedeli 9.884 TL, azami teminat 2.095.462 TL (1 Ocak 2026); prim oranı binde 2,82 (betonarme, I. risk grubu, Allianz DASK tablosu, Ekim 2026); deprem olasılığı, büyüklük ve hasar oranı varsayım" },
   bosKalma: .15, bakim: .005, yipranma: .015, arsaPayi: .4, kiraSinir: { 2022: .25, 2023: .25 },
   evSahibiSrc: "boş kalma olasılığı, süre ve bakım payı varsayım; kira artış kuralı TBK 344; Haziran 2022-Temmuz 2024 arası %25 sınırı (oyunda 2022 ve 2023)",
@@ -555,7 +558,7 @@ const D = {
   olasilik: { fikir: .6, cocuk: .35, cocukMax: 4, cocukYas: 40, arabaYenileYas: 10, arabaYenile: .3, prim: .1, primYas: 55, lahmacunManset: .3,
     cocukEvlenme: [20, 40], kazaYas: [20, 37], kazaCocuksuz: 20, kazaCocuklu: 40, kuzenOder: .5,
     uniDusukKonfor: 2, uniOrtaSinir: 6.5, uniOrta: .7, uniZengin: .9, dershane: .7,
-    kriz: .06, krizEsik: -.15,
+    kriz: .06, krizEsik: -.15, haberYil: 2,
     bungeeYas: 60, bungeeIlk: .5, bungeeArtis: .04, bungeeUst: .95, arizaYas: 6, arizaArtis: .05, arizaMax: .8 }
 };
 // Gerçek veriler (yıl: [TÜFE %, mevduat faizi %, yıl sonu USD/TL yeni TL]); 2026 ve sonrası model
@@ -650,6 +653,8 @@ const lahmacunTL = () => S.yil <= 2026 ? LAHMACUN[S.yil] : LAHMACUN[2026] * S.en
 // Politika faizi (TCMB bir hafta repo, yıl sonu %); 2010 öncesi bu araç yoktu. 2027 sonrası model: mevduat faiziyle 2026 oranında.
 const POLITIKA = { 2010: 6.5, 2011: 5.75, 2012: 5.5, 2013: 4.5, 2014: 8.25, 2015: 7.5, 2016: 8, 2017: 8, 2018: 24, 2019: 12, 2020: 17, 2021: 14, 2022: 9, 2023: 42.5, 2024: 47.5, 2025: 38, 2026: 37 };
 // Bilgi bölümü: oyundaki her verinin kaynağı (başlık, [ad, açıklama, bağlantı])
+// Künye (GDD K13): Kurallar ve kaynaklar penceresinin sonunda. Sürüm her yeni sürümde güncellenir.
+const KUNYE = { oyun: "1M$ Bir Ömür", surum: "v94", yil: 2026, yapan: "Tasarım ve geliştirme: Özgür Alem, Cezvi Studio", veri: "Veriler: TCMB, TÜİK, SGK, DASK ve diğerleri (yukarıdaki kaynaklar)" };
 const KAYNAKLAR = [
   ["Geçmiş ekonomi (1978-2025, gerçek veri)", [
     ["TÜİK TÜFE", "yıllık enflasyon; Vikipedi tablosu üzerinden", ""],
@@ -699,7 +704,8 @@ function kurallarAc() {
 <h4>Ekonomi</h4><p>Geçmiş bir yıl seçersen 2025'e kadar yaşanmış veriler gelir; 2026 sonrası geçmişin ortalamasına dayanan tahmini bir modeldir.</p>
 <h4>Kısayollar</h4><p>Yön tuşları seçer, Enter onaylar, A Arşiv, F tam ekran, Esc kapatır.</p></div>`;
   const notlar = S.ad ? `<div style="text-align:left"><h4>Bu yılın hesap notları (${S.yil})</h4><p>Bütün tutarlar o yılın parasıyla: ev, araba, maaş, vergi, kira her yıl enflasyon kadar zamlanır; tepedeki dolar ve servet grafiği karşılaştırma için bugünün parasıyla. Bu yıl vadeli reel ${yuz(reel())}; vadesiz para enflasyonla ${yuz(S.eko.enf / (1 + S.eko.enf))} erir; dolar ${yuz(dolarFaiz())} faiz alır, değeri kurla iner çıkar ve ABD enflasyonuyla (${yuz(abdEnf())}) kendi ülkesinde de erir. Yıl katsayısı: 2026'da 1 TL olan her şey bu yıl ${S.endeks.toLocaleString("tr-TR", { maximumSignificantDigits: 4 })} TL.</p></div>` : "";
-  popup("Kurallar ve kaynaklar", kural + notlar + `<h4>Kaynaklar ve veriler</h4>` + kaynakHTML()); $("popup").dataset.disKapat = "1";   // dışına tıklayınca kapanır
+  popup("Kurallar ve kaynaklar", kural + notlar + `<h4>Kaynaklar ve veriler</h4>` + kaynakHTML()
+    + `<div style="text-align:left"><h4>Künye</h4><p><b>${KUNYE.oyun}</b> · ${KUNYE.surum} · ${KUNYE.yil}<br>${KUNYE.yapan}<br>${KUNYE.veri}</p></div>`); $("popup").dataset.disKapat = "1";   // dışına tıklayınca kapanır
 }
 function kaynakHTML() {
   const html = KAYNAKLAR.map(([b, L]) => `<h4>${b}</h4><ul class="kaynak">${L.map(([ad, ac, url]) => `<li>${url ? `<a href="${url}" target="_blank" rel="noopener">${ad}</a>` : `<b>${ad}</b>`}: ${ac}</li>`).join("")}</ul>`).join("");
@@ -1505,88 +1511,129 @@ const HABER_KOSUL = {
   "asgari zam": () => S.yil > 1978 && asgariReel(S.yil) / asgariReel(S.yil - 1) > 1.05,
   "dolar fırladı": () => (S.kurArtis || 0) >= .3, "konut arttı": () => (S.konutDeg || 0) >= .05, "konut düştü": () => (S.konutDeg || 0) <= -.03,
   "kriz": () => krizde(), "ev sahibi": () => S.evler.length > 0, "kiracı": () => !S.evler.length,
+  "EYT: emekli oldun": () => S.emekli && emekliKural().grup === "eyt",
+  "EYT: sigortalısın": () => (S.sigortali || S.emekli) && emekliKural().grup !== "eyt",
+  "EYT: sigortasız": () => !(S.emekli && emekliKural().grup === "eyt") && !((S.sigortali || S.emekli) && emekliKural().grup !== "eyt"),
   "evli": () => S.es, "bekâr": () => !S.es, "çocuklu": () => S.cocuklar.length > 0, "emekli": () => S.emekli, "yaşlı": () => S.yas >= 65,
 };
-const OZEL_MANSET = [
-  ["Dünyadan Haberler", "İlk Yapay Zekâ Devlet Başkanı Seçildi", 2041, 15, "bir kez", "iyi ekonomi", "-"],
-  ["Dünyadan Haberler", "Fabrika Robotları İsyan Etti, Enflasyonda Rekor!", 2036, 10, "bir kez", "yüksek enflasyon", "-"],
-  ["Ekonomi Haberleri", "Robotlara Asgari Ücret Tartışması Meclise Geldi", 2040, 8, "bir kez", "-", "Fabrika Robotları İsyan Etti, Enflasyonda Rekor!"],
-  ["Dünyadan Haberler", "Ortadoğu Gergin, Kriz Olabilir!", 1978, 10, "10 yılda bir", "-", "-"],
-  ["Dünyadan Haberler", "Ortadoğu Karıştı, Kriz Kapıda!", 1979, 10, "10 yılda bir", "kötü ekonomi", "Ortadoğu Gergin, Kriz Olabilir!"],
-  ["Dünyadan Haberler", "Ortadoğu Daha Çok Karıştı, Kriz İçerde!", 1980, 10, "10 yılda bir", "kriz", "Ortadoğu Karıştı, Kriz Kapıda!"],
-  ["Ekonomi Haberleri", "Çay Bardağı Küçüldü, Fiyatı Aynı Kaldı", 2027, 10, "bir kez", "yüksek enflasyon", "-"],
-  ["Ekonomi Haberleri", "Simit 100 Lirayı Geçti, Susam Lüks Tüketim Sayıldı", 2033, 10, "bir kez", "-", "-"],
-  ["Emlak Haberleri", "Ev Sahibi Kiracıdan Referans Mektubu İstedi", 2020, 10, "bir kez", "konut arttı", "-"],
-  ["Ekonomi Haberleri", "Asgari Ücrete Ara Zam: Bir Lahmacun Fazla", 1978, 10, "her yıl", "asgari zam", "-"],
-  ["Ekonomi Haberleri", "Emekliler Torunlara Kripto Harçlık Verdi", 2027, 10, "bir kez", "-", "-"],
-  ["Şehir Haberleri", "Uçan Taksiler Köprü Trafiğine Takıldı", 2045, 10, "bir kez", "-", "-"],
-  ["Bilim Haberleri", "Mars'ta İlk Kiralık Daire: Depozito 3 Kira", 2050, 10, "bir kez", "-", "-"],
-  ["Ekonomi Haberleri", "İlk Yapay Zekâ CEO İşe Başladı", 2030, 10, "bir kez", "-", "-"],
-  ["Ekonomi Haberleri", "Yapay Zekâ CEO'nun Vergi Kaçırdığı Tespit Edildi", 2031, 30, "bir kez", "-", "İlk Yapay Zekâ CEO İşe Başladı"],
-  ["Emlak Haberleri", "Yeni Mezun İlk Maaşıyla Bir Metrekare Ev Aldı", 1978, 8, "10 yılda bir", "konut arttı", "-"],
-  ["Ekonomi Haberleri", "Pazarda Domates Taneyle Satılmaya Başlandı", 1978, 8, "bir kez", "yüksek enflasyon", "-"],
-  ["Ekonomi Haberleri", "Bayram Harçlığına Enflasyon Farkı İstendi", 1978, 8, "10 yılda bir", "yüksek enflasyon", "-"],
-  ["Emlak Haberleri", "Ev Fiyatları Durdu, Emlakçılar Bunu da Fırsat Diye Sattı", 1978, 6, "bir kez", "konut düştü", "-"],
-  ["Emlak Haberleri", "Uzaktan Çalışanlar Köye Döndü, Köyde Kira Patladı", 2030, 8, "bir kez", "-", "-"],
-  ["Ekonomi Haberleri", "Robot Esnaf Kan Ağlıyor, Pil Fiyatları Yükseldi", 1978, 8, "10 yılda bir", "-", "-"],
-  ["Ekonomi Haberleri", "Altın Rekor Kırdı, Teyzeler Bilezikleri Yeniden Saydı", 1978, 8, "10 yılda bir", "kötü ekonomi", "-"],
-  ["Ekonomi Haberleri", "Bankalar Mevduata Yeniden Tost Makinesi Hediye Ediyor", 1978, 6, "bir kez", "iyi ekonomi", "-"],
-  ["Şehir Haberleri", "Robot Garsonlar Bahşiş İstemeye Başladı", 2030, 8, "bir kez", "-", "-"],
-  ["Şehir Haberleri", "Sürücüsüz Dolmuşlar Boş Kaldı, Kriz Kapıda", 2038, 8, "bir kez", "kötü ekonomi", "-"],
-  ["Şehir Haberleri", "Sürücüsüz Taksi Trafikte Terör Estirdi, Fiyatlar Yükseldi", 2038, 8, "bir kez", "yüksek enflasyon", "-"],
-  ["Emlak Haberleri", "Ev Arkadaşı İlanlarında Yaş Sınırı 60'a Çıktı", 2035, 8, "bir kez", "-", "-"],
-  ["Bilim Haberleri", "Uzay Turizmi Ucuzladı: Mars Turu 12 Taksit", 2048, 8, "bir kez", "-", "-"],
-  ["Sağlık Haberleri", "Kök Hücre Tedavileri ile İnsan Ömrü 100'e Çıktı!", 2030, 10, "bir kez", "-", "-"],
-  ["Sağlık Haberleri", "100 Yaşını Geçenler Derneği Üye Kabulünü Durdurdu", 2036, 10, "bir kez", "-", "Kök Hücre Tedavileri ile İnsan Ömrü 100'e Çıktı!"],
-  ["Ekonomi Haberleri", "Enflasyon Canavarı Doymak Bilmiyor", 1978, 8, "bir kez", "yüksek enflasyon", "-"],
-  ["Ekonomi Haberleri", "Etiket Yazıcıları Fiyata Yetişemedi, Esnaf Kalemle Düzeltiyor", 1978, 8, "10 yılda bir", "yüksek enflasyon", "-"],
-  ["Ekonomi Haberleri", "Çocuklar Harçlığı Dövizle İstemeye Başladı", 1990, 8, "bir kez", "yüksek enflasyon", "-"],
-  ["Ekonomi Haberleri", "Sabah Alınan Ekmek Akşam Zamlı Satıldı", 1978, 6, "10 yılda bir", "yüksek enflasyon", "-"],
-  ["Ekonomi Haberleri", "Kumbaralar Rafta Kaldı, Satışlar Dibe Vurdu", 1978, 8, "bir kez", "yüksek enflasyon", "-"],
-  ["Ekonomi Haberleri", "Zam Değil Zamcık! Asgari Ücret Yetmiyor", 1978, 8, "10 yılda bir", "yüksek enflasyon", "-"],
-  ["Ekonomi Haberleri", "Tost Fiyatı Dostları Düşman Etti", 2000, 8, "bir kez", "yüksek enflasyon", "-"],
-  ["Ekonomi Haberleri", "Bakkal Veresiye Defterine Enflasyon Sütunu Ekledi", 1978, 8, "bir kez", "yüksek enflasyon", "-"],
-  ["Ekonomi Haberleri", "Düğünlerde Altın Yerine Sarımsak Takıldı", 2010, 8, "bir kez", "yüksek enflasyon", "-"],
-  ["Ekonomi Haberleri", "Ev Hanımları Altın Yönetiminde Merkez Bankası'nı Geçti", 1978, 6, "bir kez", "yüksek enflasyon", "-"],
-  ["Ekonomi Haberleri", "Fiyatlar Bir Ay Değişmedi, Vatandaş Şüpheli", 1978, 8, "bir kez", "düşük enflasyon", "-"],
-  ["Ekonomi Haberleri", "Mevduat Faizi Enflasyonu Geçti, Bankalar da Şaşkın", 1978, 8, "10 yılda bir", "iyi ekonomi", "-"],
-  ["Ekonomi Haberleri", "Ekonomistler Hemfikir: Bu Kadar İyi Gitmesi Normal Değil", 1978, 6, "10 yılda bir", "iyi ekonomi", "-"],
-  ["Ekonomi Haberleri", "Tatil Rezervasyonları Rekor Kırdı", 1990, 8, "10 yılda bir", "iyi ekonomi", "-"],
-  ["Ekonomi Haberleri", "Bozuk Para Yeniden Cebe Girdi", 2005, 6, "bir kez", "düşük enflasyon", "-"],
-  ["Ekonomi Haberleri", "Hiç Bir Şey Olmasa da Bir Şeyler Oldu", 2005, 6, "bir kez", "iyi ekonomi", "-"],
-  ["Ekonomi Haberleri", "Döviz Bürosu Önünde Kuyruk: Herkes Kendi Kurunu Söyledi", 1978, 10, "10 yılda bir", "dolar fırladı", "-"],
-  ["Ekonomi Haberleri", "Yastık Altındaki Dolarlar Uykudan Uyandı", 1978, 8, "10 yılda bir", "dolar fırladı", "-"],
-  ["Ekonomi Haberleri", "İthal Peynir Kuyumcu Vitrinine Girdi", 1990, 6, "bir kez", "dolar fırladı", "-"],
-  ["Ekonomi Haberleri", "Yurt Dışı Tatili Hayal Olarak Satışa Çıktı", 1990, 6, "bir kez", "dolar fırladı", "-"],
-  ["Ekonomi Haberleri", "Telefonun Fiyatı Arabayı Geçti", 2010, 8, "bir kez", "dolar fırladı", "-"],
-  ["Ekonomi Haberleri", "Dolar Fırladı, tutabilene Aşkolsun", 1978, 6, "10 yılda bir", "dolar fırladı", "-"],
-  ["Ekonomi Haberleri", "Uzmanlar Uyardı: Kemerler Sıkılsın", 1978, 8, "10 yılda bir", "kötü ekonomi", "-"],
-  ["Ekonomi Haberleri", "Bankalar Kumbara Dağıtmayı Bıraktı", 1978, 6, "bir kez", "kötü ekonomi", "-"],
-  ["Ekonomi Haberleri", "Mevduat Sahiplerine Faiz Yerine Teselli", 1978, 8, "10 yılda bir", "kötü ekonomi", "-"],
-  ["Ekonomi Haberleri", "İflas Eden Şirket Son Toplantısını Kafede Yaptı", 1978, 6, "bir kez", "kötü ekonomi", "-"],
-  ["Dünyadan Haberler", "Küresel Piyasalar Sallandı, Kesin Yine Bize Bir Şey Olacak", 1978, 8, "10 yılda bir", "kötü ekonomi", "-"],
-  ["Dünyadan Haberler", "Petrol Fiyatları Uçtu, Bisiklet Satışları Patladı, Yeterli Bisiklet Yolu Olmadığı Anlaşılınca Satışlar Durdu", 1978, 8, "10 yılda bir", "yüksek enflasyon", "-"],
-  ["Emlak Haberleri", "Kira Artışı Maaş Artışını Geçti, Emlakçılar Partiliyor", 1990, 8, "10 yılda bir", "konut arttı", "-"],
-  ["Emlak Haberleri", "Bir Odalı Daireye 40 Kişi Başvurdu", 2010, 8, "bir kez", "konut arttı", "-"],
-  ["Emlak Haberleri", "Emlakçı İlanında \"Metroya Yürüme Mesafesi: 3 Saat\"", 2000, 6, "bir kez", "-", "-"],
-  ["Emlak Haberleri", "Balkon Kiralayan Kiracılar Kuşlardan Şikayetçi", 2015, 6, "bir kez", "konut arttı", "-"],
-  ["Emlak Haberleri", "Ev Sahipleri Kiracıları Tutmak İçin Baklava Gönderdi", 1978, 6, "bir kez", "konut düştü", "-"],
-  ["Emlak Haberleri", "Kentsel Dönüşüm Bitti, Yeni Binaya Eski Komşular Sığmadı", 2010, 6, "bir kez", "-", "-"],
-  ["Emlak Haberleri", "Site Aidatı Kira Kadar Oldu", 2015, 8, "bir kez", "-", "-"],
-  ["Emlak Haberleri", "Çimento Fiyatları Düştü Artık Herkes Betonperest", 2005, 6, "bir kez", "iyi ekonomi", "-"],
-  ["Sağlık Haberleri", "Torunlarına Bakmak İstemeyen Dedeler Dernek Kurdu", 2000, 6, "bir kez", "yaşlı", "-"],
-  ["Ekonomi Haberleri", "Emekliler Kahvede Kripto Uzmanlığı Eğitim Alıyor", 2025, 8, "bir kez", "yaşlı", "-"],
-  ["Sağlık Haberleri", "Dededen Kalan Miraslarla Büyük Düşüş", 1990, 6, "bir kez", "emekli", "-"],
-  ["Sağlık Haberleri", "100 Yaşındaki Dede: Sırrım Hiç Çalışmamak", 1978, 6, "bir kez", "yaşlı", "-"],
-  ["Şehir Haberleri", "Robot Köpekleri Pil Dışkıları Kriz Yarattı", 2030, 6, "bir kez", "yaşlı", "-"],
-  ["Ekonomi Haberleri", "Bankalardan Emeklilere Promosyon Yarışı: Elinizi Öperiz", 2015, 8, "10 yılda bir", "emekli", "-"],
-  ["Sağlık Haberleri", "Gençlik Kremlerine Talep Yoğun", 2030, 6, "bir kez", "yaşlı", "-"],
-  ["Bilim Haberleri", "Yapay Zekâ Tavlada Amcaları Yendi, Amcalar Rövanş İstedi", 2026, 8, "bir kez", "-", "-"],
-  ["Teknoloji Haberleri", "Akıllı Buzdolabı Sahibine Diyet Önerdi, Kapıyı Kilitledi", 2030, 8, "bir kez", "-", "-"],
-  ["Teknoloji Haberleri", "Robot Kuaför İlk Haftasında Herkesi Kel Yaptı", 2035, 8, "bir kez", "-", "-"],
-  ["Şehir Haberleri", "Drone Kuryeler Simit Taşımaya Başladı", 2032, 8, "bir kez", "-", "-"],
-  ["Bilim Haberleri", "Ay'da İlk Çay Bahçesi Açıldı, Çay 20gr DKA (Dünya Kripto Altını)", 2055, 8, "bir kez", "-", "-"],
-  ["Ekonomi Haberleri", "Yapay Zekâ Muhasebeci Vergiyi Kuruşu Kuruşuna Hesapladı, Herkes Şikâyetçi", 2030, 8, "bir kez", "-", "-"],
+// Ömür Postası manşetleri (GDD K11), yıla göre; zincirler yan yana. Haberler ekonomiyi asla etkilemez.
+// [yıl, etiket, manşet, olasılık %, tekrar, koşul, önce, pencere, not]. Tekrar "o yıl": yalnız o yıl, koşulu tutarsa kesin (tarihi manşetler).
+// Pencere: "-" yok; metin varsa haber çıkınca ciddi pencere açılır; "deprem olayı" penceresini deprem kuralı açar. Not oyunda görünmez.
+const MANSET = [
+  [1978, "Ekonomi Haberleri", "Tüp, Yağ ve Sigara Kuyrukları Birleşti, Sıra Numarası Dağıtıldı", 100, "o yıl", "-", "-", "-", "1978-1979 yokluk yılları, karne ve kuyruklar"],
+  [1979, "Ekonomi Haberleri", "Ülke 70 Sente Muhtaç, Bozuk Para Seferberliği Başladı", 100, "o yıl", "-", "-", "-", "\"Türkiye 70 sente muhtaç\" sözü, döviz darlığı"],
+  [1980, "Ekonomi Haberleri", "Bir Eylül Sabahı Radyoda Hep Aynı Marş Çaldı", 100, "o yıl", "-", "-", "-", "12 Eylül 1980 darbesi"],
+  [1982, "Ekonomi Haberleri", "Bankerler Tatile Çıktı, Dönüş Bileti Almamışlar", 100, "o yıl", "-", "-", "-", "1982 banker krizi"],
+  [1984, "Ekonomi Haberleri", "Dolar Taşımak Artık Suç Değil", 100, "o yıl", "-", "-", "-", "1984 döviz serbestisi"],
+  [1985, "Ekonomi Haberleri", "Hoş Geldin KDV: Önce Alış Veriş Sonra Fiş", 100, "o yıl", "-", "-", "-", "1 Ocak 1985 KDV, \"fiş alın\" kampanyası"],
+  [1986, "Sağlık Haberleri", "Çernobilli Çayın Radyasyonsuz Olduğu Canlı Yayında İçilerek Kanıtlandı", 100, "o yıl", "-", "-", "-", "Çernobil, 1986; bakanın çay içmesi"],
+  [1987, "Dünyadan Haberler", "Kara Pazartesi: Dünya Borsaları Çöktü Zenginler Üzgün", 100, "o yıl", "-", "-", "-", "19 Ekim 1987 dünya borsa çöküşü"],
+  [1988, "Ekonomi Haberleri", "Enflasyon Yüzde 75'i Gördü, Etiketler Kurşun Kalemle Yazılıyor", 100, "o yıl", "-", "-", "-", "1988 yüksek enflasyon"],
+  [1989, "Ekonomi Haberleri", "TL Artık Konvertibl: Ama Kimse Ne Demek Bilmiyor", 100, "o yıl", "-", "-", "-", "Ağustos 1989, 32 sayılı karar"],
+  [1991, "Dünyadan Haberler", "Körfezde Savaş, Gaz Maskesi ve Makarna Stokları Tükendi", 100, "o yıl", "-", "-", "-", "1991 Körfez Savaşı"],
+  [1994, "Ekonomi Haberleri", "Bir Nisan Sabahı Lira Yarı Fiyatına İndi", 100, "o yıl", "-", "-", "-", "5 Nisan 1994 kararları, devalüasyon"],
+  [1996, "Ekonomi Haberleri", "Gümrük Birliği: İthal Peynir Sofraya Oturdu, Yerli Peynirin Gözü Yaşlı", 100, "o yıl", "-", "-", "-", "1 Ocak 1996 Gümrük Birliği"],
+  [1997, "Ekonomi Haberleri", "28 Şubat: Herkes Gergin", 100, "o yıl", "-", "-", "-", "28 Şubat 1997 süreci"],
+  [1998, "Dünyadan Haberler", "Rusya'da Kriz, Bavul Ticareti Bavulda Kaldı", 100, "o yıl", "-", "-", "-", "Ağustos 1998 Rusya krizi, Laleli bavul ticareti"],
+  [1999, "Sağlık Haberleri", "17 Ağustos Gecesi Marmara'da Büyük Deprem!", 100, "o yıl", "-", "-", "deprem olayı (K4)", "17 Ağustos 1999 Marmara depremi (ciddi, şaka yok)"],
+  [2000, "Dünyadan Haberler", "2000 Yılı Bilgisayarları Çökertmedi, Herkes Biraz Hayal Kırıklığına Uğradı", 100, "o yıl", "-", "-", "-", "Y2K korkusu"],
+  [2000, "Ekonomi Haberleri", "Kasım Likidite Krizi: Bankalar Birbirine Para Vermeyi Unuttu", 100, "o yıl", "-", "-", "-", "Kasım 2000 likidite krizi"],
+  [2001, "Ekonomi Haberleri", "Kitapçık Fırlatıldı, Lira Düştü", 100, "o yıl", "-", "-", "-", "19 Şubat 2001 MGK, anayasa kitapçığı; 22 Şubat dalgalı kur"],
+  [2001, "Ekonomi Haberleri", "Öteden Bir Ekonomist Geldi: Herkes Hizaya Girecek", 100, "o yıl", "-", "-", "-", "Mart 2001 Kemal Derviş, \"15 günde 15 yasa\""],
+  [2001, "Ekonomi Haberleri", "Bankalar Fona Devredildi", 100, "o yıl", "-", "-", "-", "2001-2003 TMSF'ye devredilen bankalar, bankacılık reformu"],
+  [2002, "Dünyadan Haberler", "Avrupa'da Yeni Para, Bavulcular Yeni Kur Ezberliyor", 100, "o yıl", "-", "-", "-", "1 Ocak 2002 Euro"],
+  [2003, "Dünyadan Haberler", "Komşuda Savaş, Petrol Fiyatı Füze Gibi", 100, "o yıl", "-", "-", "-", "Mart 2003 Irak Savaşı"],
+  [2007, "Bilim Haberleri", "Bir Gecede Akılsız Kaldık: Akıllı Telefon Çıktı", 100, "o yıl", "-", "-", "-", "2007 ilk akıllı telefon"],
+  [2008, "Dünyadan Haberler", "Dünyadaki Büyük Krizin Bize Teğet Geçeceği Duyuruldu", 100, "o yıl", "-", "-", "-", "2008 küresel kriz, \"teğet geçer\" sözü"],
+  [2013, "Şehir Haberleri", "Ekrandaki Penguen Belgeseli Büyük İlgi Gördü", 100, "o yıl", "-", "-", "-", "Haziran 2013 Gezi olayları, penguen belgeseli"],
+  [2016, "Dünyadan Haberler", "Milli İradenin Mücadelesi Ağır Kayıplar Verdi", 100, "o yıl", "-", "-", "-", "15 Temmuz 2016"],
+  [2018, "Ekonomi Haberleri", "Telefonlar Kırıldı, Dolarlar Yakıldı, Kur Yine de Yükseldi", 100, "o yıl", "-", "-", "-", "Ağustos 2018 kur krizi"],
+  [2020, "Sağlık Haberleri", "Pandemi: Herkes Evde Ekmek Yapıyor", 100, "o yıl", "-", "-", "-", "Mart 2020 pandemi"],
+  [2021, "Ekonomi Haberleri", "Faiz İndi, Dolar Çıktı: Kur Korumalı Mevduat Gözleri Kamaştırdı", 100, "o yıl", "-", "-", "-", "Aralık 2021 kur şoku, kur korumalı mevduat"],
+  [2022, "Ekonomi Haberleri", "Enflasyon Yüzde 85'i Gördü, Etiket Fabrikaları Üç Vardiya Çalışıyor", 100, "o yıl", "-", "-", "-", "Ekim 2022 enflasyon zirvesi"],
+  [2023, "Sağlık Haberleri", "6 Şubat'ta Büyük Deprem, On Bir İl Yasta", 100, "o yıl", "-", "-", "6 Şubat 2023'te Kahramanmaraş merkezli 7,7 ve 7,6 büyüklüğünde iki deprem oldu. On bir ilde 53 binden fazla insan hayatını kaybetti, milyonlarca insan evsiz kaldı.", "6 Şubat 2023 Kahramanmaraş depremleri (ciddi, şaka yok)"],
+  [2023, "Ekonomi Haberleri", "Rasyonel Zemine Dönüldü: Faiz Bir Yılda Beş Katına Çıktı", 100, "o yıl", "-", "-", "-", "Haziran 2023 ortodoks politikaya dönüş, faiz %8,5'ten %42,5'e"],
+  [2023, "Ekonomi Haberleri", "Bu Arada EYT Yasalaştı: Sen de Emekli Oldun", 100, "o yıl", "EYT: emekli oldun", "-", "-", "7438 sayılı Kanun, 3 Mart 2023; kişisel EYT penceresi ayrıca çıkar"],
+  [2023, "Ekonomi Haberleri", "Bu Arada EYT Yasalaştı: Milyonlar Emekli Oldu, Sen Değil", 100, "o yıl", "EYT: sigortalısın", "-", "Emeklilikte yaşa takılanlar (EYT) yasası 3 Mart 2023'te yürürlüğe girdi: 8 Eylül 1999'dan önce sigortalı olanlar yaş şartı olmadan emekli olabiliyor. Milyonlarca kişi emekli oldu. Senin sigortan 1999'dan sonra başladı; yaş şartını bekliyorsun.", "7438 sayılı Kanun"],
+  [2023, "Ekonomi Haberleri", "Bu Arada EYT Yasalaştı: Milyonlar Emekli Oldu", 100, "o yıl", "EYT: sigortasız", "-", "Emeklilikte yaşa takılanlar (EYT) yasası 3 Mart 2023'te yürürlüğe girdi: 8 Eylül 1999'dan önce sigortalı olanlar yaş şartı olmadan emekli olabiliyor. Milyonlarca kişi emekli oldu.", "7438 sayılı Kanun"],
+  [2024, "Ekonomi Haberleri", "Asgari Ücrete Ara Zam Gelmedi, Lahmacun Hesapları Yeniden Yapıldı", 100, "o yıl", "-", "-", "-", "2024 ara zam yapılmadı"],
+  [2025, "Ekonomi Haberleri", "Bir Mart Sabahı Kur Fırladı, Merkez Bankası Gece Mesaisinde", 100, "o yıl", "-", "-", "-", "Mart 2025 piyasa dalgalanması, faiz artışı"],
+  [2026, "Dünyadan Haberler", "Ortadoğu Gergin, Kriz Olabilir!", 10, "10 yılda bir", "-", "-", "-", ""],
+  [2026, "Dünyadan Haberler", "Ortadoğu Karıştı, Kriz Kapıda!", 10, "10 yılda bir", "kötü ekonomi", "Ortadoğu Gergin, Kriz Olabilir!", "-", ""],
+  [2026, "Dünyadan Haberler", "Ortadoğu Daha Çok Karıştı, Kriz İçerde!", 10, "10 yılda bir", "kriz", "Ortadoğu Karıştı, Kriz Kapıda!", "-", ""],
+  [2026, "Emlak Haberleri", "Ev Sahibi Kiracıdan Referans Mektubu İstedi", 10, "bir kez", "konut arttı", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Asgari Ücrete Ara Zam: Bir Lahmacun Fazla", 10, "her yıl", "asgari zam", "-", "-", ""],
+  [2026, "Emlak Haberleri", "Yeni Mezun İlk Maaşıyla Bir Metrekare Ev Aldı", 8, "10 yılda bir", "konut arttı", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Pazarda Domates Taneyle Satılmaya Başlandı", 8, "bir kez", "yüksek enflasyon", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Bayram Harçlığına Enflasyon Farkı İstendi", 8, "10 yılda bir", "yüksek enflasyon", "-", "-", ""],
+  [2026, "Emlak Haberleri", "Ev Fiyatları Durdu, Emlakçılar Bunu da Fırsat Diye Sattı", 6, "bir kez", "konut düştü", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Robot Esnaf Kan Ağlıyor, Pil Fiyatları Yükseldi", 8, "10 yılda bir", "-", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Altın Rekor Kırdı, Teyzeler Bilezikleri Yeniden Saydı", 8, "10 yılda bir", "kötü ekonomi", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Bankalar Mevduata Yeniden Tost Makinesi Hediye Ediyor", 6, "bir kez", "iyi ekonomi", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Enflasyon Canavarı Doymak Bilmiyor", 8, "bir kez", "yüksek enflasyon", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Çocuklar Harçlığı Dövizle İstemeye Başladı", 8, "bir kez", "yüksek enflasyon", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Sabah Alınan Ekmek Akşam Zamlı Satıldı", 6, "10 yılda bir", "yüksek enflasyon", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Kumbaralar Rafta Kaldı, Satışlar Dibe Vurdu", 8, "bir kez", "yüksek enflasyon", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Zam Değil Zamcık! Asgari Ücret Yetmiyor", 8, "10 yılda bir", "yüksek enflasyon", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Tost Fiyatı Dostları Düşman Etti", 8, "bir kez", "yüksek enflasyon", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Bakkal Veresiye Defterine Enflasyon Sütunu Ekledi", 8, "bir kez", "yüksek enflasyon", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Düğünlerde Altın Yerine Sarımsak Takıldı", 8, "bir kez", "yüksek enflasyon", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Ev Hanımları Altın Yönetiminde Merkez Bankası'nı Geçti", 6, "bir kez", "yüksek enflasyon", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Fiyatlar Bir Ay Değişmedi, Vatandaş Şüpheli", 8, "bir kez", "düşük enflasyon", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Mevduat Faizi Enflasyonu Geçti, Bankalar da Şaşkın", 8, "10 yılda bir", "iyi ekonomi", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Ekonomistler Hemfikir: Bu Kadar İyi Gitmesi Normal Değil", 6, "10 yılda bir", "iyi ekonomi", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Tatil Rezervasyonları Rekor Kırdı", 8, "10 yılda bir", "iyi ekonomi", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Hiç Bir Şey Olmasa da Bir Şeyler Oldu", 6, "bir kez", "iyi ekonomi", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Döviz Bürosu Önünde Kuyruk: Herkes Kendi Kurunu Söyledi", 10, "10 yılda bir", "dolar fırladı", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Yastık Altındaki Dolarlar Uykudan Uyandı", 8, "10 yılda bir", "dolar fırladı", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Yurt Dışı Tatili Hayal Olarak Satışa Çıktı", 6, "bir kez", "dolar fırladı", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Telefonun Fiyatı Arabayı Geçti", 8, "bir kez", "dolar fırladı", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Dolar Fırladı, tutabilene Aşkolsun", 6, "10 yılda bir", "dolar fırladı", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Uzmanlar Uyardı: Kemerler Sıkılsın", 8, "10 yılda bir", "kötü ekonomi", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Bankalar Kumbara Dağıtmayı Bıraktı", 6, "bir kez", "kötü ekonomi", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Mevduat Sahiplerine Faiz Yerine Teselli", 8, "10 yılda bir", "kötü ekonomi", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "İflas Eden Şirket Son Toplantısını Kafede Yaptı", 6, "bir kez", "kötü ekonomi", "-", "-", ""],
+  [2026, "Dünyadan Haberler", "Küresel Piyasalar Sallandı, Kesin Yine Bize Bir Şey Olacak", 8, "10 yılda bir", "kötü ekonomi", "-", "-", ""],
+  [2026, "Dünyadan Haberler", "Petrol Fiyatları Uçtu, Bisiklet Satışları Patladı, Yeterli Bisiklet Yolu Olmadığı Anlaşılınca Satışlar Durdu", 8, "10 yılda bir", "yüksek enflasyon", "-", "-", ""],
+  [2026, "Emlak Haberleri", "Kira Artışı Maaş Artışını Geçti, Emlakçılar Partiliyor", 8, "10 yılda bir", "konut arttı", "-", "-", ""],
+  [2026, "Emlak Haberleri", "Bir Odalı Daireye 40 Kişi Başvurdu", 8, "bir kez", "konut arttı", "-", "-", ""],
+  [2026, "Emlak Haberleri", "Emlakçı İlanında \"Metroya Yürüme Mesafesi: 3 Saat\"", 6, "bir kez", "-", "-", "-", ""],
+  [2026, "Emlak Haberleri", "Balkon Kiralayan Kiracılar Kuşlardan Şikayetçi", 6, "bir kez", "konut arttı", "-", "-", ""],
+  [2026, "Emlak Haberleri", "Ev Sahipleri Kiracıları Tutmak İçin Baklava Gönderdi", 6, "bir kez", "konut düştü", "-", "-", ""],
+  [2026, "Emlak Haberleri", "Kentsel Dönüşüm Bitti, Yeni Binaya Eski Komşular Sığmadı", 6, "bir kez", "-", "-", "-", ""],
+  [2026, "Emlak Haberleri", "Site Aidatı Kira Kadar Oldu", 8, "bir kez", "-", "-", "-", ""],
+  [2026, "Emlak Haberleri", "Çimento Fiyatları Düştü Artık Herkes Betonperest", 6, "bir kez", "iyi ekonomi", "-", "-", ""],
+  [2026, "Sağlık Haberleri", "Torunlarına Bakmak İstemeyen Dedeler Dernek Kurdu", 6, "bir kez", "yaşlı", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Emekliler Kahvede Kripto Uzmanlığı Eğitim Alıyor", 8, "bir kez", "yaşlı", "-", "-", ""],
+  [2026, "Sağlık Haberleri", "Dededen Kalan Miraslarla Büyük Düşüş", 6, "bir kez", "emekli", "-", "-", ""],
+  [2026, "Sağlık Haberleri", "100 Yaşındaki Dede: Sırrım Hiç Çalışmamak", 6, "bir kez", "yaşlı", "-", "-", ""],
+  [2026, "Ekonomi Haberleri", "Bankalardan Emeklilere Promosyon Yarışı: Elinizi Öperiz", 8, "10 yılda bir", "emekli", "-", "-", ""],
+  [2026, "Bilim Haberleri", "Yapay Zekâ Tavlada Amcaları Yendi, Amcalar Rövanş İstedi", 8, "bir kez", "-", "-", "-", ""],
+  [2027, "Ekonomi Haberleri", "Çay Bardağı Küçüldü, Fiyatı Aynı Kaldı", 10, "bir kez", "yüksek enflasyon", "-", "-", ""],
+  [2027, "Ekonomi Haberleri", "Emekliler Torunlara Kripto Harçlık Verdi", 10, "bir kez", "-", "-", "-", ""],
+  [2030, "Ekonomi Haberleri", "İlk Yapay Zekâ CEO İşe Başladı", 10, "bir kez", "-", "-", "-", ""],
+  [2031, "Ekonomi Haberleri", "Yapay Zekâ CEO'nun Vergi Kaçırdığı Tespit Edildi", 30, "bir kez", "-", "İlk Yapay Zekâ CEO İşe Başladı", "-", ""],
+  [2030, "Emlak Haberleri", "Uzaktan Çalışanlar Köye Döndü, Köyde Kira Patladı", 8, "bir kez", "-", "-", "-", ""],
+  [2030, "Şehir Haberleri", "Robot Garsonlar Bahşiş İstemeye Başladı", 8, "bir kez", "-", "-", "-", ""],
+  [2030, "Sağlık Haberleri", "Kök Hücre Tedavileri ile İnsan Ömrü 100'e Çıktı!", 10, "bir kez", "-", "-", "-", ""],
+  [2036, "Sağlık Haberleri", "100 Yaşını Geçenler Derneği Üye Kabulünü Durdurdu", 10, "bir kez", "-", "Kök Hücre Tedavileri ile İnsan Ömrü 100'e Çıktı!", "-", ""],
+  [2030, "Şehir Haberleri", "Robot Köpekleri Pil Dışkıları Kriz Yarattı", 6, "bir kez", "yaşlı", "-", "-", ""],
+  [2030, "Sağlık Haberleri", "Gençlik Kremlerine Talep Yoğun", 6, "bir kez", "yaşlı", "-", "-", ""],
+  [2030, "Teknoloji Haberleri", "Akıllı Buzdolabı Sahibine Diyet Önerdi, Kapıyı Kilitledi", 8, "bir kez", "-", "-", "-", ""],
+  [2030, "Ekonomi Haberleri", "Yapay Zekâ Muhasebeci Vergiyi Kuruşu Kuruşuna Hesapladı, Herkes Şikâyetçi", 8, "bir kez", "-", "-", "-", ""],
+  [2032, "Şehir Haberleri", "Drone Kuryeler Simit Taşımaya Başladı", 8, "bir kez", "-", "-", "-", ""],
+  [2033, "Ekonomi Haberleri", "Simit 100 Lirayı Geçti, Susam Lüks Tüketim Sayıldı", 10, "bir kez", "-", "-", "-", ""],
+  [2035, "Emlak Haberleri", "Ev Arkadaşı İlanlarında Yaş Sınırı 60'a Çıktı", 8, "bir kez", "-", "-", "-", ""],
+  [2035, "Teknoloji Haberleri", "Robot Kuaför İlk Haftasında Herkesi Kel Yaptı", 8, "bir kez", "-", "-", "-", ""],
+  [2036, "Dünyadan Haberler", "Fabrika Robotları İsyan Etti, Enflasyonda Rekor!", 10, "bir kez", "yüksek enflasyon", "-", "-", ""],
+  [2040, "Ekonomi Haberleri", "Robotlara Asgari Ücret Tartışması Meclise Geldi", 8, "bir kez", "-", "Fabrika Robotları İsyan Etti, Enflasyonda Rekor!", "-", ""],
+  [2038, "Şehir Haberleri", "Sürücüsüz Dolmuşlar Boş Kaldı, Kriz Kapıda", 8, "bir kez", "kötü ekonomi", "-", "-", ""],
+  [2038, "Şehir Haberleri", "Sürücüsüz Taksi Trafikte Terör Estirdi, Fiyatlar Yükseldi", 8, "bir kez", "yüksek enflasyon", "-", "-", ""],
+  [2041, "Dünyadan Haberler", "İlk Yapay Zekâ Devlet Başkanı Seçildi", 15, "bir kez", "iyi ekonomi", "-", "-", ""],
+  [2045, "Şehir Haberleri", "Uçan Taksiler Köprü Trafiğine Takıldı", 10, "bir kez", "-", "-", "-", ""],
+  [2048, "Bilim Haberleri", "Uzay Turizmi Ucuzladı: Mars Turu 12 Taksit", 8, "bir kez", "-", "-", "-", ""],
+  [2050, "Bilim Haberleri", "Mars'ta İlk Kiralık Daire: Depozito 3 Kira", 10, "bir kez", "-", "-", "-", ""],
+  [2055, "Bilim Haberleri", "Ay'da İlk Çay Bahçesi Açıldı, Çay 20gr DKA (Dünya Kripto Altını)", 8, "bir kez", "-", "-", "-", ""],
 ];
 // Kriz (GDD K10): mevduatın reel kaybı eşiği geçen yıl (geçmiş yıllar gerçek veriyle, model yılları kriz kipinde zaten öyle)
 const krizde = () => reel() <= D.olasilik.krizEsik;
@@ -1595,25 +1642,28 @@ function gazeteKupuru() {
   const f = S.yil >= 2014 ? lahmacunTL() : 0, fTL = !f ? "" : f < 100 ? f.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " TL" : tlR(f);
   const lahMans = f && !ilk && Math.random() < D.olasilik.lahmacunManset;   // lahmacun bazen manşete çıkar
   const sifir = S.sifirHaber; S.sifirHaber = false;
-  // 2023: EYT manşeti, oyuncunun durumuna göre
-  const eytMans = S.yil === 2023 && !ilk ? (S.emekli && emekliKural().grup === "eyt" ? "EYT yasalaştı: sen de emekli oldun" : (S.sigortali || S.emekli) && emekliKural().grup !== "eyt" ? "EYT yasalaştı: milyonlar emekli oldu, sen değil" : "EYT yasalaştı: milyonlar emekli oldu") : "";
   const dep = S.depremHaber; S.depremHaber = null;   // geçen yıl deprem olduysa manşet o
-  // özel manşet (yalnız manşet, ekonomiye etkisi yok; oyunun durumu uyunca çıkar)
-  let ozel = null;
-  if (!ilk && !dep && !sifir && !eytMans) {
-    S.ozelSon = S.ozelSon || {};
-    const aday = OZEL_MANSET.filter(([, m, ilkYil, yuzde, tekrar, kosul, once]) => {
+  // haberler (GDD K11): önce o yılın kesin haberleri (tablo sırasıyla hepsi), yoksa olasılıklılardan en çok D.olasilik.haberYil tane;
+  // ilki manşet, ötekiler alt başlık. İlk yıl, 6 sıfır ya da geçen yılın depremi manşetteyse hepsi alt başlık; olasılıklılar o yıl çıkmaz.
+  S.ozelSon = S.ozelSon || {};
+  const tutar = (kosul, krizKurali) => { const K = kosul.split(",").map(x => x.trim());
+    return K.every(k => k === "-" || (HABER_KOSUL[k] ? HABER_KOSUL[k]() : true)) && (!krizKurali || !krizde() || K.includes("kriz")); };   // kriz yılında yalnız kriz haberleri
+  const kesin = MANSET.filter(([y, , , , tekrar, kosul]) => tekrar === "o yıl" && y === S.yil && tutar(kosul, false));
+  const secilen = [];
+  if (!ilk && !dep && !sifir && !kesin.length) {
+    const aday = MANSET.filter(([ilkYil, , m, yuzde, tekrar, kosul, once]) => {
+      if (tekrar === "o yıl") return false;
       const son = S.ozelSon[m], aralik = tekrar === "bir kez" ? Infinity : tekrar === "her yıl" ? 1 : parseInt(tekrar);
-      const K = kosul.split(",").map(x => x.trim());
-      const kosulTutar = K.every(k => k === "-" || (HABER_KOSUL[k] ? HABER_KOSUL[k]() : true)) && (!krizde() || K.includes("kriz"));   // kriz yılında yalnız kriz haberleri
-      return S.yil >= ilkYil && (son === undefined || S.yil - son >= aralik) && kosulTutar
+      return S.yil >= ilkYil && (son === undefined || S.yil - son >= aralik) && tutar(kosul, true)
         && (once === "-" || (S.ozelSon[once] < S.yil && (son === undefined || S.ozelSon[once] > son))) && Math.random() < yuzde / 100;
     });
-    ozel = aday.length ? aday[Math.floor(Math.random() * aday.length)] : null;
-    if (ozel) S.ozelSon[ozel[1]] = S.yil;
+    while (aday.length && secilen.length < D.olasilik.haberYil) secilen.push(aday.splice(Math.floor(Math.random() * aday.length), 1)[0]);
   }
-  const dunya = ozel ? ozel[1] : "";
-  const mans = sifir ? `Liradan 6 sıfır atıldı! Tarihte ${S.sifirSay}. kez` : ilk ? "Şanslı torun milyoner oldu!" : dep ? `İstanbul'da ${dep} büyüklüğünde deprem` : eytMans ? eytMans : dunya ? dunya : krizde() ? "KRİZ! Enflasyon mevduatı yedi." : lahMans ? `Lahmacun ${fTL} oldu!` : ka >= .5 ? `Dolar ${yuz(ka)} fırladı` : r >= .05 ? "Mevduat Fırsatı: Faiz enflasyonu ezdi geçti"
+  const haber = kesin.concat(secilen), ust = haber.length > 0 && !ilk && !dep && !sifir;
+  haber.forEach(h => { S.ozelSon[h[2]] = S.yil;
+    if (h[7] !== "-" && !h[7].startsWith("deprem olayı")) duyuru(baslikYap(h[2].replace(/^Bu Arada /, "")), h[7]); });   // ciddi haber penceresi
+  const alt = (ust ? haber.slice(1) : haber).map(h => h[2]);
+  const mans = sifir ? `Liradan 6 sıfır atıldı! Tarihte ${S.sifirSay}. kez` : ilk ? "Şanslı torun milyoner oldu!" : dep ? `İstanbul'da ${dep} büyüklüğünde deprem` : ust ? haber[0][2] : krizde() ? "KRİZ! Enflasyon mevduatı yedi." : lahMans ? `Lahmacun ${fTL} oldu!` : ka >= .5 ? `Dolar ${yuz(ka)} fırladı` : r >= .05 ? "Mevduat Fırsatı: Faiz enflasyonu ezdi geçti"
     : r >= 0 ? "Faiz enflasyonu ancak yakaladı" : r > -.05 ? "Faiz enflasyonun gerisinde kaldı" : "Mevduat sahipleri yine kaybetti";
   const pol = politika();
   const kisa = [`Enflasyon ${yuz(S.eko.enf)}, mevduat faizi ${yuz(S.eko.faiz)}: reel faiz ${yuz(r)}.`, pol !== null ? `Merkez Bankası politika faizi ${yuz(pol)}.` : "",
@@ -1623,7 +1673,7 @@ function gazeteKupuru() {
     if (mans.startsWith("Lahmacun")) kisa.unshift(`Servetin ${lah.toLocaleString("tr-TR")} lahmacun ediyor.`);   // lahmacun yalnız manşet çıkan yıl
   }
   if (sifir) kisa.unshift(S.sifirSay > 1 ? `1.000.000 TL artık 1 TL. Türkiye bunu ilk kez 2005'te yaptı.` : `1.000.000 TL artık 1 YTL: Yeni Türk Lirası geldi.`);
-  const html = `<span class="gz-etiket">${ozel ? ozel[0] : "Ekonomi Haberleri"}, ${S.yil}</span><div class="gz-baslik">${baslikYap(mans)}</div><p>${kisa.filter(Boolean).join(" ")}</p>`;
+  const html = `<span class="gz-etiket">${ust ? haber[0][1] : "Ekonomi Haberleri"}, ${S.yil}</span><div class="gz-baslik">${baslikYap(mans)}</div>${alt.map(a => `<div class="gz-alt">${baslikYap(a)}</div>`).join("")}<p>${kisa.filter(Boolean).join(" ")}</p>`;
   $("haber").innerHTML = html;
   note("Ekonomi", `<div class="gazete">${html}</div>`, { sessiz: true, src: S.yil >= 2014 ? LAHMACUN_SRC : "" });
 }
@@ -1966,19 +2016,22 @@ function yilKapat() {
   if (S.evler.length) ode("Ev bakımı ve tadilat", evDeger() * D.bakim);
   // DASK zorunlu; deprem olursa hasarın DASK teminatını aşan kısmı onarım gideri
   const DP = D.deprem, teminat = i => Math.min(DP.teminat, DP.m2Bedel * evM2(i));
-  if (S.evler.length) ode("DASK (deprem sigortası)", S.evler.reduce((a, e, i) => a + teminat(i) * DP.primOran, 0));
+  const dask = S.yil >= DP.daskBas, marmara = S.yil === DP.marmara.yil;
+  if (S.evler.length && dask) ode("DASK (deprem sigortası)", S.evler.reduce((a, e, i) => a + teminat(i) * DP.primOran, 0));
   // deprem herkes için büyük haber: pencere, Arşiv ve gelecek yılın manşeti; evin varsa hasar büyüklüğe göre
-  if (Math.random() < DP.olasilik) {
-    const M = Math.round((DP.buyuk[0] + Math.random() * (DP.buyuk[1] - DP.buyuk[0])) * 10) / 10, Mt = M.toLocaleString("tr-TR", { minimumFractionDigits: 1 });
-    const oran = DP.hasar[0] + (M - DP.buyuk[0]) / (DP.buyuk[1] - DP.buyuk[0]) * (DP.hasar[1] - DP.hasar[0]);
-    let m = `İstanbul'da ${Mt} büyüklüğünde deprem oldu. Binalar hasar gördü, insanlar geceyi dışarıda geçirdi.`;
+  if (marmara || (!DP.rastgeleYok.includes(S.yil) && Math.random() < DP.olasilik)) {
+    const M = marmara ? DP.marmara.buyuk : Math.round((DP.buyuk[0] + Math.random() * (DP.buyuk[1] - DP.buyuk[0])) * 10) / 10, Mt = M.toLocaleString("tr-TR", { minimumFractionDigits: 1 });
+    const oran = marmara ? DP.marmara.hasar : DP.hasar[0] + (M - DP.buyuk[0]) / (DP.buyuk[1] - DP.buyuk[0]) * (DP.hasar[1] - DP.hasar[0]);
+    let m = marmara ? `17 Ağustos 1999 gecesi Gölcük merkezli ${Mt} büyüklüğünde deprem oldu. 17 binden fazla insan hayatını kaybetti. İstanbul'da da binalar yıkıldı, insanlar haftalarca geceyi dışarıda geçirdi.`
+      : `İstanbul'da ${Mt} büyüklüğünde deprem oldu. Binalar hasar gördü, insanlar geceyi dışarıda geçirdi.`;
     if (S.evler.length) {
-      const hasar = S.evler.map((e, i) => evFiyat(i) * yip(i) * oran), odeme = S.evler.map((e, i) => Math.min(hasar[i], teminat(i)));
+      const hasar = S.evler.map((e, i) => evFiyat(i) * yip(i) * oran), odeme = S.evler.map((e, i) => dask ? Math.min(hasar[i], teminat(i)) : 0);
       const kalan = hasar.reduce((a, h, i) => a + h - odeme[i], 0);
       ode("Deprem onarımı", kalan);
-      m += `<br>Evlerinde hasar (%${Math.round(oran * 100)}): ${tl(hasar.reduce((a, b) => a + b, 0))}. DASK ödedi: ${tl(odeme.reduce((a, b) => a + b, 0))}. Kalan onarım senden: <b class="minus">−${tl(kalan)}</b>`;
+      m += `<br>Evlerinde hasar (%${Math.round(oran * 100)}): ${tl(hasar.reduce((a, b) => a + b, 0))}. ` + (dask ? `DASK ödedi: ${tl(odeme.reduce((a, b) => a + b, 0))}. Kalan onarım senden: ` : "Zorunlu deprem sigortası (DASK) henüz yoktu; onarımın tamamı senden: ") + `<b class="minus">−${tl(kalan)}</b>`;
     } else m += "<br>Kirada oturduğun ev hasar gördü; onarımı ev sahibinin sorumluluğunda.";
-    S.depremHaber = Mt; note("Deprem", m, { src: DP.src }); duyuru(`İstanbul'da ${Mt} Büyüklüğünde Deprem`, m);
+    if (!marmara) S.depremHaber = Mt;   // 1999'un manşeti tarihi manşetlerde
+    note("Deprem", m, { src: marmara ? DP.marmara.src : DP.src }); duyuru(marmara ? `Marmara'da ${Mt} Büyüklüğünde Deprem` : `İstanbul'da ${Mt} Büyüklüğünde Deprem`, m);
   }
   // kira yılda bir geçen yılın enflasyonuyla artar (2022-2023'te en çok %25); bu yılın enflasyonu yüksekse reel geriler, piyasayı geçmez
   const artis = Math.min(S.enfGecen ?? S.eko.enf, S.yil < 2026 && D.kiraSinir[S.yil] || Infinity);
