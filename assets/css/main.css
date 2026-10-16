@@ -1691,6 +1691,9 @@ html { overflow-y: scroll; scrollbar-gutter: stable; }
 /* Flatter dropdown submenu, slimmer featured-image frame */
 .navbar .navbar__submenu { box-shadow: none; border-width: 1px; }
 .post__cover { padding: calc(var(--baseline) * 1); border-width: 5px; }
+/* Theme option featuredImagePlain: featured image without frame, edge to edge,
+   spaced like an image at the top of the post text (16px above, 40px below) */
+.post__cover--plain { border: 0; padding: 0; margin-top: calc(var(--baseline) * 4); }
 
 /* Footer RSS link (config: feedLink), inline after the copyright. The
    separator dot lives on the wrapper span, so only "RSS" is the link. */
