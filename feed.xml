@@ -3,7 +3,7 @@
     <title>Alem-i Özgür - ozthealem logs</title>
     <link href="https://ozthealem.com/feed.xml" rel="self" />
     <link href="https://ozthealem.com" />
-    <updated>2026-10-17T01:11:11+03:00</updated>
+    <updated>2026-10-17T01:13:32+03:00</updated>
     <author>
         <name>Özgür Alem</name>
     </author>
@@ -93,7 +93,7 @@
         </content>
     </entry>
     <entry>
-        <title>Oyun Mu Yapıyorum 1: Temel Atıldı Karakter Koştu</title>
+        <title>Oyun Mu Yapıyorum 1: Karakter Koştu Hopladı</title>
         <author>
             <name>Özgür Alem</name>
         </author>
@@ -117,7 +117,7 @@
 
 <p dir="ltr">Günün geri kalanı görünmeyen işlerle geçti: Visual Studio güncellemesi, derleyici ayarları, git deposu... Neyse ki motor böyle hazır bir şablonla geliyor. Play'e bastım ve karakter aşağıdaki gibi koştu. Küçük bir şey ama başlangıç için yeterli.</p>
 <figure class="post__image post__image--center"><img loading="lazy"  src="https://ozthealem.com/media/posts/14/oyun-yapiyorum-01-2.gif" alt="zıplayan adam game" width="421" height="225"></figure>
-<p dir="ltr">Editör olarak VS Code'u seçtim, yazılımcı arkadaşlar onu önerdi. YZ başka şeyler önerdi ve tabii ki o önerileri benim bağlamıma uymuyordu. Sonra Unreal ile YZ arasında köprü kuran bir MCP (Model Context Protocol) sunucusu denedim. YZ sahneye bir küp koydu, kırmızıya boyadı, biraz yukarı kaydırdı. Deneme aşamasında olduğu için fazla işin içine girmedim. Aslında <em>Blueprint</em> (görsel programlama dili) benim daha çok sevdiğim bir sistem. Fakat işin içinde YZ olunca onun <em>token </em>ekonomisine uygun plan yapmak gerekiyor. Sonuçta bu, tek geliştiricili bir grafik doktora projesi olacak. Görseller benden, yazılım YZ'den, bereketi yaratandan.<br><br><strong>Not:</strong> Yazılımcılar, YZ ile görselcileri elemeye çalışırken biz görsel tasarımcılar da yazılımcıları neden bypass etmeyi denemeyelim ki? Kodu sağlam ama görseli tutarsız oyunlardan ve görseli güzel ama hata dolu oyunlardan oluşan bir çöplüğe doğru gidiyoruz.. Bu yüzden bu uzlaşısızlık ve bireyselcilik çağında bir süre yazılıma ağırlık vermek zorundayım, en azından prototipi oluşturacak kadar genel bir yazılım tasarım mimarisi bilsem yeterli.</p>
+<p dir="ltr">Editör olarak VS Code'u seçtim, yazılımcı arkadaşlar onu önerdi. YZ başka şeyler önerdi ve tabii ki o önerileri benim bağlamıma uymuyordu. Sonra Unreal ile YZ arasında köprü kuran bir MCP (Model Context Protocol) sunucusu denedim. YZ sahneye bir küp koydu, kırmızıya boyadı, biraz yukarı kaydırdı. Deneme aşamasında olduğu için fazla işin içine girmedim. Aslında <em>Blueprint</em> (görsel programlama dili) benim daha çok sevdiğim bir sistem. Fakat işin içinde YZ olunca onun <em>token </em>ekonomisine uygun plan yapmak gerekiyor. Sonuçta bu, tek geliştiricili bir grafik doktora projesi olacak. Görseller benden, yazılım YZ'den, bereketi yaratandan.<br><br><strong>Not:</strong> Yazılımcılar, YZ ile görselcileri elemeye çalışırken biz görsel tasarımcılar da yazılımcıları neden bypass etmeyi denemeyelim ki? Kodu sağlam ama görseli tutarsız oyunlardan ve görseli güzel ama hata dolu oyunlardan oluşan bir çöplüğe doğru gidiyoruz. Bu yüzden bu uzlaşısızlık ve bireyselcilik çağında bir süre yazılıma ağırlık vermek zorundayım, en azından prototipi oluşturacak kadar genel bir yazılım tasarım mimarisi bilsem yeterli.</p>
             ]]>
         </content>
     </entry>
