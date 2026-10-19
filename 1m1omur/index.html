@@ -9,6 +9,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>1M$ Bir Ömür</title>
+<!-- Ziyaret ve olay sayacı (Umami, nabiz.cezvi.com, çerezsiz). Yalnız ozthealem.com'da sayar; vault'tan açınca saymaz. -->
+<script defer src="https://nabiz.cezvi.com/nabiz.js" data-website-id="7c514da7-4234-4d2a-86ff-f5519dd4c893" data-domains="ozthealem.com,ozthealem.github.io"></script>
 <style>/* yazı tipleri oyunun yanında (Fonts/), Google'a bağlanılmaz; latin ve latin-ext (Türkçe) alt kümeleri */
 /* Atkinson Hyperlegible Next (Braille Institute, 2025; değişken kalınlık): eski Atkinson'da büyük İ yoktu */
 @font-face {
@@ -659,7 +661,7 @@ const lahmacunTL = () => S.yil <= 2026 ? LAHMACUN[S.yil] : LAHMACUN[2026] * S.en
 const POLITIKA = { 2010: 6.5, 2011: 5.75, 2012: 5.5, 2013: 4.5, 2014: 8.25, 2015: 7.5, 2016: 8, 2017: 8, 2018: 24, 2019: 12, 2020: 17, 2021: 14, 2022: 9, 2023: 42.5, 2024: 47.5, 2025: 38, 2026: 37 };
 // Bilgi bölümü: oyundaki her verinin kaynağı (başlık, [ad, açıklama, bağlantı])
 // Künye (GDD K13): Kurallar ve kaynaklar penceresinin sonunda. Sürüm her yeni sürümde güncellenir.
-const KUNYE = { oyun: "1M$ Bir Ömür", surum: "v97", yil: 2026, yapan: "Tasarım ve geliştirme: Özgür Alem, Cezvi Studio", veri: "Veriler: TCMB, TÜİK, SGK, DASK ve diğerleri (yukarıdaki kaynaklar)" };
+const KUNYE = { oyun: "1M$ Bir Ömür", surum: "v98", yil: 2026, yapan: "Tasarım ve geliştirme: Özgür Alem, Cezvi Studio", veri: "Veriler: TCMB, TÜİK, SGK, DASK ve diğerleri (yukarıdaki kaynaklar)" };
 const KAYNAKLAR = [
   ["Geçmiş ekonomi (1978-2025, gerçek veri)", [
     ["TÜİK TÜFE", "yıllık enflasyon; Vikipedi tablosu üzerinden", ""],
@@ -1380,6 +1382,8 @@ function oturumAc() {
   fetch(OTURUM_API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ oyun: SEREF_OYUN }) })
     .then(r => r.ok ? r.json() : null).then(j => { if (j && j.id) S.oturum = j.id; }).catch(() => {});
 }
+// Oyun olayları (Umami, v98): başladı / bitti. Sayaç yoksa (reklam engelleyici, vault'tan açma) sessizce geçer.
+const olay = (ad, veri) => { try { if (window.umami) window.umami.track(ad, veri); } catch (e) {} };
 const kacis = t => String(t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 function yerelListe() { try { return JSON.parse(localStorage.getItem(SEREF_YEREL)) || []; } catch (e) { return []; } }
 function serefKaydet(k) {
@@ -1429,7 +1433,7 @@ function mirasKart(Y) {
 $("nameIn").focus();
 
 function basla(miras) {
-  $("start").remove(); oturumAc();
+  $("start").remove(); oturumAc(); olay("oyun-basladi", { baslangic: S.bas });
   S.kur0 = S.kur2026 = D.kur;
   if (S.bas < 2026) {                        // geçmiş yıl: fiyat endeksi o yılın başına, kur o yılın kuruna
     S.yil = S.bas; S.endeks = 1 / (1 + ENF_2026_9AY);   // Eylül 2026 = 1
@@ -2275,6 +2279,7 @@ function son(kazandi, msg, ozelBaslik) {
   const fk = kart(baslik, metin + gizliKutu, { cls: "q" });
   fk.insertAdjacentHTML("beforeend", `<div class="opts one"><button class="opt yenidenBtn">YENİDEN OYNA</button></div>`);
   fk.querySelector(".yenidenBtn").onclick = () => location.reload();
+  olay("oyun-bitti", { sonuc: baslik, puan: Math.round(puan), yas: S.yas, baslangic: S.bas, yil: S.yil, gizli });
   const temizAd = (S.ad || "Mehmet").replace(/[<>&"]/g, "").trim().slice(0, ISIM_MAX);
   const kayit = { isim: temizAd && isimUygunMu(temizAd) ? temizAd : "Mehmet", yas: S.yas, puan: Math.min(10000000, Math.round(puan)), bas: S.bas, baslik, tarih: Date.now(), gizli };   // gizli: şeref listesinde ★
   const finalAc = () => {
