@@ -1840,18 +1840,20 @@ main:focus {
   display: none;
 }
 /* Terminal drops the first post's top padding (its title brings its own
-   margin); these layouts don't have that. 40px below the navbar looks equal
-   to the gap above the footer (the navbar's own bottom space adds to it). */
+   margin); these layouts don't have that. 24px here plus the navbar's own
+   32px under its links matches the 56px between the last post and the
+   footer text (measured in the browser). */
 .content > .posts.posts--half:first-child > .post:first-child,
 .content > .posts.posts--compact:first-child > .post:first-child,
 .content > .posts.posts--list:first-child > .post:first-child {
-  padding-top: calc(var(--baseline) * 10);
+  padding-top: calc(var(--baseline) * 6);
 }
 
 /* Half: image on the left at the height of the text (cropped to fit, at least
    7.5rem), title (2 lines), details and a 4-line excerpt on the right. A post
    with no image at all uses the full width. The frame hugs the image and can
-   be switched off (listingHalfFrame -> posts--plain-thumbs). */
+   be switched off (listingFrame -> posts--plain-thumbs; in Full the cover
+   gets post__cover--plain). */
 .posts.posts--half > .post {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
@@ -2011,4 +2013,10 @@ main:focus {
   .posts.posts--list > .post {
     grid-template-columns: 1fr;
   }
+}
+
+/* Publii preview only: note in place of the comments (post.hbs) */
+.post__comments-preview {
+  font-size: .9rem;
+  color: hsla(var(--color), .5);
 }
