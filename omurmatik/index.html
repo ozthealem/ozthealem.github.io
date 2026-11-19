@@ -610,6 +610,8 @@ const servet = () => nakit() + evDeger() + digerDeger();
 const varlikVar = () => !!(S.evler.length || S.araba || S.esAraba || S.kafe || S.tarla);   // ACİL'de satılabilecek bir şey var mı
 const servetAG = () => servet() / (S.kur2026 || D.kur);
 const harcanabilir =() => nakit() - S.secimler.reduce((a, b) => a + (b._tutar || 0), 0);
+// v3.31: kapalı seçeneklerde "nakdin yetmiyor (nakit: X)"; X o anki harcanabilir nakit (evler sayılmaz, bu yılın bekleyen harcamaları düşülür)
+const nakitYetmez = () => `nakdin yetmiyor (nakit: ${tl(harcanabilir())})`;
 
 // faiz gelirdir (vadeli ve dolar, bileşik: faiz hesaba eklenir); enflasyonun ve kurun erittiği ayrı, "Enflasyon karşısında"
 const SABIT_KAZANC = ["Kira geliri", "Emekli maaşı", "Vadeli faizi", "Dolar faizi", "Kafe kârı"];
@@ -1177,7 +1179,7 @@ function ciz() {
   $("yilLine").innerHTML = `<span class="asg" title="Bir asgari ücretlinin kaç aylık maaşı. Bu yıl net asgari ücret ${tlTL(asgariReel(S.yil))}."><b>${asgN.toLocaleString("tr-TR")}</b>asgari ücret</span>${tlKisa(servet())}`;
   const milyon = Math.max(0, servetAG() / 1e6); if (!$("kadran")) $("money").insertAdjacentHTML("beforeend", `<div class="kadran" id="kadran"></div>`);
   $("kadran").style.setProperty("--p", Math.min(1, milyon)); $("kadran").innerHTML = `<i></i>milyondan %${Math.round(milyon * 100)}`; $("kadran").title = "Servetin bugünün 1 milyon dolarına oranı";
-  $("usd").title = `Nakdin (vadesiz, vadeli ve dolar; evler hariç) bugünün doları kadar alım gücü. Bu yılın kuruyla $${Math.round(nakit() / D.kur).toLocaleString("tr-TR")}. Servetin tamamı Bilanço'da.`;   // v3.31: sayaç nakit
+  $("usd").title = `Servetin (nakit ve evler) bugünün doları kadar alım gücü. Bu yılın kuruyla $${Math.round(servet() / D.kur).toLocaleString("tr-TR")}.`;
   const kf = n => n.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const nom = D.kur * S.endeks;   // nominal kur = reel kur × fiyat endeksi
   // ekonomi şeridi: gazetenin piyasa köşesi
@@ -1294,9 +1296,8 @@ function grafik() {
 let anim = null;
 function sayac() {
   cancelAnimationFrame(anim);
-  // v3.31 (kullanıcı kararı): sayaç yalnız nakit (vadesiz + vadeli + dolar), "paran yetmiyor" hesabıyla aynı temel; servet Bilanço'da
-  const bas = S.gosterilen, hedef = nakit() / (S.kur2026 || D.kur), t0 = performance.now();
-  const adim = now => { const u = Math.min(1, (now - t0) / 900); S.gosterilen = bas + (hedef - bas) * (1 - Math.pow(1 - u, 3)); $("usd").innerHTML = S.birim === "tl" ? tlBuyuk(nakit()) : usdBuyuk(S.gosterilen); if (u < 1 && S.birim !== "tl") anim = requestAnimationFrame(adim); };
+  const bas = S.gosterilen, hedef = servetAG(), t0 = performance.now();
+  const adim = now => { const u = Math.min(1, (now - t0) / 900); S.gosterilen = bas + (hedef - bas) * (1 - Math.pow(1 - u, 3)); $("usd").innerHTML = S.birim === "tl" ? tlBuyuk(servet()) : usdBuyuk(S.gosterilen); if (u < 1 && S.birim !== "tl") anim = requestAnimationFrame(adim); };
   anim = requestAnimationFrame(adim);
 }
 
@@ -1936,7 +1937,7 @@ function degistir(id) {
   const i = +id.slice(2), eskiAd = evAdi(i), eskiSemt = evB(i).ad, sd = satisDegeri(id), surum = S.evSurum;
   zorunluSor("Emlakçı", `${eskiAd} evini satıp hangisine geçeceksin? (harç %2 dahil)`, ["ucuz", "orta", "luks"].map(k => {
     const E = D.evler[k], yeni = evSecenegi(k, eskiSemt), f = yeni.fiyat * (1 + D.harc), yetmez = harcanabilir() + sd < f;
-    return { t: `${SEG[k]} · ${yeni.ad} ${yeni.tip}`, s: tl(f) + (yetmez ? "<br>paran yetmiyor" : ""), kapali: yetmez, tutar: f - sd, f: () => {
+    return { t: `${SEG[k]} · ${yeni.ad} ${yeni.tip}`, s: tl(f) + (yetmez ? "<br>" + nakitYetmez() : ""), kapali: yetmez, tutar: f - sd, f: () => {
       // arada bir ev satıldıysa ya da değiştirildiyse liste kaymıştır: yanlış evi satmamak için iptal
       if (S.evSurum !== surum || S.evler[i] === undefined) return note("Emlakçı", `Ev listen değişti, ${eskiAd} evini değiştirme iptal edildi.`);
       if (nakit() + satisDegeri("ev" + i) < f) return note("Emlakçı", `Paran yetmedi, ${eskiAd} evini değiştiremedin.`);
@@ -1951,7 +1952,7 @@ function evSec() {
   soru("Gayrimenkul", ilk ? "İlk evin, içinde oturacaksın. Hangisi? (harç %2 dahil)" : "Kiraya vermek için hangi ev? (harç %2 dahil)", ["ucuz", "orta", "luks"].map(k => {
     const E = D.evler[k], yeni = evSecenegi(k), f = yeni.fiyat * (1 + D.harc), ad = `${yeni.ad} ${yeni.tip}`;
     const yetmez = harcanabilir() < f;
-    return { t: `${SEG[k]} · ${ad}`, ad: ilk ? "Ev" : "Kiralık ev", s: tl(f) + (yetmez ? "<br>paran yetmiyor" : ilk ? "" : `<br>kira ${tl(yeni.kira)}`), kapali: yetmez, tutar: f, f: () => {
+    return { t: `${SEG[k]} · ${ad}`, ad: ilk ? "Ev" : "Kiralık ev", s: tl(f) + (yetmez ? "<br>" + nakitYetmez() : ilk ? "" : `<br>kira ${tl(yeni.kira)}`), kapali: yetmez, tutar: f, f: () => {
       if (nakit() < f) return note("Emlakçı", `Paran yetmedi, ${ad} evini alamadın.`);
       S.evler.push(k); S.evYas[S.evler.length - 1] = 0; S.evBilgi[S.evler.length - 1] = yeni; al("Ev alımı", f);
       note("Emlakçı", (ilk ? `${ad}: ilk evini aldın ve taşındın: <b class="minus">−${tl(f)}</b>. Artık kira ödemiyorsun.` : `${ad}: bir ev daha aldın, kiraya verdin: <b class="minus">−${tl(f)}</b>. Aylık kira geliri ${tl(yeni.kira)}.`)
@@ -1967,7 +1968,7 @@ function arabaSecenek(yenile) {
     const A = D.arabalar[k];   // listede yalnız fiyat; yıllık masraf alınca Araba kutusunda
     const takas = yenile && S.araba ? satisDegeri("araba") : 0, yetmez = harcanabilir() + takas < A.fiyat;
     const model = modelSec(k, S.arabaAd);
-    return { k, ad: "Araba", t: { ucuz: "Ucuz", orta: "Orta", luks: "Lüks" }[k] + " · " + model + (A.yas0 ? ` (${A.yas0} yaşında)` : " (sıfır)"), s: tl(A.fiyat) + (yetmez ? " · paran yetmiyor" : ""), kapali: yetmez, tutar: A.fiyat - takas, f: () => {
+    return { k, ad: "Araba", t: { ucuz: "Ucuz", orta: "Orta", luks: "Lüks" }[k] + " · " + model + (A.yas0 ? ` (${A.yas0} yaşında)` : " (sıfır)"), s: tl(A.fiyat) + (yetmez ? " · " + nakitYetmez() : ""), kapali: yetmez, tutar: A.fiyat - takas, f: () => {
       if (nakit() + (yenile && S.araba ? satisDegeri("araba") : 0) < A.fiyat) return note("Galeri", `Paran yetmedi, ${model} alınamadı.`);
       if (yenile && S.araba) { const d = satisDegeri("araba"); gelir("Araba satışı", d); note("Galeri", `Eski araban takasta ${tl(d)}'ye gitti.`); }
       S.araba = k; S.arabaAd = model; S.arabaYil = 0; al("Araba alımı", A.fiyat); note("Galeri", `${model} aldın: <b class="minus">−${tl(A.fiyat)}</b>`, { src: A.src + "; model adı süs, fiyat segmentin" });
@@ -1978,7 +1979,7 @@ function arabaSecenek(yenile) {
 function esArabaSec() {
   soru("Eşine araba al", "Hangi araba?", ["ucuz", "orta", "luks"].map(k => {
     const A = D.arabalar[k], model = modelSec(k, S.arabaAd), yetmez = harcanabilir() < A.fiyat;
-    return { ad: "Eşine araba", t: SEG[k] + " · " + model + (A.yas0 ? ` (${A.yas0} yaşında)` : " (sıfır)"), s: tl(A.fiyat) + (yetmez ? " · paran yetmiyor" : ""), kapali: yetmez, tutar: A.fiyat, f: () => {
+    return { ad: "Eşine araba", t: SEG[k] + " · " + model + (A.yas0 ? ` (${A.yas0} yaşında)` : " (sıfır)"), s: tl(A.fiyat) + (yetmez ? " · " + nakitYetmez() : ""), kapali: yetmez, tutar: A.fiyat, f: () => {
       if (nakit() < A.fiyat) return note("Galeri", `Paran yetmedi, ${model} alınamadı.`);
       S.esAraba = { k, ad: model, yil: 0 }; al("Araba alımı", A.fiyat); note("Galeri", `Eşine ${model} aldın: <b class="minus">−${tl(A.fiyat)}</b>`, { src: A.src + "; model adı süs, fiyat segmentin" });
     } };
@@ -2098,7 +2099,7 @@ function sacmala() {
       return { t: ad, s: `${tl(Z.estetik)} · konfor +1`, tutar: Z.estetik, f: () => { S.estetik = true; al("Estetik", Z.estetik); note("Klinik", "Aynaya bakınca keyfin yerine geldi. Konfor kalıcı olarak +1. (tutar örnek)"); } }; })(),
     { t: "Komşunun düğününe çeyrek altın tak", s: tl(Z.ceyrek), f: () => { al("Düğün takısı", Z.ceyrek); note("Komşu", "Takı töreninde adın anons edildi: \"Bir çeyrek!\" Alkışlar biraz cılız.", { src: D.ceyrekSrc }); } },
     S.es && (() => { const E = D.evler.ucuz, ev = evSecenegi("ucuz", null, true), f = ev.fiyat * (1 + D.harc), yetmez = harcanabilir() < f, semt = `${ev.ad} ${ev.tip}`;
-      return { t: "Kayınvalideye ev al", s: `${tl(f)} · ${semt}${yetmez ? " · paran yetmiyor" : ""}`, kapali: yetmez, tutar: f, f: () => {
+      return { t: "Kayınvalideye ev al", s: `${tl(f)} · ${semt}${yetmez ? " · " + nakitYetmez() : ""}`, kapali: yetmez, tutar: f, f: () => {
         if (nakit() < f) return note("Emlakçı", "Paran yetmedi, kayınvalideye ev alamadın.");
         al("Kayınvalideye ev", f); note("Kayınvalide", `Semt: ${semt}. Artık her bayram sizde. Ev onun, senin varlığın değil.`, { src: E.src }); } }; })(),
     !S.tarla && { t: "Köyde organik tarım için arazi al", s: tl(Z.tarla), tutar: Z.tarla, f: () => { al("Tarla alımı", Z.tarla); S.tarla = { para: Z.tarla, deger: Z.tarla, yil: 0 };
