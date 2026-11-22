@@ -890,15 +890,17 @@ body.sahne #mailBtn:active, body.sahne #tamEkran:active { background:rgba(0,0,0,
 body.sahne #mailBtn:focus-visible, body.sahne #tamEkran:focus-visible, body.sahne #go:focus-visible { outline:2px solid #e8c66e; outline-offset:2px; }
 body.sahne #badge { left:92px; top:16px; right:auto; width:37px; min-width:0; height:20px; padding:0; letter-spacing:6.5px; border:none; border-radius:0; background:none; box-shadow:none;
   font:800 14px/20px var(--fn); color:#e3a23b; text-align:right; }
-body.sahne #go { position:absolute; left:372px; top:714px; width:536px; height:66px; margin:0; padding:2px 0 18px; border:none; border-radius:33px; background:none; box-shadow:none;
-  color:#fbefe0; text-shadow:0 1px 0 #6e1a10; font:900 26px/28px var(--fh); letter-spacing:1px; pointer-events:auto; }
-body.sahne #go::before { content:""; display:inline-block; width:44px; height:28px; margin-right:9px; vertical-align:-4px; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 28'%3E%3Cpath d='M0 0 L20 14 L0 28 Z' fill='%23fbefe0'/%3E%3Cpath d='M24 0 L44 14 L24 28 Z' fill='%23fbefe0' opacity='.55'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat; }
-body.sahne #go small { display:block; margin-top:0; font:400 10.5px/12px var(--fn); color:#f7d6c4; letter-spacing:0; text-shadow:none; }
+body.sahne #go { position:absolute; left:372px; top:714px; width:536px; height:66px; margin:0; padding:5px 0 15px; border:none; border-radius:33px; background:none; box-shadow:none;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  color:#fbefe0; text-shadow:0 1px 0 #6e1a10; font:900 21px/21px var(--fh); letter-spacing:1px; pointer-events:auto; }
+body.sahne #go .ust { display:inline-flex; align-items:center; justify-content:center; gap:8px; line-height:21px; }
+body.sahne #go .ust::before { content:""; display:block; flex:none; width:25px; height:16px; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 28'%3E%3Cpath d='M0 0 L20 14 L0 28 Z' fill='%23fbefe0'/%3E%3Cpath d='M24 0 L44 14 L24 28 Z' fill='%23fbefe0' opacity='.55'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat; }
+body.sahne #go small { display:block; margin-top:1px; font:400 10.5px/11px var(--fn); color:#f7d6c4; letter-spacing:0; text-shadow:none; }
 body.sahne #go .kanal { left:43px; right:auto; width:450px; top:51px; bottom:auto; }
 body.sahne #go:not(:disabled):hover { background:rgba(255,226,170,.07); box-shadow:0 0 24px 6px rgba(255,214,120,.28); }
 body.sahne #go:disabled { background:rgba(24,20,16,.5); color:#d9cfc0; text-shadow:none; }
-body.sahne #go:disabled::before { opacity:.4; }
-#go.isliyor::before, #go.yeniYil::before { display:none !important; }   /* v3.22: işlerken ok yok, VC slayt 09 */
+body.sahne #go:disabled .ust::before { opacity:.4; }
+#go.isliyor .ust::before, #go.yeniYil .ust::before { display:none !important; }   /* v3.22: işlerken ok yok, VC slayt 09 */
 /* v3.1 Parçalı yüzey: zemin bütün ekranı kaplar (sahne/bg.svg; 19 Kas'a kadar kasa.svg). Paneller tek SVG (sahne/paneller.svg), border-image ile üç dilim: üst 0-518 sabit,
    orta 518-540 ekran uzadıkça boylanır (--e kadar), alt 540-800 aşağı kayar. Sütunlar ve alt sıra --e kadar uzar ya da kayar.
    Servet ekranının camı (tarama, vinyet, yansıma) rakamın üstünde (sahne/lcd_cam.svg). */
@@ -906,7 +908,7 @@ body, body.sahne { background:#16211e url("bg.svg?v=3.30") 0 0 / 100% 100% no-re
 body.sahne #app { height:calc(800px + var(--e, 0px)); }
 body.sahne #sahneBG > i { position:absolute; display:block; }
 body.sahne #sahneBG > .sbUst { left:0; top:0; width:1280px; height:calc(800px + var(--e, 0px)); box-sizing:border-box; border-style:solid; border-width:518px 0 260px 0;
-  border-image:url("paneller.svg?v=3.39") 518 0 260 0 fill / 518px 0 260px 0 stretch; }
+  border-image:url("paneller.svg?v=3.46") 518 0 260 0 fill / 518px 0 260px 0 stretch; }
 body.sahne #sahneBG > .sbOrta, body.sahne #sahneBG > .sbAlt { display:none; }
 body.sahne #sahneBG > .lcdCam { left:384px; top:31px; width:326px; height:52px; background:url("lcd_cam.svg?v=3.25") 0 0 / 100% 100% no-repeat; z-index:4; }
 body.sahne #notes { height:calc(388px + var(--e, 0px)); }
