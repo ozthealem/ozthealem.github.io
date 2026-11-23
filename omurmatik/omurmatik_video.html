@@ -1,0 +1,1907 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bir Nokta Bir Ömür - Ömürmatik</title>
+<!-- Ziyaret sayacı (Umami, nabiz.cezvi.com, çerezsiz). Yalnız ozthealem.com'da sayar; vault'tan açınca saymaz. -->
+<script defer src="https://nabiz.cezvi.com/nabiz.js" data-website-id="59b41e6d-6b1d-4259-b613-aa67f1249f2b" data-domains="ozthealem.com,ozthealem.github.io"></script>
+<style>/* Yerel fontlar (../Fonts/, Fonts/, ../Oyun/Fonts/); Google'a bağlanılmaz, hem file:/// hem HTTP'de çalışır */
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url(../Fonts/atkinsonnext-latin-ext.woff2) format('woff2'), url(Fonts/atkinsonnext-latin-ext.woff2) format('woff2'), url(../Oyun/Fonts/atkinsonnext-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url(../Fonts/atkinsonnext-latin.woff2) format('woff2'), url(Fonts/atkinsonnext-latin.woff2) format('woff2'), url(../Oyun/Fonts/atkinsonnext-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  font-style: italic;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url(../Fonts/atkinsonnext-i-latin-ext.woff2) format('woff2'), url(Fonts/atkinsonnext-i-latin-ext.woff2) format('woff2'), url(../Oyun/Fonts/atkinsonnext-i-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  font-style: italic;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url(../Fonts/atkinsonnext-i-latin.woff2) format('woff2'), url(Fonts/atkinsonnext-i-latin.woff2) format('woff2'), url(../Oyun/Fonts/atkinsonnext-i-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(../Fonts/fraunces-700-latin-ext.woff2) format('woff2'), url(Fonts/fraunces-700-latin-ext.woff2) format('woff2'), url(../Oyun/Fonts/fraunces-700-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(../Fonts/fraunces-700-latin.woff2) format('woff2'), url(Fonts/fraunces-700-latin.woff2) format('woff2'), url(../Oyun/Fonts/fraunces-700-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url(../Fonts/fraunces-900-latin-ext.woff2) format('woff2'), url(Fonts/fraunces-900-latin-ext.woff2) format('woff2'), url(../Oyun/Fonts/fraunces-900-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url(../Fonts/fraunces-900-latin.woff2) format('woff2'), url(Fonts/fraunces-900-latin.woff2) format('woff2'), url(../Oyun/Fonts/fraunces-900-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+<style>
+/* Ömürmatik v3.46 · Seçenek A (Dengeli Makine + Gazete) */
+:root {
+  color-scheme: only dark;
+  --kasa: #35514a;
+  --kasa-koyu: #263832;
+  --kasa-derin: #17241f;
+  --pirinc: #a5874f;
+  --pirinc-acik: #e3cf9f;
+  --pirinc-koyu: #5a4220;
+  --krem: #f2ecdb;
+  --krem2: #e3d6b6;
+  --murekkep: #1c1a17;
+  --red: #c23b2a;
+  --manset-kirmizi: #c4271b;
+  --lcd: #111b15;
+  --lcd-yazi: #b8f27c;
+  --fh: 'Fraunces', Georgia, serif;
+  --fb: 'Atkinson Hyperlegible Next', system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  height: 100%;
+  color: var(--krem);
+  font-family: var(--fb);
+  font-size: 16px;
+  background: #16211e url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%221280%22%20height=%22800%22%20viewBox=%220%200%201280%20800%22%20preserveAspectRatio=%22none%22%3E%3Cdefs%3E%3Cfilter%20id=%22filter-1%22%20x=%220%22%20y=%220%22%20width=%22100%25%22%20height=%22100%25%22%20color-interpolation-filters=%22sRGB%22%3E%3CfeTurbulence%20type=%22fractalNoise%22%20baseFrequency=%22.02%20.9%22%20numOctaves=%222%22%20seed=%223%22%20result=%22n%22/%3E%3CfeColorMatrix%20in=%22n%22%20values=%220%200%200%200%20.1%200%200%200%200%20.14%200%200%200%200%20.12%20.4%200%200%200%20-.14%22%20result=%22tane%22/%3E%3CfeMerge%20result=%22m%22%3E%3CfeMergeNode%20in=%22SourceGraphic%22/%3E%3CfeMergeNode%20in=%22tane%22/%3E%3C/feMerge%3E%3CfeComposite%20in=%22m%22%20in2=%22SourceGraphic%22%20operator=%22in%22/%3E%3C/filter%3E%3CclipPath%20id=%22clip-bg%22%3E%3Crect%20x=%220%22%20y=%220%22%20width=%221280%22%20height=%22800%22/%3E%3C/clipPath%3E%3C/defs%3E%3Cg%20clip-path=%22url%28%23clip-bg%29%22%3E%3Cg%3E%3Cg%3E%3Cg%20filter=%22url%28%23filter-1%29%22%3E%3Crect%20x=%220%22%20y=%220%22%20width=%221280%22%20height=%22800%22%20fill=%22%233a524b%22/%3E%3C/g%3E%3Cg%3E%3Cpath%20d=%22M20%206%20L1260%206%20C1267.732%206%201274%2012.268%201274%2020%20L1274%20780%20C1274%20787.732%201267.732%20794%201260%20794%20L20%20794%20C12.268%20794%206%20787.732%206%20780%20L6%2020%20C6%2012.268%2012.268%206%2020%206%20Z%22%20fill=%22none%22%20stroke=%22%232a3d37%22%20stroke-width=%221.5%22/%3E%3C/g%3E%3Cg%3E%3Cpolyline%20points=%226.9,44.49%206.9,43.79%206.9,43.09%206.9,42.39%206.9,41.69%206.9,40.99%206.9,40.29%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.29%22%20stroke-linecap=%22round%22%20opacity=%220.76%22/%3E%3Cpolyline%20points=%226.9,23.5%206.9,22.8%206.9,22.1%206.9,21.4%206.9,20.7%206.9,20%206.92,19.36%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.11%22%20stroke-linecap=%22round%22%20opacity=%220.87%22/%3E%3Cpolyline%20points=%2211.69,9.87%2012.2,9.48%2012.72,9.11%2013.27,8.76%2013.82,8.45%2014.4,8.16%2014.99,7.9%2015.59,7.67%2016.2,7.46%2016.82,7.29%2017.44,7.15%2018.08,7.04%2018.72,6.96%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.07%22%20stroke-linecap=%22round%22%20opacity=%220.62%22/%3E%3Cpolyline%20points=%2224.2,6.9%2024.9,6.9%2025.6,6.9%2026.3,6.9%2027,6.9%2027.7,6.9%2028.4,6.9%2029.1,6.9%2029.8,6.9%2030.5,6.9%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.44%22%20stroke-linecap=%22round%22%20opacity=%220.66%22/%3E%3Cpolyline%20points=%2235.4,6.9%2036.09,6.9%2036.79,6.9%2037.49,6.9%2038.19,6.9%2038.89,6.9%2039.59,6.9%2040.29,6.9%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.31%22%20stroke-linecap=%22round%22%20opacity=%220.74%22/%3E%3Cpolyline%20points=%2244.49,6.9%2045.19,6.9%2045.89,6.9%2046.59,6.9%2047.29,6.9%2047.99,6.9%2048.69,6.9%2049.39,6.9%2050.09,6.9%2050.79,6.9%2051.49,6.9%2052.19,6.9%2052.89,6.9%2053.59,6.9%2054.29,6.9%2054.99,6.9%2055.69,6.9%2056.39,6.9%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.08%22%20stroke-linecap=%22round%22%20opacity=%220.76%22/%3E%3Cpolyline%20points=%2268.98,6.9%2069.68,6.9%2070.38,6.9%2071.08,6.9%2071.78,6.9%2072.48,6.9%2073.18,6.9%2073.88,6.9%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.21%22%20stroke-linecap=%22round%22%20opacity=%220.86%22/%3E%3C/g%3E%3Cg%3E%3Cpolyline%20points=%221273.1,690.42%201273.1,691.12%201273.1,691.82%201273.1,692.52%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.12%22%20stroke-linecap=%22round%22%20opacity=%220.63%22/%3E%3Cpolyline%20points=%221273.1,703.72%201273.1,704.42%201273.1,705.12%201273.1,705.82%201273.1,706.52%201273.1,707.22%201273.1,707.92%201273.1,708.62%201273.1,709.32%201273.1,710.02%201273.1,710.72%201273.1,711.42%201273.1,712.12%201273.1,712.82%201273.1,713.52%201273.1,714.22%201273.1,714.92%201273.1,715.62%201273.1,716.32%201273.1,717.02%201273.1,717.72%201273.1,718.42%201273.1,719.12%201273.1,719.82%201273.1,720.52%201273.1,721.22%201273.1,721.92%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.05%22%20stroke-linecap=%22round%22%20opacity=%220.83%22/%3E%3Cpolyline%20points=%221273.1,726.81%201273.1,727.51%201273.1,728.21%201273.1,728.91%201273.1,729.61%201273.1,730.31%201273.1,731.01%201273.1,731.71%201273.1,732.41%201273.1,733.11%201273.1,733.81%201273.1,734.51%201273.1,735.21%201273.1,735.91%201273.1,736.61%201273.1,737.31%201273.1,738.01%201273.1,738.71%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%220.76%22%20stroke-linecap=%22round%22%20opacity=%220.57%22/%3E%3Cpolyline%20points=%221273.1,751.31%201273.1,752.01%201273.1,752.71%201273.1,753.41%201273.1,754.11%201273.1,754.81%201273.1,755.51%201273.1,756.21%201273.1,756.91%201273.1,757.61%201273.1,758.31%201273.1,759.01%201273.1,759.71%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%220.74%22%20stroke-linecap=%22round%22%20opacity=%220.73%22/%3E%3Cpolyline%20points=%221273.1,773%201273.1,773.7%201273.1,774.4%201273.1,775.1%201273.1,775.8%201273.1,776.5%201273.1,777.2%201273.1,777.9%201273.1,778.6%201273.1,779.3%201273.1,780%201273.08,780.64%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.23%22%20stroke-linecap=%22round%22%20opacity=%220.56%22/%3E%3Cpolyline%20points=%221272.1,785.01%201271.84,785.6%201271.55,786.18%201271.24,786.73%201270.89,787.28%201270.52,787.8%201270.13,788.31%201269.71,788.8%201269.26,789.26%201268.8,789.71%201268.31,790.13%201267.8,790.52%201267.28,790.89%201266.73,791.24%201266.18,791.55%201265.6,791.84%201265.01,792.1%201264.41,792.33%201263.8,792.54%201263.18,792.71%201262.56,792.85%201261.92,792.96%201261.28,793.04%201260.64,793.08%201260,793.1%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.36%22%20stroke-linecap=%22round%22%20opacity=%220.72%22/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat fixed;
+}
+#wrap {
+  margin: 0 auto;
+  padding: 12px 18px;
+  max-width: 1440px;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.masthead {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 4px 4px 8px;
+  border-bottom: 3px double var(--pirinc);
+}
+.title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.title-group svg {
+  width: 24px;
+  height: 32px;
+  flex: none;
+}
+.masthead h1 {
+  font-family: var(--fh);
+  font-weight: 900;
+  font-size: 25px;
+  margin: 0;
+  color: var(--krem);
+  letter-spacing: .015em;
+  line-height: 1.05;
+}
+.masthead .badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, var(--pirinc-acik), var(--pirinc));
+  color: #1e1a14;
+  border: 1px solid var(--pirinc-koyu);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.masthead a {
+  color: var(--krem);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #2d423b, #1d2c27);
+  border: 1.5px solid var(--pirinc);
+  box-shadow: 0 2px 0 #111b15;
+}
+.masthead a:hover { filter: brightness(1.12); }
+
+/* Dış Makine Çerçevesi: petrol kasa + kabartmalı pirinç çerçeve + 4 köşe yarık vida */
+#stage {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  padding: 12px;
+  border-radius: 14px;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .25 0 0 0 0 .20 0 0 0 0 .12 .24 0 0 0 -.08'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, #2f4841 0%, var(--kasa-koyu) 55%, #1c2b26 100%);
+  border: 2px solid var(--pirinc-koyu);
+  box-shadow:
+    inset 0 1px 0 rgba(255,250,240,.14),
+    inset 0 -2px 4px rgba(0,0,0,.45),
+    0 12px 30px rgba(0,0,0,.45);
+}
+.bezel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  padding: 3px;
+  background: linear-gradient(180deg, var(--pirinc-acik) 0%, var(--pirinc) 42%, var(--pirinc-koyu) 100%);
+  box-shadow: 0 2px 6px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.35);
+}
+.monitor {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #3a524b;
+  box-shadow: inset 0 0 0 2px #0c1411;
+}
+#bgLayer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: #3a524b url("data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%221280%22%20height=%22800%22%20viewBox=%220%200%201280%20800%22%20preserveAspectRatio=%22none%22%3E%3Cdefs%3E%3Cfilter%20id=%22filter-1%22%20x=%220%22%20y=%220%22%20width=%22100%25%22%20height=%22100%25%22%20color-interpolation-filters=%22sRGB%22%3E%3CfeTurbulence%20type=%22fractalNoise%22%20baseFrequency=%22.02%20.9%22%20numOctaves=%222%22%20seed=%223%22%20result=%22n%22/%3E%3CfeColorMatrix%20in=%22n%22%20values=%220%200%200%200%20.1%200%200%200%200%20.14%200%200%200%200%20.12%20.4%200%200%200%20-.14%22%20result=%22tane%22/%3E%3CfeMerge%20result=%22m%22%3E%3CfeMergeNode%20in=%22SourceGraphic%22/%3E%3CfeMergeNode%20in=%22tane%22/%3E%3C/feMerge%3E%3CfeComposite%20in=%22m%22%20in2=%22SourceGraphic%22%20operator=%22in%22/%3E%3C/filter%3E%3CclipPath%20id=%22clip-bg%22%3E%3Crect%20x=%220%22%20y=%220%22%20width=%221280%22%20height=%22800%22/%3E%3C/clipPath%3E%3C/defs%3E%3Cg%20clip-path=%22url%28%23clip-bg%29%22%3E%3Cg%3E%3Cg%3E%3Cg%20filter=%22url%28%23filter-1%29%22%3E%3Crect%20x=%220%22%20y=%220%22%20width=%221280%22%20height=%22800%22%20fill=%22%233a524b%22/%3E%3C/g%3E%3Cg%3E%3Cpath%20d=%22M20%206%20L1260%206%20C1267.732%206%201274%2012.268%201274%2020%20L1274%20780%20C1274%20787.732%201267.732%20794%201260%20794%20L20%20794%20C12.268%20794%206%20787.732%206%20780%20L6%2020%20C6%2012.268%2012.268%206%2020%206%20Z%22%20fill=%22none%22%20stroke=%22%232a3d37%22%20stroke-width=%221.5%22/%3E%3C/g%3E%3Cg%3E%3Cpolyline%20points=%226.9,44.49%206.9,43.79%206.9,43.09%206.9,42.39%206.9,41.69%206.9,40.99%206.9,40.29%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.29%22%20stroke-linecap=%22round%22%20opacity=%220.76%22/%3E%3Cpolyline%20points=%226.9,23.5%206.9,22.8%206.9,22.1%206.9,21.4%206.9,20.7%206.9,20%206.92,19.36%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.11%22%20stroke-linecap=%22round%22%20opacity=%220.87%22/%3E%3Cpolyline%20points=%2211.69,9.87%2012.2,9.48%2012.72,9.11%2013.27,8.76%2013.82,8.45%2014.4,8.16%2014.99,7.9%2015.59,7.67%2016.2,7.46%2016.82,7.29%2017.44,7.15%2018.08,7.04%2018.72,6.96%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.07%22%20stroke-linecap=%22round%22%20opacity=%220.62%22/%3E%3Cpolyline%20points=%2224.2,6.9%2024.9,6.9%2025.6,6.9%2026.3,6.9%2027,6.9%2027.7,6.9%2028.4,6.9%2029.1,6.9%2029.8,6.9%2030.5,6.9%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.44%22%20stroke-linecap=%22round%22%20opacity=%220.66%22/%3E%3Cpolyline%20points=%2235.4,6.9%2036.09,6.9%2036.79,6.9%2037.49,6.9%2038.19,6.9%2038.89,6.9%2039.59,6.9%2040.29,6.9%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.31%22%20stroke-linecap=%22round%22%20opacity=%220.74%22/%3E%3Cpolyline%20points=%2244.49,6.9%2045.19,6.9%2045.89,6.9%2046.59,6.9%2047.29,6.9%2047.99,6.9%2048.69,6.9%2049.39,6.9%2050.09,6.9%2050.79,6.9%2051.49,6.9%2052.19,6.9%2052.89,6.9%2053.59,6.9%2054.29,6.9%2054.99,6.9%2055.69,6.9%2056.39,6.9%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.08%22%20stroke-linecap=%22round%22%20opacity=%220.76%22/%3E%3Cpolyline%20points=%2268.98,6.9%2069.68,6.9%2070.38,6.9%2071.08,6.9%2071.78,6.9%2072.48,6.9%2073.18,6.9%2073.88,6.9%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.21%22%20stroke-linecap=%22round%22%20opacity=%220.86%22/%3E%3C/g%3E%3Cg%3E%3Cpolyline%20points=%221273.1,690.42%201273.1,691.12%201273.1,691.82%201273.1,692.52%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.12%22%20stroke-linecap=%22round%22%20opacity=%220.63%22/%3E%3Cpolyline%20points=%221273.1,703.72%201273.1,704.42%201273.1,705.12%201273.1,705.82%201273.1,706.52%201273.1,707.22%201273.1,707.92%201273.1,708.62%201273.1,709.32%201273.1,710.02%201273.1,710.72%201273.1,711.42%201273.1,712.12%201273.1,712.82%201273.1,713.52%201273.1,714.22%201273.1,714.92%201273.1,715.62%201273.1,716.32%201273.1,717.02%201273.1,717.72%201273.1,718.42%201273.1,719.12%201273.1,719.82%201273.1,720.52%201273.1,721.22%201273.1,721.92%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.05%22%20stroke-linecap=%22round%22%20opacity=%220.83%22/%3E%3Cpolyline%20points=%221273.1,726.81%201273.1,727.51%201273.1,728.21%201273.1,728.91%201273.1,729.61%201273.1,730.31%201273.1,731.01%201273.1,731.71%201273.1,732.41%201273.1,733.11%201273.1,733.81%201273.1,734.51%201273.1,735.21%201273.1,735.91%201273.1,736.61%201273.1,737.31%201273.1,738.01%201273.1,738.71%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%220.76%22%20stroke-linecap=%22round%22%20opacity=%220.57%22/%3E%3Cpolyline%20points=%221273.1,751.31%201273.1,752.01%201273.1,752.71%201273.1,753.41%201273.1,754.11%201273.1,754.81%201273.1,755.51%201273.1,756.21%201273.1,756.91%201273.1,757.61%201273.1,758.31%201273.1,759.01%201273.1,759.71%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%220.74%22%20stroke-linecap=%22round%22%20opacity=%220.73%22/%3E%3Cpolyline%20points=%221273.1,773%201273.1,773.7%201273.1,774.4%201273.1,775.1%201273.1,775.8%201273.1,776.5%201273.1,777.2%201273.1,777.9%201273.1,778.6%201273.1,779.3%201273.1,780%201273.08,780.64%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.23%22%20stroke-linecap=%22round%22%20opacity=%220.56%22/%3E%3Cpolyline%20points=%221272.1,785.01%201271.84,785.6%201271.55,786.18%201271.24,786.73%201270.89,787.28%201270.52,787.8%201270.13,788.31%201269.71,788.8%201269.26,789.26%201268.8,789.71%201268.31,790.13%201267.8,790.52%201267.28,790.89%201266.73,791.24%201266.18,791.55%201265.6,791.84%201265.01,792.1%201264.41,792.33%201263.8,792.54%201263.18,792.71%201262.56,792.85%201261.92,792.96%201261.28,793.04%201260.64,793.08%201260,793.1%22%20fill=%22none%22%20stroke=%22%239fb0a6%22%20stroke-width=%221.36%22%20stroke-linecap=%22round%22%20opacity=%220.72%22/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+}
+canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: transparent;
+  cursor: pointer;
+}
+.glass {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 6px;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.035) 0%, rgba(255,255,255,0) 32%),
+    repeating-linear-gradient(to bottom, rgba(0,0,0,.07) 0 1px, transparent 1px 4px);
+  box-shadow: inset 0 0 34px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+/* 4 Köşe Yarık Vidalar (paneller.svg stili) */
+.vida {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  z-index: 4;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,.6));
+}
+.vida.tl { top: 4px; left: 4px; }
+.vida.tr { top: 4px; right: 4px; }
+.vida.bl { bottom: 4px; left: 4px; }
+.vida.br { bottom: 4px; right: 4px; }
+
+#big {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  background: radial-gradient(circle at center, rgba(16,25,21,.32), rgba(10,16,13,.52));
+}
+#big button {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--fh);
+  font-weight: 900;
+  font-size: 26px;
+  padding: 16px 38px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #eed48f 0%, var(--pirinc) 62%, #7d6234 100%);
+  color: #1e1a14;
+  border: 2px solid var(--pirinc-koyu);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.45), 0 5px 18px rgba(0,0,0,.55);
+  cursor: pointer;
+}
+#big button svg { width: 22px; height: 22px; flex: none; }
+#big button:hover { filter: brightness(1.06); }
+
+/* Kontrol çubuğu */
+#bar {
+  flex: none;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #2d443d, var(--kasa-koyu));
+  border: 1.5px solid var(--pirinc);
+  box-shadow: inset 0 1px 0 rgba(255,250,240,.1), 0 3px 8px rgba(0,0,0,.35);
+}
+button {
+  background: linear-gradient(180deg, #2a3e37, #1b2823);
+  color: var(--krem);
+  border: 1.5px solid var(--pirinc);
+  border-radius: 6px;
+  padding: 7px 12px;
+  font: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 0 #101915;
+}
+button:hover { filter: brightness(1.1); }
+button.on {
+  background: linear-gradient(180deg, #ecd084, var(--pirinc));
+  color: #1e1a14;
+  border-color: var(--pirinc-koyu);
+}
+/* Oyunun kendi yuvarlak pirinç/koyu buton estetiği (#sesBtn) */
+button.bar-ikon,
+button.bar-ikon.on {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  padding: 6px;
+  border-radius: 50%;
+  border: 2px solid #8a6a3a;
+  background: linear-gradient(#3a3f3c, #1e2220);
+  color: #e8c66e;
+  box-shadow: inset 0 1px 0 #5b625e, 0 2px 0 #0b110f;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+button.bar-ikon:focus-visible { outline: 2px solid #e8c66e; outline-offset: 2px; }
+button.bar-ikon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+#play svg .ikon-play, #play svg .ikon-pause rect { fill: currentColor; }
+#play .ikon-pause { display: none; }
+#play.playing .ikon-play { display: none; }
+#play.playing .ikon-pause { display: inline; }
+#fs .fs-exit { display: none; }
+#fs.on .fs-enter { display: none; }
+#fs.on .fs-exit { display: inline; }
+#fs.on { border-color: #e8c66e; box-shadow: 0 0 8px rgba(232,198,110,.35), inset 0 1px 0 #5b625e, 0 2px 0 #0b110f; }
+#voice svg .hoparlor { fill: currentColor; }
+#voice .dalga { display: none; }
+#voice.on .dalga { display: inline; }
+#voice.on .carpi { display: none; }
+#voice:not(.on) { color: #b5a273; }
+#seek { flex: 1; min-width: 180px; accent-color: var(--red); cursor: pointer; }
+#time { font-variant-numeric: tabular-nums; color: var(--pirinc-acik); font-weight: 700; font-size: 14px; min-width: 105px; text-align: center; }
+
+/* Tam ekran modu: dış kasa, pirinç çerçeve ve 4 vida gizlenir; mavi çerçeve (1920x1080) kenardan kenara dolar */
+:fullscreen #wrap,
+body.tam-ekran #wrap {
+  max-width: none;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  padding: 0;
+  gap: 0;
+}
+:fullscreen .masthead,
+body.tam-ekran .masthead {
+  display: none;
+}
+:fullscreen #stage,
+body.tam-ekran #stage {
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+:fullscreen .vida,
+body.tam-ekran .vida {
+  display: none !important;
+}
+:fullscreen .bezel,
+body.tam-ekran .bezel {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+:fullscreen .monitor,
+body.tam-ekran .monitor {
+  border-radius: 0;
+  box-shadow: none;
+}
+:fullscreen .glass,
+body.tam-ekran .glass {
+  border-radius: 0;
+  box-shadow: none;
+}
+:fullscreen #bar,
+body.tam-ekran #bar {
+  position: fixed;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  width: min(760px, calc(100vw - 32px));
+  z-index: 20;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .22s ease;
+}
+:fullscreen #wrap.bar-acik #bar,
+:fullscreen #bar:hover,
+:fullscreen #bar:has(:focus-visible),
+body.tam-ekran #wrap.bar-acik #bar,
+body.tam-ekran #bar:hover,
+body.tam-ekran #bar:has(:focus-visible) {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Cue İşaretleyici (?sync=1) */
+#syncPanel {
+  display: none;
+  flex: none;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--krem);
+  color: var(--murekkep);
+  border: 2px solid var(--pirinc-koyu);
+  box-shadow: inset 0 0 0 1px var(--pirinc);
+  gap: 8px;
+  flex-direction: column;
+}
+#syncPanel.open { display: flex; }
+#syncTop { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+#syncInfo { font-size: 14px; font-weight: 700; }
+#syncInfo small { font-weight: 400; color: #5a4f3c; display: block; }
+#syncBtns { display: flex; gap: 6px; flex-wrap: wrap; }
+#syncBtns button { background: #1c1a17; color: var(--krem); border-color: #5a4220; box-shadow: none; padding: 6px 10px; font-size: 13px; }
+#syncBtns button.accent { background: var(--manset-kirmizi); border-color: #6e150e; color: #fff; }
+#syncOut {
+  width: 100%;
+  font-family: Consolas, ui-monospace, monospace;
+  font-size: 12px;
+  padding: 6px 8px;
+  border-radius: 5px;
+  border: 1px solid #8a7a5a;
+  background: #fffaf0;
+  color: #1c1a17;
+  resize: vertical;
+}
+
+@media (max-width: 640px) {
+  body:not(.tam-ekran) #wrap { padding: 8px; gap: 7px; }
+  .masthead { padding: 2px 2px 6px; }
+  .masthead h1 { font-size: 19px; }
+  .masthead .badge { display: none; }
+  .masthead a { font-size: 13px; padding: 4px 9px; }
+  body:not(.tam-ekran) #stage { padding: 8px; border-radius: 10px; }
+  .vida { width: 10px; height: 10px; }
+  .vida.tl { top: 2px; left: 2px; } .vida.tr { top: 2px; right: 2px; }
+  .vida.bl { bottom: 2px; left: 2px; } .vida.br { bottom: 2px; right: 2px; }
+  #bar { padding: 6px 8px; gap: 6px; }
+  #bar button:not(.bar-ikon) { padding: 5px 8px; font-size: 13px; }
+  #bar button.bar-ikon { width: 34px; height: 34px; padding: 5px; }
+  #seek { min-width: 110px; }
+  #time { font-size: 13px; min-width: 88px; }
+}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div class="masthead">
+    <div class="title-group">
+      <svg viewBox="0 0 30 40" aria-hidden="true">
+        <rect x="2" y="1" width="26" height="5" rx="2" fill="#a5874f" stroke="#5a4220"/>
+        <rect x="2" y="34" width="26" height="5" rx="2" fill="#a5874f" stroke="#5a4220"/>
+        <path d="M6 6C6 15 13 17 14 20C13 23 6 25 6 34H24C24 25 17 23 16 20C17 17 24 15 24 6Z" fill="#f3ead4" stroke="#5a4220" stroke-width="1.4"/>
+        <path d="M8.5 9C10 14 13.5 16 14.6 18H15.4C16.5 16 20 14 21.5 9Z" fill="#f09a1e"/>
+        <path d="M8 33C9.5 28.5 13 26.5 15 26.4C17 26.5 20.5 28.5 22 33Z" fill="#f09a1e"/>
+        <rect x="14.4" y="18" width="1.2" height="9" fill="#f09a1e"/>
+      </svg>
+      <h1>Bir Nokta Bir Ömür</h1>
+      <span class="badge">Ömürmatik</span>
+    </div>
+    <a href="./">← Oyuna dön</a>
+  </div>
+
+  <div id="stage">
+    <svg class="vida tl" viewBox="0 0 16 16" aria-hidden="true"><defs><radialGradient id="vg" cx="35%" cy="35%" r="65%"><stop offset="0" stop-color="#f1f3ee"/><stop offset="0.55" stop-color="#9ea3a0"/><stop offset="1" stop-color="#5d6260"/></radialGradient></defs><circle cx="8" cy="8" r="6.8" fill="url(#vg)" stroke="#1b2521" stroke-width="1.2"/><line x1="4" y1="12" x2="12" y2="4" stroke="#2f3632" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <svg class="vida tr" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.8" fill="url(#vg)" stroke="#1b2521" stroke-width="1.2"/><line x1="4" y1="4" x2="12" y2="12" stroke="#2f3632" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <svg class="vida bl" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.8" fill="url(#vg)" stroke="#1b2521" stroke-width="1.2"/><line x1="3.5" y1="9.5" x2="12.5" y2="6.5" stroke="#2f3632" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <svg class="vida br" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.8" fill="url(#vg)" stroke="#1b2521" stroke-width="1.2"/><line x1="4" y1="12" x2="12" y2="4" stroke="#2f3632" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <div class="bezel">
+      <div class="monitor">
+        <div id="bgLayer" aria-hidden="true"></div>
+        <canvas id="cv"></canvas>
+        <div class="glass"></div>
+        <div id="big"><button id="bigPlay" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="6,4 20,12 6,20" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span>Oynat</span></button></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="bar">
+    <button id="play" type="button" class="bar-ikon" aria-label="Oynat" title="Oynat (Space)"><svg viewBox="0 0 24 24" aria-hidden="true"><polygon class="ikon-play" points="7,5 19,12 7,19"/><g class="ikon-pause"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></g></svg></button>
+    <input id="seek" type="range" min="0" max="100" step="0.01" value="0">
+    <span id="time">0:00 / 0:00</span>
+    <button id="sub" type="button" class="on" aria-pressed="true">Altyazı</button>
+    <button id="sfx" type="button" class="on" aria-pressed="true">Ses efekti</button>
+    <button id="fs" type="button" class="bar-ikon" aria-pressed="false" aria-label="Tam ekran" title="Tam ekran (F)"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="fs-enter" d="M4 9V5a1 1 0 0 1 1-1h4M20 9V5a1 1 0 0 0-1-1h-4M4 15v4a1 1 0 0 0 1 1h4M20 15v4a1 1 0 0 1-1 1h-4"/><path class="fs-exit" d="M9 4v4a1 1 0 0 1-1 1H4M15 4v4a1 1 0 0 0 1 1h4M9 20v-4a1 1 0 0 0-1-1H4M15 20v-4a1 1 0 0 1 1-1h4"/></svg></button>
+    <button id="voice" type="button" class="bar-ikon on" aria-pressed="true" aria-label="Seslendirme" title="Seslendirme açık (M)"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="hoparlor" d="M4 9h4l5-4v14l-5-4H4z"/><path class="dalga" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/><path class="carpi" d="M16 9l5 6M21 9l-5 6"/></svg></button>
+  </div>
+
+  <div id="syncPanel" aria-live="polite">
+    <div id="syncTop">
+      <div id="syncInfo">Cue İşaretleyici (0/21)<small>Oynat ile başlatın, her beat başında C veya Space tuşuna basın.</small></div>
+      <div id="syncBtns">
+        <button id="syncMark" class="accent">Beat İşaretle (C)</button>
+        <button id="syncUndo">Geri Al</button>
+        <button id="syncReset">Sıfırla</button>
+        <button id="syncCopy">cues Kopyala</button>
+      </div>
+    </div>
+    <textarea id="syncOut" rows="2" readonly></textarea>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+// ============================================================================
+// SESLENDİRME YAPILANDIRMASI (Çift Modlu Motor)
+// - src: "" iken dahili Web Audio ses efektleri + isteğe bağlı speechSynthesis çalışır.
+// - src: "omurmatik_ses.mp3" gibi bir yol verildiğinde harici ses <audio> ile oynatılır
+//        ve zaman çizelgesi audio.currentTime ile tam senkron akar.
+// - cues: 21 beat için başlangıç saniyelerini içeren dizi (null ise varsayılan süreler).
+//         ?sync=1 parametresiyle açıp C veya Space ile kolayca üretebilirsiniz.
+// ============================================================================
+const SESLENDIRME = { src: "", cues: null };
+
+const Q = new URLSearchParams(location.search);
+const SYNC_MODE = Q.get("sync") === "1";
+const stage = document.getElementById("stage");
+const cv = document.getElementById("cv");
+const kutuDik = () => { const r = stage.getBoundingClientRect(); return r.height > r.width; };
+const DIK = Q.get("yon") === "dik" || (Q.get("yon") !== "yatay" && kutuDik());
+const LW = 1920, LH = 1080;                     // yatay tasarım ölçüsü
+const W0 = DIK ? LH : LW, H0 = DIK ? LW : LH;   // tasarım çerçevesi
+let W = W0, H = H0;
+const DX = () => (W - W0) / 2, DY = () => (H - H0) / 2;
+const Y = y => y + (H - LH) / 2;
+
+function boyutla() {
+  const r = cv.parentElement.getBoundingClientRect(), A = r.width / Math.max(1, r.height);
+  if (A > W0 / H0) { H = H0; W = Math.round(H0 * A); } else { W = W0; H = Math.round(W0 / A); }
+  if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+}
+boyutla();
+let boyutBekle = 0;
+window.addEventListener("resize", () => {
+  clearTimeout(boyutBekle);
+  boyutBekle = setTimeout(() => {
+    if (!Q.get("yon") && kutuDik() !== DIK) {
+      const u = new URL(location.href); u.searchParams.set("t", t.toFixed(1)); location.replace(u.href); return;
+    }
+    boyutla();
+  }, 150);
+});
+
+const ctx = cv.getContext("2d");
+const FONT = "'Atkinson Hyperlegible Next', system-ui, sans-serif";
+const FH = "'Fraunces', Georgia, serif";
+
+// Seçenek A renk paleti (Ömürmatik v3.46)
+const AMBER = "#c23b2a";      // "sen" kırmızısı
+const RED_BAND = "#c4271b";   // gazete manşet kırmızısı
+const COOL = "#f3ead4";       // krem piksel ve açık yazı
+const COOL2 = "#e3d6b6";      // alternatif bant kremi
+const KREM = "#f2ecdb";       // gazete/dosya fişi krem kâğıt
+const MUREKKEP = "#1c1a17";   // koyu gazete mürekkebi
+const BLUE = "#3a75bd";
+const MUTED = "#c99a3a";
+const PIRINC = "#a5874f";
+const PIRINC_KOYU = "#5a4220";
+const OLIVE = "#6b7f45";
+const BG = "#17241f";         // nefes alan koyu petrol ekran
+const PAPER = "#111b15";      // koyu plaka ve LCD cam zemini
+const INK = "#1e1a14";
+const LCD_GREEN = "#b8f27c";
+
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, u) => a + (b - a) * u;
+const es = u => u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+const eo = u => 1 - Math.pow(1 - u, 3);
+const ramp = (t, t0, d) => clamp((t - t0) / d);
+const L10 = Math.log10;
+
+// 21 Beat (omurmatik_video.html)
+const BEATS = [
+  ["b11", "S01", "Bu bir piksel. Ekranınızın gösterebildiği en küçük nokta.", 1.6, 5],
+  ["b1f", "S01", "Şu an baktığınız ekran, Full HD ise iki milyondan fazla nokta bulunmaktadır.", 0.2, 4],
+  ["b12", "S01", "Bundan sonra her piksel 1 milyon doları temsil etsin.", 0.2, 3],
+  ["b21", "S02", "Bu tek nokta ile üç ev ve bir araba alabilirsiniz. Birinde oturursunuz, ikisini kiraya verirsiniz. İyi maaşlı bir memur kadar da geliriniz olur.", 0.2, 0],
+  ["b22", "S02", "Dikkatli kullanırsanız bu para, ortalama bir ömür boyunca hiç çalışmadan yaşamanıza yeter, ailenize de bakarsınız. Evet, bir nokta, bir ömür.", 0.2, 0],
+  ["b31", "S03", "On milyon dolar. On ömür.", 0.3, 3.5],
+  ["b41", "S04", "Yüz milyon dolar. 100 milyon dolar değerleme almış, üç ortaklı bir oyun stüdyosu düşünün. Masraflar çıktıktan sonra bile iyi para.", 0.2, 0],
+  ["b51", "S05", "Bu da 1 milyar dolar, bin ömürlük ‘unicorn’ bariyeri. Türkiye'nin 8 unicorn olmuş şirketi var, 3'ü oyun firması.", 0.2, 5.2],
+  ["b52", "S05", "Unicorn olmanın üç şartı var. Girişim olmak. Borsada olmamak. Bir yatırım turunda 1 milyar doları geçmek. Özetle zenginler için keşif bekleyen bir maden; girişimciler için de bir üst lige çıkma bileti.", 0.2, 0],
+  ["b61", "S06", "On milyar. On bin ömür.", 0.2, 2.8],
+  ["b71", "S07", "Yüz milyar dolar. İşte Full HD ölçeğimizin sınırlarına dayandık.", 0.2, 4.5],
+  ["b72", "S07", "Ve bu kadar parayla hâlâ dünyanın en zengin on kişisi arasına giremiyorsunuz.", 0.2, 7],
+  ["b81", "S08", "En tepedeki isim Elon Musk'un serveti 839 milyar dolar. Bu rakam tek bir haftada yüz milyarlarca dolar oynayabiliyor.", 1.2, 12.5],
+  ["b82", "S08", "İşte bu da o bizim tatlı 1 milyon dolar… Devler içinse bir yuvarlama hatası.", 0.3, 5.5],
+  ["b91", "S09", "Bir insanın, harcayamayacağı kadar çok parası olmalı mı?", 0.8, 0],
+  ["b92", "S09", "Bu insanlar devlet değil, ihtiyaç duyunca para basmıyorlar. Kıskanmayın çünkü: hizmetlerini satın alarak bu paraları onlara siz veriyorsunuz.", 0.2, 0],
+  ["b93", "S09", "Duygularınıza oynuyorlar; size özel hissettirecek markalar oluşturup güzelce paketleyip ederinin üstünde satıyorlar.", 0.2, 0],
+  ["b101", "S10", "En zengin 10 kişinin servetini toplasak, yaklaşık 2 trilyon 591 milyar dolar ediyor.", 0.5, 8.8],
+  ["b102", "S10", "Toplamda bu ekrandaki tüm piksellerden 1.25 kat daha fazla nokta.", 0.2, 3.5],
+  ["b103", "S10", "Peki ya siz? Sizin bir noktanız var mı?", 0.8, 4.5],
+  ["b104", "S10", "Artık ne kadar fakir olduğunuzu biliyorsunuz.", 0.5, 4]
+];
+
+const T = {}, TE = {}, SCENE_START = {};
+const hasCustomCues = Array.isArray(SESLENDIRME.cues) && SESLENDIRME.cues.length === BEATS.length;
+let clock = 0;
+BEATS.forEach(([id, sc, txt, pre, mn], i) => {
+  if (hasCustomCues) {
+    const start = Math.max(0, Number(SESLENDIRME.cues[i]) || 0);
+    if (!(sc in SCENE_START)) SCENE_START[sc] = sc === "S01" ? 0 : Math.max(0, start - pre);
+    T[id] = start;
+    const nextStart = i + 1 < BEATS.length ? Number(SESLENDIRME.cues[i + 1]) : null;
+    TE[id] = nextStart !== null && Number.isFinite(nextStart)
+      ? Math.max(start + 0.5, nextStart - 0.15)
+      : start + Math.max(mn, txt.length / 15 + 0.3);
+    clock = TE[id];
+  } else {
+    if (!(sc in SCENE_START)) SCENE_START[sc] = sc === "S01" ? 0 : clock;
+    clock += pre;
+    T[id] = clock;
+    clock += Math.max(mn, txt.length / 15 + 0.3);
+    TE[id] = clock;
+  }
+});
+let DUR = clock + 1.5;
+
+const EVS = [];
+const EV = (t, f) => EVS.push({ t, f });
+
+// Altyazı kartları
+const CARDS = [];
+for (const [id, sc, txt] of BEATS) {
+  const words = txt.split(" "), lines = [];
+  let cur = "";
+  for (const w of words) {
+    if ((cur + " " + w).trim().length > (DIK ? 30 : 42)) { lines.push(cur.trim()); cur = w; } else cur += " " + w;
+  }
+  if (cur.trim()) lines.push(cur.trim());
+  const span = Math.min(TE[id] - T[id] - 0.1, txt.length / 15);
+  let ct = T[id];
+  for (const ln of lines) {
+    const d = span * ln.length / txt.length;
+    CARDS.push([ct, ct + d + 0.25, ln]);
+    ct += d;
+  }
+  EV(T[id], () => speak(txt));
+}
+
+// Kamera planı
+const SC = [LW / 2, LH / 2];
+const cam0 = { z: L10(1), c: [0.5, 0.5] };
+const SEG = [];
+let camCur = { z: cam0.z, c: cam0.c };
+function move(t0, t1, z, c, P, ease) {
+  SEG.push({ t0, t1, z0: camCur.z, z1: L10(z), c0: camCur.c, c1: c, P: P || c, ease: ease || "s" });
+  camCur = { z: L10(z), c };
+}
+function camAt(t) {
+  let st = cam0;
+  for (const s of SEG) {
+    if (t < s.t0) break;
+    if (t >= s.t1) { st = { z: s.z1, c: s.c1 }; continue; }
+    const u = (t - s.t0) / (s.t1 - s.t0), e = s.ease === "l" ? u : es(u);
+    const z = Math.pow(10, lerp(s.z0, s.z1, e)), za = Math.pow(10, s.z0), zb = Math.pow(10, s.z1);
+    const S0 = [SC[0] + (s.P[0] - s.c0[0]) * za, SC[1] + (s.P[1] - s.c0[1]) * za];
+    const S1 = [SC[0] + (s.P[0] - s.c1[0]) * zb, SC[1] + (s.P[1] - s.c1[1]) * zb];
+    const S = [lerp(S0[0], S1[0], e), lerp(S0[1], S1[1], e)];
+    return { z, c: [s.P[0] - (S[0] - SC[0]) / z, s.P[1] - (S[1] - SC[1]) / z] };
+  }
+  return { z: Math.pow(10, st.z), c: st.c };
+}
+
+// Dünya: piksel ızgarası ve bloklar
+const OWN = [0.5, 0.5];
+const LV = [[1, 1], [5, 2], [10, 10], [50, 20], [100, 100], [200, 500]];
+const BASE = [0, 660, 523, 440, 330, 262];
+const PENTA = [1, 9 / 8, 5 / 4, 3 / 2, 5 / 3];
+const BLOCKS = [];
+function level(L, t0, step, drop) {
+  const [pw, ph] = LV[L - 1], [w, h] = LV[L];
+  let k = 0;
+  for (let r = 0; r < h / ph; r++) for (let c = 0; c < w / pw; c++) {
+    if (!r && !c) continue;
+    const bt = t0 + k * step, kk = k;
+    BLOCKS.push({ x: c * pw, y: r * ph, w: pw, h: ph, t: bt, drop: drop || 0, dd: 0.35 });
+    EV(bt, () => tone(BASE[L] * PENTA[kk % 5] * (kk >= 5 ? 2 : 1), 0.7, "triangle", 0.07));
+    k++;
+  }
+}
+level(1, T.b31 + 0.5, 0.28);
+level(2, T.b41 + 1.0, 0.22);
+level(3, T.b51 + 1.0, 0.2);
+level(4, T.b61 + 0.6, 0.1, 150);
+level(5, T.b71 + 0.6, 0.14);
+
+// Musk: 8 birim ($100B, 200 x 500 piksel) + $39B (200 x 195)
+const MU0 = T.b81 + 2.7, MUS = 0.4;
+for (let k = 0; k < 8; k++) {
+  const mt = MU0 + k * MUS;
+  BLOCKS.push({ x: 400 + 230 * (k % 4), y: -230 + 510 * Math.floor(k / 4), w: 200, h: 500, t: mt, drop: 1600, dd: 0.5, musk: true, base: 100 * k, cap: 100 });
+  EV(mt + 0.5, thud);
+}
+const M39T = MU0 + 8 * MUS + 0.2;
+BLOCKS.push({ x: 1320, y: -230, w: 200, h: 195, t: M39T, drop: 1600, dd: 0.5, musk: true, base: 800, cap: 205 });
+EV(M39T + 0.5, () => thud(0.5));
+const MEND = M39T + 0.8;
+
+const B81 = BEATS.find(b => b[0] === "b81")[2];
+const TW = Math.max(T.b81 + B81.indexOf("oynayabiliyor") / 15, MEND + 0.2);
+const FLK = [[0, 0], [1, 160], [2, -140], [3, 70], [4, -40], [5, 0]];
+function muskB(t) {
+  const u = t - TW;
+  if (u <= 0 || u >= 5) return 839;
+  const i = Math.floor(u), f = es(u - i);
+  return 839 + lerp(FLK[i][1], FLK[i + 1][1], f);
+}
+FLK.slice(1).forEach(([d, v]) => EV(TW + d - 0.5, () => tone(v > 0 ? 660 : v < 0 ? 220 : 440, 0.6, "sine", 0.06)));
+const PL = [2 * (1320 + 199) + 0.5, 2 * (-230 + 194) + 0.5];
+
+move(T.b12, T.b12 + 1.2, 40, OWN);
+move(T.b21 + 0.2, T.b21 + 1.6, 700, [0.5, 0.62], OWN);
+move(TE.b22 - 2.4, TE.b22 - 1.0, 40, OWN, OWN);
+const KZ = DIK ? 0.8 : 1, lv = (c, d) => DIK ? [c[0] + d, c[1]] : [c[0], c[1] + d];
+move(T.b31, T.b31 + 0.9, 50 * KZ, lv([4.5, 1.5], 3), OWN);
+move(T.b41, T.b41 + 1.0, 32 * KZ, lv([9.5, 9.5], 5), OWN);
+move(T.b51, T.b51 + 1.0, 15 * KZ, lv([49.5, 19.5], 10), OWN);
+move(T.b61, T.b61 + 0.8, 3.4 * KZ, lv([99.5, 99.5], 45), OWN);
+const FA = [200, 500];
+move(T.b71, T.b71 + 1.6, 1, FA, OWN);
+const C4 = [1500, 500];
+move(T.b81 + 0.3, T.b81 + 2.6, 0.5, C4);
+move(T.b82, T.b82 + 2.5, 260, [PL[0], PL[1] + 0.15], PL);
+move(TE.b82 - 0.3, TE.b93 - 0.5, 0.5, C4, PL, "l");
+move(T.b103 - 0.5, T.b103 + 3.5, 40, OWN, OWN);
+move(T.b104 + 0.3, TE.b104 - 0.3, 1, OWN, OWN);
+
+const TIGN = 0.6;
+EV(T.b1f - 0.3, () => tick());
+EV(T.b12, () => whoosh());
+EV(T.b12 + 1.4, () => tone(523, 1.4, "sine", 0.08));
+EV(TE.b22 - 2.4, () => whoosh());
+EV(T.b71 + 2.0, () => tone(196, 2.5, "sine", 0.06));
+for (let i = 0; i < 10; i++) EV(T.b72 + 1.0 + (9 - i) * 0.55, click);
+EV(T.b81 + 0.3, () => whoosh(1.5));
+EV(T.b82, () => whoosh(2.2));
+EV(T.b82 + 2.3, () => tone(523, 1.6, "sine", 0.07));
+EV(T.b91, droneOn);
+EV(T.b101, droneOff);
+const B52 = BEATS.find(b => b[0] === "b52")[2];
+const COND = ["Girişim", "Borsada", "Bir yatırım"].map(w => B52.indexOf(w) / 15);
+COND.forEach(d => EV(T.b52 + d, () => bell(988)));
+const LIFT = T.b51 + 3.2;
+EV(LIFT, () => [0, 1, 2, 3].forEach(i => setTimeout(() => tone(1568 * PENTA[i], 0.5, "sine", 0.04), i * 70)));
+for (let i = 0; i < 10; i++) EV(LIFT + 1.0 + i * 0.08, click);
+function pulseSize(t) {
+  const g = eo(ramp(t, T.b11 + 0.6, 0.5)), b = es(ramp(t, T.b11 + 1.75, 0.5));
+  return 1 + 23 * (g - b);
+}
+function liftOff(t, x) {
+  const up = eo(ramp(t, LIFT, 0.35)), down = es(ramp(t, LIFT + 0.75 + x / 50 * 0.8, 0.25));
+  return -8 * (up - down);
+}
+EV(TIGN + 0.4, () => tone(880, 1.0, "sine", 0.05));
+
+// S10 bantları
+const RICH = [["Elon Musk", 839], ["Larry Page", 257], ["Sergey Brin", 237], ["Jeff Bezos", 224],
+  ["Mark Zuckerberg", 222], ["Larry Ellison", 190], ["Bernard Arnault ve ailesi", 171],
+  ["Jensen Huang", 154], ["Warren Buffett", 149], ["Amancio Ortega", 148]];
+const RPB = 1000 / (DIK ? LH : LW), CAP = DIK ? LW : LH;
+let TOTAL = 0;
+const BANDS = RICH.map(([n, v]) => { const a = TOTAL; TOTAL += v * RPB; return { n, v, a, b: TOTAL }; });
+const SA = [1840, 80], SB = DIK ? [SA[0] + LW + 120, SA[1]] : [1840, 80 + LH + 120];
+const TOPS = [SA[1] - LH / 2, SB[1] - LH / 2], SX0 = SA[0] - LW / 2, KOLS = [SA[0] - LW / 2, SB[0] - LW / 2];
+const F0 = T.b101 + 1.8, F1 = T.b101 + 8.3;
+const rowT = r => F0 + (F1 - F0) * r / TOTAL;
+EV(F0, () => pour(F1 - F0));
+EV(rowT(CAP), splash);
+
+// Sayaç zamanlaması
+const CNT = [[T.b21 + 0.3, 1e6, 0.6], [T.b31 + 0.5, 1e7, 2.5], [T.b41 + 1.0, 1e8, 2], [T.b51 + 1.0, 1e9, 2],
+  [T.b61 + 0.6, 1e10, 1.2], [T.b71 + 0.6, 1e11, 1.4], [MU0, 839e9, MEND - MU0]];
+function cntAt(t) {
+  let v = 0, prev = 0;
+  for (const [t0, val, d] of CNT) {
+    if (t < t0) break;
+    const u = clamp((t - t0) / d);
+    v = prev ? Math.pow(10, lerp(L10(prev), L10(val), u)) : val * u;
+    prev = val;
+  }
+  return v;
+}
+
+const LABELS = [
+  [TIGN + 0.6, T.b12, "1 px", "c", 700],
+  [T.b12 + 1.4, T.b21, "1px = $1M", "c", 640],
+  [T.b21 + 0.3, TE.b22 - 1.0, "$1M", "c", 960],
+  [TE.b22 - 1.0, T.b31, "1 nokta = 1 ömür", "c", 640],
+  [T.b31 + 0.4, T.b41, "$10M = 10 ömür", "c", 860],
+  [T.b41 + 1.5, T.b51, "$100M = 100 ömür", "c", 860],
+  [T.b51 + 1.5, T.b52, "$1B = 1.000 ömür", "c", 860],
+  [T.b61 + 1.0, T.b71, "$10B = 10.000 ömür", "c", 860],
+  [T.b71 + 2.2, T.b72, "$100B = 100.000 ömür", 380, 540, 56],
+  [T.b82 + 2.6, TE.b82, "$1M = 1 ömür", "c", 860]
+];
+
+// Desen: 2 x 2 piksel ızgarası
+const pc = document.createElement("canvas");
+pc.width = pc.height = 2;
+const pctx = pc.getContext("2d");
+pctx.fillStyle = COOL; pctx.fillRect(0, 0, 1, 1);
+const PAT = ctx.createPattern(pc, "repeat");
+
+function rrect(x, y, w, h, r) {
+  const rad = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + rad, y);
+  ctx.arcTo(x + w, y, x + w, y + h, rad);
+  ctx.arcTo(x + w, y + h, x, y + h, rad);
+  ctx.arcTo(x, y + h, x, y, rad);
+  ctx.arcTo(x, y, x + w, y, rad);
+  ctx.closePath();
+}
+
+function poly(pts, p, close) {
+  if (p <= 0) return;
+  const P = close ? pts.concat([pts[0]]) : pts;
+  let total = 0;
+  for (let i = 1; i < P.length; i++) total += Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1]);
+  let left = total * clamp(p);
+  ctx.beginPath(); ctx.moveTo(P[0][0], P[0][1]);
+  for (let i = 1; i < P.length && left > 0; i++) {
+    const d = Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1]), u = Math.min(1, left / d);
+    ctx.lineTo(lerp(P[i - 1][0], P[i][0], u), lerp(P[i - 1][1], P[i][1], u));
+    left -= d;
+  }
+  ctx.stroke();
+}
+function circlePts(cx, cy, r, n = 16) {
+  const a = [];
+  for (let i = 0; i <= n; i++) a.push([cx + r * Math.cos(i / n * 2 * Math.PI), cy + r * Math.sin(i / n * 2 * Math.PI)]);
+  return a;
+}
+
+// ============================================================================
+// S02 & S08: Resmi ev, araba ve kırmızı insan profili vektör oranlarıyla
+// krem kâğıt kart içinde net, dolgulu ve koyu kontürlü çizim
+// ============================================================================
+function drawPersonSilhouette(cx, cy, w, h, alpha) {
+  // omurmatik.html / karakter.js profil oranları (70x88 -> omuzlar + baş)
+  ctx.save();
+  ctx.globalAlpha *= alpha;
+  const sx = w / 70, sy = h / 88;
+  ctx.translate(cx - w / 2, cy - h / 2);
+  ctx.scale(sx, sy);
+  ctx.fillStyle = AMBER;
+  ctx.strokeStyle = "#1e1a14";
+  ctx.lineWidth = 2.2;
+  ctx.beginPath();
+  ctx.moveTo(8.03, 87.5);
+  ctx.lineTo(8.03, 83.14);
+  ctx.bezierCurveTo(8.03, 72.82, 18.30, 56.79, 28.62, 56.79);
+  ctx.lineTo(41.38, 56.79);
+  ctx.bezierCurveTo(51.70, 56.79, 61.97, 72.82, 61.97, 83.14);
+  ctx.lineTo(61.97, 87.5);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(35, 38.12, 19.19, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawHouseVector(x, y, s, roofCol, isOwn, p, light) {
+  if (p <= 0) return;
+  const u = clamp(p);
+  ctx.save();
+  ctx.globalAlpha *= u;
+  const lw = Math.max(1.8, s * 0.028);
+  ctx.lineWidth = lw;
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+  ctx.strokeStyle = "#1e1a14";
+
+  // Baca
+  ctx.fillStyle = "#d9cdb2";
+  ctx.fillRect(x + s * 0.68, y + s * 0.14, s * 0.12, s * 0.24);
+  ctx.strokeRect(x + s * 0.68, y + s * 0.14, s * 0.12, s * 0.24);
+
+  // Gövde (krem duvar)
+  const bx = x + s * 0.13, by = y + s * 0.44, bw = s * 0.74, bh = s * 0.50;
+  ctx.fillStyle = "#fffaf0";
+  ctx.fillRect(bx, by, bw, bh);
+  ctx.strokeRect(bx, by, bw, bh);
+
+  // Üçgen çatı (kucukEv / IKON.orta oranları)
+  ctx.fillStyle = roofCol;
+  ctx.beginPath();
+  ctx.moveTo(x + s * 0.04, y + s * 0.46);
+  ctx.lineTo(x + s * 0.50, y + s * 0.08);
+  ctx.lineTo(x + s * 0.96, y + s * 0.46);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // Kapı
+  const dx = x + s * 0.54, dy = y + s * 0.63, dw = s * 0.19, dh = s * 0.31;
+  ctx.fillStyle = "#7d6234";
+  ctx.fillRect(dx, dy, dw, dh);
+  ctx.strokeRect(dx, dy, dw, dh);
+
+  // Pencere
+  const wx = x + s * 0.21, wy = y + s * 0.55, ww = s * 0.23, wh = s * 0.23;
+  ctx.fillStyle = isOwn && light > 0 ? "#fff6c8" : "#dfe8ea";
+  if (isOwn && light > 0) {
+    ctx.save();
+    ctx.shadowColor = "#ffe08a";
+    ctx.shadowBlur = 22 * light;
+    ctx.fillRect(wx, wy, ww, wh);
+    ctx.restore();
+  } else {
+    ctx.fillRect(wx, wy, ww, wh);
+  }
+  if (isOwn && light > 0.2) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(wx, wy, ww, wh);
+    ctx.clip();
+    drawPersonSilhouette(wx + ww * 0.5, wy + wh * 0.58, ww * 0.85, wh * 0.95, clamp((light - 0.2) * 1.4));
+    ctx.restore();
+  }
+  ctx.strokeRect(wx, wy, ww, wh);
+  ctx.beginPath();
+  ctx.moveTo(wx + ww / 2, wy); ctx.lineTo(wx + ww / 2, wy + wh);
+  ctx.moveTo(wx, wy + wh / 2); ctx.lineTo(wx + ww, wy + wh / 2);
+  ctx.lineWidth = Math.max(1, lw * 0.55);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawCarVector(x, y, w, h, p, light) {
+  if (p <= 0) return;
+  const u = clamp(p);
+  ctx.save();
+  ctx.globalAlpha *= u;
+  // ARABA_CIZ.orta (w: 63, h: 30) oranları
+  const sx = w / 63, sy = h / 30;
+  ctx.translate(x, y);
+  ctx.scale(sx, sy);
+  ctx.lineWidth = Math.max(1.0, 2.2 / Math.max(0.5, sx));
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+  ctx.strokeStyle = "#1e1a14";
+
+  // Gövde (zeytin yeşili)
+  ctx.fillStyle = OLIVE;
+  ctx.beginPath();
+  ctx.moveTo(0, 25);
+  ctx.lineTo(0, 13);
+  ctx.bezierCurveTo(0, 10.333, 1, 8, 3, 6);
+  ctx.lineTo(7, 1);
+  ctx.bezierCurveTo(7.667, 0.333, 9, 0, 11, 0);
+  ctx.lineTo(36, 0);
+  ctx.bezierCurveTo(38, 0, 39.667, 0.667, 41, 2);
+  ctx.lineTo(49, 9);
+  ctx.lineTo(59, 11);
+  ctx.bezierCurveTo(61.667, 11.533, 63, 13.2, 63, 16);
+  ctx.lineTo(63, 25);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // Pirinç tampon / yan şerit aksanı
+  ctx.strokeStyle = "#c9a24a";
+  ctx.lineWidth = Math.max(0.8, 1.4 / Math.max(0.5, sx));
+  ctx.beginPath(); ctx.moveTo(3, 17.5); ctx.lineTo(60, 17.5); ctx.stroke();
+
+  // Camlar
+  ctx.fillStyle = "#dfe8ea";
+  ctx.strokeStyle = "#1e1a14";
+  ctx.lineWidth = Math.max(0.8, 1.3 / Math.max(0.5, sx));
+  ctx.beginPath();
+  ctx.moveTo(4.6, 9); ctx.lineTo(8.6, 2); ctx.lineTo(21.6, 2); ctx.lineTo(21.6, 9); ctx.closePath();
+  ctx.moveTo(23.6, 9); ctx.lineTo(23.6, 2); ctx.lineTo(36.2, 2);
+  ctx.bezierCurveTo(37.4, 2, 38.467, 2.467, 39.4, 3.4);
+  ctx.lineTo(44.6, 9); ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // Ön camda kırmızı insan başı silueti
+  if (light > 0.1) {
+    ctx.fillStyle = AMBER;
+    ctx.beginPath(); ctx.arc(34.5, 6.2, 2.3, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // Tekerlekler (12, 24.5, r=5.5 ve 51, 24.5, r=5.5)
+  [[12, 24.5, 5.5], [51, 24.5, 5.5]].forEach(([cx, cy, rr]) => {
+    ctx.fillStyle = "#1e1a14";
+    ctx.beginPath(); ctx.arc(cx, cy, rr, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#c9a24a";
+    ctx.beginPath(); ctx.arc(cx, cy, rr * 0.48, 0, Math.PI * 2); ctx.fill();
+  });
+  ctx.restore();
+}
+
+function sketch(sx, sy, s, p, alpha, light) {
+  if (alpha <= 0 || p <= 0) return;
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  const pad = s * 0.03;
+  const cx = sx + pad, cy = sy + pad, cw = s - pad * 2, ch = s - pad * 2;
+  const cardP = clamp(p * 4);
+
+  // Krem kâğıt kart
+  ctx.save();
+  ctx.globalAlpha = alpha * cardP;
+  ctx.shadowColor = "rgba(0,0,0,0.45)";
+  ctx.shadowBlur = Math.max(4, s * 0.04);
+  ctx.shadowOffsetY = Math.max(2, s * 0.012);
+  ctx.fillStyle = KREM;
+  rrect(cx, cy, cw, ch, s * 0.035);
+  ctx.fill();
+  ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+  ctx.strokeStyle = "#1e1a14";
+  ctx.lineWidth = Math.max(1.5, s * 0.012);
+  ctx.stroke();
+  ctx.strokeStyle = PIRINC;
+  ctx.lineWidth = Math.max(1, s * 0.005);
+  rrect(cx + s * 0.016, cy + s * 0.016, cw - s * 0.032, ch - s * 0.032, s * 0.022);
+  ctx.stroke();
+  ctx.restore();
+
+  // 3 Ev + 1 Araba
+  const hs = cw * 0.27;
+  const roofs = [AMBER, OLIVE, PIRINC];
+  const labels = ["siz", "kira", "kira"];
+  [0.055, 0.365, 0.675].forEach((u, i) => {
+    const hp = clamp(p * 4.2 - 0.5 - i * 0.55);
+    const hx = cx + u * cw, hy = cy + ch * 0.11;
+    drawHouseVector(hx, hy, hs, roofs[i], i === 0, hp, light);
+    if (hp > 0.3) {
+      ctx.save();
+      ctx.globalAlpha = alpha * clamp((hp - 0.3) * 1.6);
+      ctx.fillStyle = i === 0 ? AMBER : MUREKKEP;
+      ctx.textAlign = "center";
+      ctx.font = `800 ${Math.max(9, Math.round(s * 0.046))}px ${FONT}`;
+      ctx.fillText(labels[i], hx + hs / 2, hy + hs + s * 0.045);
+      ctx.restore();
+    }
+  });
+
+  const cp = clamp(p * 4.2 - 2.3);
+  drawCarVector(cx + cw * 0.25, cy + ch * 0.57, cw * 0.50, ch * 0.26, cp, light);
+
+  // Alt özet etiketi
+  if (p > 0.72) {
+    ctx.save();
+    ctx.globalAlpha = alpha * clamp((p - 0.72) * 3.5);
+    ctx.fillStyle = "#5a4220";
+    ctx.textAlign = "center";
+    ctx.font = `700 ${Math.max(8, Math.round(s * 0.034))}px ${FONT}`;
+    ctx.fillText("3 ev + 1 araba = 1 ömür", cx + cw / 2, cy + ch * 0.92);
+    ctx.restore();
+  }
+  ctx.restore();
+}
+
+// ============================================================================
+// 90'lar Krem Kâğıt Gazete Kupürü / Dosya Fişi & Okunaklı Plaka Yardımcıları
+// ============================================================================
+function drawGazeteKart(x, y, w, h, tag, alpha, opts = {}) {
+  if (alpha <= 0) return;
+  ctx.save();
+  ctx.globalAlpha *= alpha;
+  ctx.shadowColor = "rgba(0,0,0,0.52)";
+  ctx.shadowBlur = 20;
+  ctx.shadowOffsetY = 6;
+  ctx.fillStyle = KREM;
+  rrect(x, y, w, h, 4);
+  ctx.fill();
+  ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+
+  // Çift ince kenarlık
+  ctx.strokeStyle = MUREKKEP;
+  ctx.lineWidth = 2.5;
+  rrect(x, y, w, h, 4);
+  ctx.stroke();
+  ctx.strokeStyle = "#8a7a5a";
+  ctx.lineWidth = 1.2;
+  rrect(x + 5, y + 5, w - 10, h - 10, 2);
+  ctx.stroke();
+
+  // Kırmızı üst manşet bandı
+  const bandH = opts.bandH || 40;
+  ctx.fillStyle = RED_BAND;
+  ctx.fillRect(x + 6, y + 6, w - 12, bandH);
+  ctx.strokeStyle = MUREKKEP;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(x + 6, y + 6 + bandH + 3);
+  ctx.lineTo(x + w - 6, y + 6 + bandH + 3);
+  ctx.stroke();
+
+  if (tag) {
+    ctx.fillStyle = "#fffaf0";
+    ctx.font = `800 ${opts.tagSize || 17}px ${FONT}`;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(tag, x + 18, y + 6 + bandH / 2 + 1);
+  }
+  if (opts.rightTag) {
+    ctx.fillStyle = "#ffe8dc";
+    ctx.font = `700 ${opts.rightSize || 13}px ${FONT}`;
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    ctx.fillText(opts.rightTag, x + w - 18, y + 6 + bandH / 2 + 1);
+  }
+  ctx.restore();
+}
+
+function drawPlaqueText(str, x, y, size, color, weight, alpha, opts = {}) {
+  if (!str || alpha <= 0) return;
+  ctx.save();
+  ctx.globalAlpha *= alpha;
+  const fnt = `${weight || 700} ${size}px ${size >= 70 && (weight || 700) >= 700 ? FH : FONT}`;
+  ctx.font = fnt;
+  const tw = ctx.measureText(str).width;
+  const px = opts.padX ?? Math.round(size * 0.42);
+  const py = opts.padY ?? Math.round(size * 0.28);
+  const bx = x - tw / 2 - px, by = y - size * 0.85 - py * 0.6, bw = tw + px * 2, bh = size * 1.15 + py * 1.2;
+
+  ctx.fillStyle = opts.bg || "rgba(17, 27, 21, 0.88)";
+  rrect(bx, by, bw, bh, 8);
+  ctx.fill();
+  ctx.strokeStyle = opts.border || PIRINC;
+  ctx.lineWidth = 1.8;
+  ctx.stroke();
+
+  ctx.fillStyle = color;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "alphabetic";
+  ctx.fillText(str, x, y);
+  ctx.restore();
+}
+
+function textW(str, x, y, size, color, weight, align, alpha) {
+  if (alpha <= 0) return;
+  ctx.save();
+  ctx.globalAlpha *= alpha;
+  ctx.font = `${weight || 700} ${size}px ${size >= 76 && (weight || 700) >= 700 ? FH : FONT}`;
+  ctx.fillStyle = color; ctx.textAlign = align || "center"; ctx.textBaseline = "alphabetic";
+  ctx.fillText(str, x, y);
+  ctx.restore();
+}
+
+function frameRect(cx, cy, rot, alpha, p, glow) {
+  if (alpha <= 0 || p <= 0) return;
+  ctx.save();
+  ctx.translate(cx, cy); ctx.rotate(rot);
+  ctx.globalAlpha *= alpha;
+  ctx.strokeStyle = BLUE; ctx.lineWidth = 8; ctx.shadowColor = BLUE; ctx.shadowBlur = glow;
+  const w = LW / 2, h = LH / 2;
+  poly([[0, -h], [w, -h], [w, h], [-w, h], [-w, -h], [0, -h]], p);
+  ctx.restore();
+}
+
+// Yeşil Fosforlu LCD Sayaç (oyundaki stil.css #money .usd + lcd_cam.svg estetiği)
+function drawLcdCounter(v, alpha) {
+  if (alpha <= 0) return;
+  ctx.save();
+  ctx.globalAlpha *= alpha;
+  const w = DIK ? 348 : 400;
+  const h = DIK ? 94 : 104;
+  const rx = DIK ? W - 26 : W - 36;
+  const x = rx - w;
+  const y = DIK ? DY() + 26 : H - 196;
+
+  // Pirinç çerçeve
+  const gBezel = ctx.createLinearGradient(x, y, x, y + h);
+  gBezel.addColorStop(0, "#e3cf9f");
+  gBezel.addColorStop(0.5, "#a5874f");
+  gBezel.addColorStop(1, "#5a4220");
+  ctx.shadowColor = "rgba(0,0,0,0.55)";
+  ctx.shadowBlur = 14;
+  ctx.shadowOffsetY = 4;
+  ctx.fillStyle = gBezel;
+  rrect(x, y, w, h, 10);
+  ctx.fill();
+  ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+  ctx.strokeStyle = "#1e1a14";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // İç koyu LCD camı (#111b15)
+  const gx = x + 6, gy = y + 6, gw = w - 12, gh = h - 12;
+  const gGlass = ctx.createRadialGradient(gx + gw * 0.45, gy + gh * 0.45, 10, gx + gw * 0.5, gy + gh * 0.5, gw * 0.7);
+  gGlass.addColorStop(0, "#17261c");
+  gGlass.addColorStop(1, PAPER);
+  ctx.fillStyle = gGlass;
+  rrect(gx, gy, gw, gh, 6);
+  ctx.fill();
+  ctx.strokeStyle = "#080f0b";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // İnce yatay tarama ızgarası + cam yansıması
+  ctx.save();
+  rrect(gx, gy, gw, gh, 6);
+  ctx.clip();
+  ctx.fillStyle = "rgba(0,0,0,0.26)";
+  for (let sy = gy + 2; sy < gy + gh; sy += 3) ctx.fillRect(gx, sy, gw, 1);
+  ctx.fillStyle = "rgba(255,255,255,0.035)";
+  ctx.beginPath();
+  ctx.moveTo(gx, gy); ctx.lineTo(gx + gw * 0.48, gy); ctx.lineTo(gx + gw * 0.30, gy + gh); ctx.lineTo(gx, gy + gh); ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+
+  // Fosforlu metinler
+  const moneyStr = "$" + Math.round(v).toLocaleString("tr-TR");
+  const omurStr = Math.floor(v / 1e6 + 1e-6).toLocaleString("tr-TR") + " ömür";
+  let fs = DIK ? 34 : 38;
+  ctx.font = `800 ${fs}px ${FONT}`;
+  while (ctx.measureText(moneyStr).width > gw - 24 && fs > 20) {
+    fs -= 2;
+    ctx.font = `800 ${fs}px ${FONT}`;
+  }
+  ctx.textAlign = "right";
+  ctx.textBaseline = "alphabetic";
+  ctx.fillStyle = LCD_GREEN;
+  ctx.shadowColor = "rgba(184,242,124,0.72)";
+  ctx.shadowBlur = 10;
+  ctx.fillText(moneyStr, gx + gw - 12, gy + (DIK ? 44 : 50));
+
+  ctx.shadowBlur = 4;
+  ctx.shadowColor = "rgba(158,240,110,0.45)";
+  ctx.fillStyle = "#9ef06e";
+  ctx.font = `700 ${DIK ? 21 : 23}px ${FONT}`;
+  ctx.fillText(omurStr, gx + gw - 12, gy + (DIK ? 72 : 80));
+
+  ctx.restore();
+}
+
+function render(t) {
+  const cm = camAt(t), z = cm.z, cx = cm.c[0], cy = cm.c[1];
+  const SW = DIK ? H : W, SH = DIK ? W : H;
+  const ox = SW / 2 - cx * z, oy = SH / 2 - cy * z;
+  const toS = (x, y) => DIK ? [oy + y * z, ox + x * z] : [ox + x * z, oy + y * z];
+  const dunya = () => DIK ? ctx.setTransform(0, z, z, 0, oy, ox) : ctx.setTransform(z, 0, 0, z, ox, oy);
+  const wPlaqueText = (str, x, y, size, color, weight, alpha, opts) => {
+    if (!DIK) return drawPlaqueText(str, x, y, size, color, weight, alpha, opts);
+    ctx.save(); ctx.setTransform(z, 0, 0, z, oy + y * z, ox + x * z);
+    drawPlaqueText(str, 0, 0, size, color, weight, alpha, opts); ctx.restore();
+  };
+
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+  // bg.svg dokusunun altından görünmesi için uyumlu şeffaf petrol vinyet
+  const breath = 0.5 + 0.5 * Math.sin(t * 0.9);
+  const bgGrad = ctx.createRadialGradient(W / 2, H / 2, 40, W / 2, H / 2, Math.max(W, H) * 0.72);
+  bgGrad.addColorStop(0, breath > 0.5 ? "rgba(22, 36, 31, 0.16)" : "rgba(18, 30, 26, 0.22)");
+  bgGrad.addColorStop(0.55, "rgba(17, 28, 24, 0.34)");
+  bgGrad.addColorStop(1, "rgba(10, 17, 14, 0.54)");
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  const WF = 1 - ramp(t, T.b103 - 1.4, 1.2);
+  const MF = 1 - ramp(t, T.b101, 1.2);
+  const vx0 = -ox / z, vy0 = -oy / z, vx1 = (SW - ox) / z, vy1 = (SH - oy) / z;
+
+  // Dünya katmanı
+  dunya();
+  ctx.imageSmoothingEnabled = false;
+  for (const b of BLOCKS) {
+    if (t < b.t) continue;
+    let a = ramp(t, b.t, 0.15) * WF * (b.musk ? MF : 1);
+    if (a <= 0) continue;
+    let dy = b.drop ? -(1 - eo(ramp(t, b.t, b.dd))) * b.drop : 0;
+    if (!b.musk && b.x < 50 && b.y < 20) dy += liftOff(t, b.x);
+    const rows = b.musk ? clamp(muskB(t) - b.base, 0, b.cap) * 5 : b.h;
+    if (rows <= 0) continue;
+    const x = 2 * b.x, y = 2 * b.y + dy, w = 2 * b.w - 1, h = 2 * rows - 1;
+    if (x > vx1 || y > vy1 || x + w < vx0 || y + h < vy0) continue;
+
+    if (z >= 3) {
+      ctx.globalAlpha = a;
+      const i0 = Math.max(0, Math.floor((vx0 - x - 1) / 2)), i1 = Math.min(b.w - 1, Math.ceil((vx1 - x) / 2));
+      const j0 = Math.max(0, Math.floor((vy0 - y - 1) / 2)), j1 = Math.min(Math.ceil(rows) - 1, Math.ceil((vy1 - y) / 2));
+      ctx.fillStyle = COOL; ctx.beginPath();
+      for (let i = i0; i <= i1; i++) for (let j = j0; j <= j1; j++) ctx.rect(x + 2 * i, y + 2 * j, 1, Math.min(1, 2 * rows - 1 - 2 * j));
+      ctx.fill();
+    } else if (z >= 1) {
+      ctx.globalAlpha = a * 0.9;
+      ctx.fillStyle = PAT;
+      ctx.fillRect(x, y, w, h);
+    } else {
+      // Uzak zoom'da çamurlaşmayı engelleyen yüksek kontrastlı blok dolgusu + ayırıcı kenarlık
+      ctx.globalAlpha = a * 0.72;
+      ctx.fillStyle = b.musk ? COOL2 : COOL;
+      ctx.fillRect(x, y, w, h);
+      if (w * z >= 5 && h * z >= 5) {
+        ctx.globalAlpha = a * 0.85;
+        ctx.strokeStyle = "#35514a";
+        ctx.lineWidth = Math.max(1 / z, 1.4 / Math.max(0.25, z));
+        ctx.strokeRect(x, y, w, h);
+      }
+    }
+  }
+  ctx.globalAlpha = 1;
+
+  // Ekran çerçevesi
+  const rot = es(ramp(t, T.b81 + 0.3, 1.5)) * Math.PI / 2;
+  frameRect(FA[0], FA[1], rot, WF, ramp(t, T.b71 + 2.0, 1.2), 30);
+
+  // S07: Forbes 2026 İlk 10 (90'lar krem kâğıt gazete kupürü)
+  const la = ramp(t, T.b72 + 0.4, 0.4) * (1 - ramp(t, T.b81 + 0.1, 0.5));
+  if (la > 0) {
+    if (DIK) { const s = 0.86; ctx.save(); ctx.setTransform(s, 0, 0, s, W / 2 - (460 + 330) * s, DY() + 26 - 50 * s); }
+    drawGazeteKart(460, 50, 660, 816, "FORBES 2026 · İLK 10", la, { bandH: 42, tagSize: 17, rightTag: "SERVET SIRALAMASI", rightSize: 12 });
+    textW("Dünyanın en zenginleri, 2026", 490, 134, 34, MUREKKEP, 900, "left", la);
+    ctx.save(); ctx.globalAlpha *= la;
+    ctx.strokeStyle = MUREKKEP; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(490, 148); ctx.lineTo(1090, 148); ctx.stroke();
+    ctx.restore();
+    RICH.forEach(([n, v], i) => {
+      const tr = T.b72 + 1.0 + (9 - i) * 0.55, a = ramp(t, tr, 0.3) * la;
+      if (a <= 0) return;
+      const y = 198 + i * 60, col = i === 0 ? RED_BAND : MUREKKEP, amt = "$" + v + "B";
+      if (i === 0) {
+        ctx.save(); ctx.globalAlpha *= a * 0.14; ctx.fillStyle = RED_BAND;
+        ctx.fillRect(484, y - 28, 612, 40); ctx.restore();
+      } else if (i % 2 === 1) {
+        ctx.save(); ctx.globalAlpha *= a * 0.05; ctx.fillStyle = MUREKKEP;
+        ctx.fillRect(484, y - 28, 612, 40); ctx.restore();
+      }
+      textW(String(i + 1) + ".", 496, y, 28, i === 0 ? RED_BAND : "#6a6157", 700, "left", a);
+      textW(n, 546, y, 28, col, i === 0 ? 800 : 600, "left", a);
+      textW(amt.slice(0, Math.ceil(ramp(t, tr, 0.35) * amt.length)), 1084, y, 28, col, 800, "right", a);
+    });
+    textW("Kaynak: Wikipedia, \"The World's Billionaires\" (CC BY-SA 4.0), Forbes 2026", 490, 842, 16.5, "#6a6157", 600, "left", la);
+    if (DIK) ctx.restore();
+  }
+
+  // S08: Musk yazıları (okunaklı koyu plaka arkalığı ile)
+  const fw = ramp(t, TW - 0.2, 0.3) * (1 - ramp(t, TW + 5, 0.4));
+  const ma = ramp(t, MEND, 0.5) * MF * WF * (1 - 0.85 * fw);
+  const mb = Math.round(muskB(t));
+  const mX = y => DIK ? 2840 + (y - 975) : 2840, mY = y => DIK ? 975 : y;
+  if (ma > 0) {
+    wPlaqueText("Elon Musk", mX(810), mY(810), 96, COOL, 900, ma, { padX: 46, padY: 18 });
+    wPlaqueText("$" + mb + "B", mX(965), mY(965), 112, "#ff6b57", 900, ma, { padX: 46, padY: 18, border: AMBER });
+    wPlaqueText((mb * 1000).toLocaleString("tr-TR") + " ömür", mX(1085), mY(1085), 54, MUTED, 700, ma, { padX: 32, padY: 14 });
+    wPlaqueText("Kaynak: Forbes, 10 Mart 2026", mX(1165), mY(1165), 30, COOL2, 600, ma, { padX: 24, padY: 10 });
+  }
+
+  // Devin son pikseli
+  const pla = ramp(t, T.b82 + 1.6, 0.6) * MF;
+  if (pla > 0) {
+    ctx.save(); ctx.globalAlpha = pla; ctx.fillStyle = AMBER;
+    ctx.shadowColor = AMBER; ctx.shadowBlur = Math.min(60, 10 + z * 0.5);
+    ctx.fillRect(PL[0] - 0.5, PL[1] - 0.5, 1, 1); ctx.restore();
+  }
+
+  // S10: İki ekran ve bantlar
+  if (t > T.b101) {
+    frameRect(SA[0], SA[1], 0, WF * ramp(t, T.b101 + 1.0, 0.4), ramp(t, T.b101 + 1.0, 0.8), 30);
+    frameRect(SB[0], SB[1], 0, WF * ramp(t, T.b101 + 1.3, 0.4), ramp(t, T.b101 + 1.3, 0.8), 30);
+    const filled = TOTAL * ramp(t, F0, F1 - F0);
+    ctx.globalAlpha = WF;
+    const bant = (s, a0, a1) => DIK ? ctx.fillRect(KOLS[s] + a0, TOPS[0], a1 - a0, LH) : ctx.fillRect(SX0, TOPS[s] + a0, LW, a1 - a0);
+    BANDS.forEach((bd, i) => {
+      const end = Math.min(bd.b - (i < BANDS.length - 1 ? 2 : 0), filled);
+      if (end <= bd.a) return;
+      ctx.fillStyle = i % 2 ? COOL2 : COOL;
+      const a0 = bd.a, a1 = Math.min(end, CAP);
+      if (a1 > a0) bant(0, a0, a1);
+      const b0 = Math.max(bd.a, CAP);
+      if (end > b0) bant(1, b0 - CAP, end - CAP);
+    });
+    BANDS.forEach(bd => {
+      const a = ramp(t, rowT(bd.b), 0.5) * WF;
+      if (a <= 0) return;
+      let pa = bd.a, pb = bd.b;
+      if (pa < CAP && pb > CAP) { if (CAP - pa >= pb - CAP) pb = CAP; else pa = CAP; }
+      const s = pa < CAP ? 0 : 1, mid = (pa + pb) / 2 - s * CAP, str = bd.n + "   $" + bd.v + "B";
+      let fs = Math.min(110, Math.max(56, (pb - pa) * 0.5));
+      if (DIK) {
+        fs = Math.min(fs, 1000 / (0.55 * str.length));
+        ctx.save(); ctx.setTransform(z, 0, 0, z, oy + SA[1] * z, ox + (KOLS[s] + mid + fs * 0.35) * z);
+        textW(str, 0, 0, fs, INK, 800, "center", a); ctx.restore();
+      } else {
+        textW(str, SA[0], TOPS[s] + mid + fs * 0.35, fs, INK, 800, "center", a);
+      }
+    });
+    const pulse = ramp(t, T.b102, 0.3) * (1 - ramp(t, T.b102 + 3, 0.5));
+    if (pulse > 0) {
+      ctx.save(); ctx.globalAlpha = pulse * (0.6 + 0.4 * Math.sin(t * 6)) * WF;
+      ctx.strokeStyle = AMBER; ctx.lineWidth = 10; ctx.shadowColor = AMBER; ctx.shadowBlur = 40;
+      if (DIK) ctx.strokeRect(KOLS[1], TOPS[0], TOTAL - CAP, LH); else ctx.strokeRect(SX0, TOPS[1], LW, TOTAL - LH);
+      ctx.restore();
+    }
+    const ta = ramp(t, F1 + 0.2, 0.6) * WF, ka = ramp(t, F1 + 0.6, 0.6) * WF;
+    if (!DIK && ta > 0) {
+      const yTot = (TOPS[1] + (TOTAL - LH) + C4[1] + LH) / 2 + 20;
+      drawGazeteKart(SA[0] - 880, yTot - 140, 1760, 260, "TOPLAM SERVET", ta, { bandH: 52, tagSize: 26 });
+      textW("İlk 10: $2.59T = 1.25 ekran", SA[0], yTot + 22, 102, RED_BAND, 900, "center", ta);
+      textW("Kaynak: Forbes, 10 Mart 2026", SA[0], yTot + 84, 36, "#5a4f3c", 600, "center", ka);
+    } else if (DIK && ta > 0) {
+      ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
+      const by = ox + (KOLS[0] - 62) * z;
+      drawGazeteKart(W / 2 - 420, by - 66, 840, 122, "TOPLAM SERVET", ta, { bandH: 26, tagSize: 13 });
+      textW("İlk 10: $2.59T = 1.25 ekran", W / 2, by + 10, 46, RED_BAND, 900, "center", ta);
+      textW("Kaynak: Forbes, 10 Mart 2026", W / 2, by + 40, 19, "#5a4f3c", 600, "center", ka);
+      ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  // Sizin pikseliniz
+  const tm = TIGN;
+  let own = t < tm ? 0 : t < tm + 0.5 ? ramp(t, tm, 0.35) * (0.75 + 0.25 * Math.sin((t - tm) * 60)) : 1;
+  if (own > 0) {
+    ctx.save(); ctx.globalAlpha = own; ctx.fillStyle = AMBER;
+    ctx.shadowColor = AMBER; ctx.shadowBlur = Math.min(70, 12 + z * 0.6);
+    const sz = pulseSize(t), j = sz > 1.5 ? (sz - 1) * 0.08 : 0;
+    ctx.fillRect(0.5 - sz / 2 + j * Math.sin(t * 47), 0.5 - sz / 2 + liftOff(t, 0) + j * Math.sin(t * 59 + 1), sz, sz);
+    ctx.restore();
+  }
+
+  // Ekran katmanı
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.imageSmoothingEnabled = true;
+
+  // S01: ekranın kenarı ve piksel hesabı
+  const erken = W > W0 || H > H0 ? ramp(t, T.b11 + 2.4, 0.3) : 0;
+  const e0 = Math.max(ramp(t, T.b1f - 0.3, 0.6), erken) * (1 - ramp(t, T.b12 - 0.3, 0.4));
+  if (e0 > 0) {
+    ctx.save(); ctx.globalAlpha = e0; ctx.strokeStyle = BLUE; ctx.lineWidth = 6; ctx.shadowColor = BLUE; ctx.shadowBlur = 30;
+    ctx.strokeRect(DX() + 5, DY() + 5, W0 - 10, H0 - 10); ctx.restore();
+    const s1 = `${W0} × ${H0} = 2.073.600 piksel`;
+    drawPlaqueText(s1.slice(0, Math.ceil(ramp(t, T.b1f + 0.3, 1.6) * s1.length)), W / 2, Y(340), DIK ? 54 : 72, COOL, 900, e0, { padX: 34, padY: 16 });
+  }
+
+  // S01 ölçü okları
+  const ar = ramp(t, T.b11 + 2.4, 0.3) * (1 - ramp(t, T.b12 - 0.4, 0.4));
+  if (ar > 0) {
+    const g = eo(ramp(t, T.b11 + 2.4, 0.8)), HS = 22;
+    const gx = lerp(150, W0 / 2 - 2, g), gy = lerp(120, H0 / 2 - 2, g), ky = DY() + 70, kx = DX() + 70;
+    ctx.save(); ctx.globalAlpha = ar; ctx.strokeStyle = COOL; ctx.lineWidth = 4; ctx.lineCap = ctx.lineJoin = "round";
+    const arm = (a, b, dx, dy) => {
+      poly([a, b], 1);
+      poly([[b[0] - dx * HS - dy * HS * 0.6, b[1] - dy * HS - dx * HS * 0.6], b,
+            [b[0] - dx * HS + dy * HS * 0.6, b[1] - dy * HS + dx * HS * 0.6]], 1);
+    };
+    if (g > 0) {
+      arm([W / 2 - 150, ky], [W / 2 - gx, ky], -1, 0); arm([W / 2 + 150, ky], [W / 2 + gx, ky], 1, 0);
+      arm([kx, H / 2 - 120], [kx, H / 2 - gy], 0, -1); arm([kx, H / 2 + 120], [kx, H / 2 + gy], 0, 1);
+    }
+    ctx.restore();
+    drawPlaqueText(W0 + "px", W / 2, DY() + 86, 42, COOL, 700, ar, { padX: 18, padY: 8 });
+    ctx.save(); ctx.translate(DX() + 86, H / 2); ctx.rotate(-Math.PI / 2);
+    drawPlaqueText(H0 + "px", 0, 0, 42, COOL, 700, ar, { padX: 18, padY: 8 }); ctx.restore();
+  }
+
+  // S01 piksel halkası
+  const rg = ramp(t, TIGN + 0.4, 0.5) * (1 - ramp(t, T.b12 - 0.3, 0.3));
+  if (rg > 0) {
+    const [px, py] = toS(0.5, 0.5);
+    ctx.save(); ctx.globalAlpha = rg; ctx.strokeStyle = AMBER; ctx.lineWidth = 5; ctx.shadowColor = AMBER; ctx.shadowBlur = 20;
+    poly(circlePts(px, py, 70, 48), ramp(t, TIGN + 0.4, 0.5)); ctx.restore();
+  }
+
+  // S02: 3 ev + 1 araba vektör kartı
+  const sk = 1 - ramp(t, TE.b22 - 2.6, 0.4);
+  if (t > T.b21 + 1.4 && sk > 0 && z > 150) {
+    const [sx, sy] = toS(0, 0);
+    sketch(sx, sy, z, ramp(t, T.b21 + 1.4, 1.4), sk, ramp(t, T.b22 + 0.3, 1.4));
+  }
+  // S08: devin son pikselinde aynı kart, soluk
+  const sk2 = ramp(t, T.b82 + 2.2, 0.5) * (1 - ramp(t, TE.b82 - 0.3, 0.8));
+  if (sk2 > 0 && z > 100) {
+    const [sx, sy] = toS(PL[0] - 0.5, PL[1] - 0.5);
+    sketch(sx, sy, z, ramp(t, T.b82 + 2.2, 1.6), sk2 * 0.65, 1);
+  }
+
+  // S08 dalgalanma: canlı tutar (gazete fişi plaka)
+  if (fw > 0) {
+    const mv = muskB(t), d = Math.round(mv - 839);
+    drawGazeteKart(W / 2 - 200, DY() + 42, 400, 152, "HAFTALIK DALGALANMA", fw, { bandH: 30, tagSize: 13 });
+    textW("$" + Math.round(mv) + "B", W / 2, DY() + 132, 68, RED_BAND, 900, "center", fw);
+    textW(d === 0 ? "±0" : (d > 0 ? "+" : "−") + Math.abs(d) + "B", W / 2, DY() + 178, 36, d >= 0 ? "#2f7a4a" : AMBER, 800, "center", fw);
+  }
+
+  // Seviye etiketleri (okunaklı plaka arkalığı ile)
+  for (const [t0, t1, a, x, y, fs] of LABELS) {
+    let al = ramp(t, t0, 0.35) * (1 - ramp(t, t1 - 0.3, 0.3));
+    if (t0 > T.b103) al *= 1 - ramp(t, TE.b104 + 0.4, 1.2);
+    if (al <= 0) continue;
+    const orta = x === "c", yan = DIK && !orta;
+    const lx = orta || yan ? W / 2 : DX() + x;
+    const ly = yan ? DY() + 700 : DIK && y === 860 ? DY() + H0 - 290 : Y(y);
+    const fsize = DIK ? Math.min(fs || 72, 60) : (fs || 76);
+    const isMoney = a.startsWith("$") || a.startsWith("1px");
+    drawPlaqueText(a, lx, ly, fsize, isMoney ? COOL : "#ff7b66", 900, al, { padX: 28, padY: 12 });
+  }
+
+  // S04: $100M Oyun Stüdyosu gazete kupürü / dosya fişi
+  const s4a = ramp(t, T.b41 + 1.4, 0.45) * (1 - ramp(t, T.b51 - 0.3, 0.4));
+  if (s4a > 0) {
+    const cw = DIK ? 540 : 470, ch = DIK ? 168 : 210;
+    const cx4 = DIK ? W / 2 - cw / 2 : DX() + 76;
+    const cy4 = DIK ? DY() + 290 : Y(250);
+    drawGazeteKart(cx4, cy4, cw, ch, "EKONOMİ DOSYASI · S04", s4a, { bandH: 34, tagSize: 15, rightTag: "100 ÖMÜR" });
+    textW("Oyun Stüdyosu", cx4 + 22, cy4 + 80, 32, MUREKKEP, 900, "left", s4a);
+    textW("$100M Değerleme", cx4 + 22, cy4 + 122, 34, RED_BAND, 900, "left", s4a);
+    textW("3 ortak · Masraflar sonrası iyi para", cx4 + 22, cy4 + (DIK ? 152 : 168), 21, "#5a4f3c", 600, "left", s4a);
+  }
+
+  // S05: Unicorn 3 şart (90'lar krem kâğıt gazete kupürü)
+  const ua = ramp(t, T.b52 + 0.2, 0.4) * (1 - ramp(t, TE.b52 - 0.6, 0.6));
+  if (ua > 0) {
+    const uw = DIK ? 820 : 840, uh = 232;
+    const ux = W / 2 - uw / 2;
+    const uyTop = DIK ? DY() + H0 - 520 : Y(690);
+    drawGazeteKart(ux, uyTop, uw, uh, "UNICORN BARİYERİ · $1B", ua, { bandH: 36, tagSize: 15, rightTag: "3 ŞART" });
+    textW("Unicorn olmak:", ux + 26, uyTop + 76, 30, MUREKKEP, 900, "left", ua);
+    ["1. Girişim olmak", "2. Borsada olmamak", "3. Bir yatırım turunda $1B'yi geçmek"].forEach((c, i) => {
+      const ca = ua * ramp(t, T.b52 + COND[i], 0.3);
+      textW(c, ux + 26, uyTop + 122 + i * 44, 30, i === 2 ? RED_BAND : MUREKKEP, i === 2 ? 800 : 600, "left", ca);
+    });
+  }
+
+  // Sağ altta (dikeyde sağ üstte) Yeşil Fosforlu LCD Sayaç
+  const ca = ramp(t, T.b21 + 0.3, 0.4) * (1 - ramp(t, T.b72, 0.4) + ramp(t, T.b81 + 2.6, 0.4)) * (1 - ramp(t, M39T, 0.4));
+  if (ca > 0) drawLcdCounter(cntAt(t), ca);
+
+  // Altyazı (klasik sinema altyazısı: Arial Bold + net siyah kontör, kutusuz)
+  if (on("sub")) {
+    for (const [t0, t1, ln] of CARDS) {
+      if (t >= t0 && t < t1) {
+        ctx.save();
+        let fs = DIK ? 44 : 46;
+        const subFont = "Arial, Helvetica, sans-serif";
+        ctx.font = `bold ${fs}px ${subFont}`;
+        while (ctx.measureText(ln).width > W - 96 && fs > 24) {
+          fs -= 2;
+          ctx.font = `bold ${fs}px ${subFont}`;
+        }
+        const ay = DIK ? H - 106 : H - 58;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "alphabetic";
+        ctx.lineJoin = "round";
+        ctx.miterLimit = 2;
+        ctx.shadowColor = "rgba(0, 0, 0, 0.9)";
+        ctx.shadowBlur = 7;
+        ctx.shadowOffsetY = 2;
+        ctx.lineWidth = Math.max(8, Math.round(fs * 0.24));
+        ctx.strokeStyle = "#000000";
+        ctx.strokeText(ln, W / 2, ay);
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetY = 0;
+        ctx.fillStyle = "#fff8dc";
+        ctx.fillText(ln, W / 2, ay);
+        ctx.restore();
+        break;
+      }
+    }
+  }
+}
+
+// Web Audio sentez efektleri
+let AC = null, MASTER = null, NB = null, DRONE = null;
+const on = id => document.getElementById(id).classList.contains("on");
+function A() {
+  if (!AC) {
+    AC = new (window.AudioContext || window.webkitAudioContext)();
+    MASTER = AC.createGain(); MASTER.gain.value = 0.9; MASTER.connect(AC.destination);
+    NB = AC.createBuffer(1, AC.sampleRate * 2, AC.sampleRate);
+    const d = NB.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  }
+  return AC;
+}
+function tone(f, d = 0.7, type = "triangle", v = 0.08) {
+  if (!on("sfx")) return;
+  const a = A(), o = a.createOscillator(), g = a.createGain(), t0 = a.currentTime;
+  o.type = type; o.frequency.value = f;
+  g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(v, t0 + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t0 + d);
+  o.connect(g).connect(MASTER); o.start(t0); o.stop(t0 + d + 0.05);
+}
+function noise(d, f, q, v, f2, type = "bandpass") {
+  if (!on("sfx")) return;
+  const a = A(), s = a.createBufferSource(), fl = a.createBiquadFilter(), g = a.createGain(), t0 = a.currentTime;
+  s.buffer = NB; s.loop = true; fl.type = type; fl.frequency.value = f; fl.Q.value = q;
+  if (f2) fl.frequency.exponentialRampToValueAtTime(f2, t0 + d);
+  g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(v, t0 + Math.min(0.05, d / 4));
+  g.gain.setValueAtTime(v, t0 + d * 0.7); g.gain.exponentialRampToValueAtTime(0.0001, t0 + d);
+  s.connect(fl).connect(g).connect(MASTER); s.start(t0); s.stop(t0 + d + 0.05);
+}
+function thud(v = 1) {
+  if (!on("sfx")) return;
+  const a = A(), o = a.createOscillator(), g = a.createGain(), t0 = a.currentTime;
+  o.type = "sine"; o.frequency.setValueAtTime(95, t0); o.frequency.exponentialRampToValueAtTime(32, t0 + 0.5);
+  g.gain.setValueAtTime(0.6 * v, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.8);
+  o.connect(g).connect(MASTER); o.start(t0); o.stop(t0 + 0.85);
+  noise(0.25, 180, 0.8, 0.25 * v, null, "lowpass");
+}
+function click() { noise(0.035, 3500, 2, 0.15, null, "highpass"); }
+function tick() { noise(0.02, 5000, 4, 0.12, null, "highpass"); }
+function whoosh(d = 1.2) { noise(d, 400, 0.8, 0.12, 2500); }
+function bell(f) { tone(f, 1.8, "sine", 0.09); tone(f * 2.01, 1.0, "sine", 0.03); }
+function pour(d) { noise(d, 300, 1.5, 0.12, 2200); }
+function splash() { noise(0.7, 900, 0.7, 0.22, 300); }
+function droneOn() {
+  if (!on("sfx") || DRONE) return;
+  const a = A(), g = a.createGain(), t0 = a.currentTime;
+  g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(0.05, t0 + 2.5); g.connect(MASTER);
+  const os = [110, 164.8, 220.5].map(f => { const o = a.createOscillator(); o.type = "sine"; o.frequency.value = f; o.connect(g); o.start(); return o; });
+  DRONE = { g, os };
+}
+function droneOff() {
+  if (!DRONE) return;
+  const t0 = AC.currentTime, d = DRONE;
+  d.g.gain.cancelScheduledValues(t0); d.g.gain.setValueAtTime(d.g.gain.value, t0); d.g.gain.linearRampToValueAtTime(0, t0 + 1.5);
+  d.os.forEach(o => o.stop(t0 + 1.6));
+  DRONE = null;
+}
+
+// Çift Modlu Seslendirme Motoru: harici <audio> varsa speechSynthesis devre dışı kalır
+let voAudio = null;
+if (SESLENDIRME.src) {
+  voAudio = new Audio(SESLENDIRME.src);
+  voAudio.preload = "auto";
+  voAudio.addEventListener("loadedmetadata", () => {
+    if (Number.isFinite(voAudio.duration) && voAudio.duration > DUR) {
+      DUR = voAudio.duration;
+      seek.max = DUR.toFixed(2);
+    }
+  });
+  voAudio.addEventListener("ended", () => setPlaying(false));
+}
+
+let VOICE = null;
+function pickVoice() {
+  if (!("speechSynthesis" in window)) return;
+  const vs = speechSynthesis.getVoices();
+  VOICE = vs.find(v => /^tr/i.test(v.lang)) || null;
+}
+if ("speechSynthesis" in window) { speechSynthesis.onvoiceschanged = pickVoice; pickVoice(); }
+function speak(txt) {
+  if (SESLENDIRME.src || !on("voice") || !("speechSynthesis" in window)) return;
+  const u = new SpeechSynthesisUtterance(txt);
+  u.lang = "tr-TR"; if (VOICE) u.voice = VOICE; u.rate = 1.05;
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
+}
+function hush() {
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+  droneOff();
+}
+
+// Oynatıcı + postMessage entegrasyonu
+EVS.sort((a, b) => a.t - b.t);
+let t = 0, lastT = 0, playing = false, prevNow = 0;
+const GOMULU = Q.get("gomulu") === "1" && window.parent !== window;
+let bildirZaman = 0, oynanan = 0;
+const bildir = bitti => { try { window.parent.postMessage({ omurmatik: "video", t: Math.round(t), oynanan: Math.round(oynanan), bitti }, "*"); } catch (e) {} };
+if (GOMULU) document.querySelector(".masthead a").style.display = "none";
+else if (location.protocol === "file:" || /\/Video\//.test(location.pathname)) document.querySelector(".masthead a").href = "../Oyun/omurmatik.html";
+
+const seek = document.getElementById("seek"), timeEl = document.getElementById("time");
+const playBtn = document.getElementById("play"), big = document.getElementById("big");
+const fsBtn = document.getElementById("fs"), wrap = document.getElementById("wrap"), barEl = document.getElementById("bar");
+seek.max = DUR.toFixed(2);
+const fmt = s => Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0");
+
+function setPlaying(p) {
+  playing = p;
+  playBtn.classList.toggle("playing", p);
+  playBtn.setAttribute("aria-label", p ? "Duraklat" : "Oynat");
+  playBtn.title = p ? "Duraklat (Space)" : "Oynat (Space)";
+  big.style.display = p ? "none" : "flex";
+  if (p) {
+    kilitAc();
+    if (t >= DUR) jump(0);
+    prevNow = performance.now();
+    lastT = t;
+    if (voAudio) {
+      voAudio.muted = !on("voice");
+      try { voAudio.currentTime = t; } catch (e) {}
+      voAudio.play().catch(() => {});
+    }
+  } else {
+    if (voAudio) voAudio.pause();
+    hush();
+  }
+}
+
+let kilitAcik = false;
+function kilitAc() {
+  try {
+    const a = A(); if (a.resume) a.resume();
+    if (!kilitAcik) { const s = a.createBufferSource(); s.buffer = a.createBuffer(1, 1, 22050); s.connect(a.destination); s.start(0); }
+  } catch (e) {}
+  try {
+    if (!kilitAcik && !SESLENDIRME.src && "speechSynthesis" in window) {
+      const u = new SpeechSynthesisUtterance(" "); u.volume = 0; speechSynthesis.speak(u);
+    }
+  } catch (e) {}
+  kilitAcik = true;
+}
+
+function jump(nt) {
+  t = clamp(nt, 0, DUR);
+  lastT = t;
+  if (voAudio) {
+    try { voAudio.currentTime = t; } catch (e) {}
+  }
+  hush();
+}
+
+function frame(now) {
+  if (playing) {
+    let dt = Math.min(0.1, (now - prevNow) / 1000);
+    if (voAudio && !voAudio.paused && voAudio.readyState >= 1) {
+      const at = Math.min(DUR, voAudio.currentTime);
+      dt = Math.max(0, at - t);
+      t = at;
+    } else {
+      t = Math.min(DUR, t + dt);
+    }
+    oynanan += dt;
+    if (t - lastT < 0.5) for (const e of EVS) { if (e.t > lastT && e.t <= t) e.f(); }
+    lastT = t;
+    if (t >= DUR) setPlaying(false);
+    if (GOMULU && (t >= DUR || now - bildirZaman > 1000)) { bildirZaman = now; bildir(t >= DUR); }
+  }
+  prevNow = now;
+  render(t);
+  seek.value = t;
+  timeEl.textContent = fmt(t) + " / " + fmt(DUR);
+  requestAnimationFrame(frame);
+}
+
+const tamEkranVar = () => document.fullscreenElement || document.webkitFullscreenElement;
+let simFullscreen = false;
+const isFullscreen = () => Boolean(tamEkranVar() || simFullscreen);
+let fsBarTimer = 0;
+let lastTouchTs = 0;
+const FS_BAR_ZONE = 110;
+const FS_BAR_HIDE_MS = 1000;
+const FS_BAR_TOUCH_MS = 2200;
+function clearFsBarTimer() {
+  if (fsBarTimer) { clearTimeout(fsBarTimer); fsBarTimer = 0; }
+}
+function hideFsBarDelayed(ms = FS_BAR_HIDE_MS) {
+  if (fsBarTimer) return;
+  fsBarTimer = setTimeout(() => {
+    fsBarTimer = 0;
+    wrap.classList.remove("bar-acik");
+  }, ms);
+}
+function showFsBar(autoHideMs = 0) {
+  if (!isFullscreen()) return;
+  wrap.classList.add("bar-acik");
+  clearFsBarTimer();
+  if (autoHideMs > 0) hideFsBarDelayed(autoHideMs);
+}
+function isBottomBarZone(e) {
+  if (barEl && e && e.target instanceof Node && barEl.contains(e.target)) return true;
+  if (!e || typeof e.clientY !== "number") return false;
+  return e.clientY >= window.innerHeight - FS_BAR_ZONE;
+}
+function onFsMouseMove(e) {
+  if (!isFullscreen()) return;
+  if (Date.now() - lastTouchTs < 700) return;
+  if (isBottomBarZone(e)) showFsBar(0);
+  else if (wrap.classList.contains("bar-acik")) hideFsBarDelayed(FS_BAR_HIDE_MS);
+}
+function onFsTouchStart() {
+  if (!isFullscreen()) return;
+  lastTouchTs = Date.now();
+  showFsBar(FS_BAR_TOUCH_MS);
+}
+function syncFullscreenUI() {
+  const fs = isFullscreen();
+  document.body.classList.toggle("tam-ekran", fs);
+  if (!fs) {
+    clearFsBarTimer();
+    wrap.classList.remove("bar-acik");
+  }
+  fsBtn.classList.toggle("on", fs);
+  fsBtn.setAttribute("aria-pressed", String(fs));
+  fsBtn.setAttribute("aria-label", fs ? "Tam ekrandan çık" : "Tam ekran");
+  fsBtn.title = fs ? "Tam ekrandan çık (F)" : "Tam ekran (F)";
+  boyutla();
+  render(t);
+}
+function setFullscreen(next) {
+  const target = typeof next === "boolean" ? next : !isFullscreen();
+  if (!target) {
+    simFullscreen = false;
+    if (tamEkranVar()) {
+      const exit = document.exitFullscreen || document.webkitExitFullscreen;
+      if (exit) return Promise.resolve(exit.call(document)).catch(() => syncFullscreenUI());
+    }
+    syncFullscreenUI();
+    return;
+  }
+  const el = document.documentElement;
+  const req = el.requestFullscreen || el.webkitRequestFullscreen;
+  if (req) {
+    return Promise.resolve(req.call(el)).then(() => syncFullscreenUI()).catch(() => {
+      simFullscreen = true;
+      syncFullscreenUI();
+    });
+  }
+  simFullscreen = true;
+  syncFullscreenUI();
+}
+fsBtn.onclick = e => {
+  if (e && e.detail) fsBtn.blur();
+  setFullscreen();
+};
+["fullscreenchange", "webkitfullscreenchange"].forEach(ev => document.addEventListener(ev, () => {
+  if (!tamEkranVar()) simFullscreen = false;
+  syncFullscreenUI();
+}));
+wrap.addEventListener("mousemove", onFsMouseMove);
+wrap.addEventListener("mouseleave", () => {
+  if (isFullscreen() && wrap.classList.contains("bar-acik")) hideFsBarDelayed(FS_BAR_HIDE_MS);
+});
+wrap.addEventListener("touchstart", onFsTouchStart, { passive: true });
+
+playBtn.onclick = () => setPlaying(!playing);
+document.getElementById("bigPlay").onclick = () => setPlaying(true);
+seek.oninput = () => jump(parseFloat(seek.value));
+["sub", "sfx", "voice"].forEach(id => {
+  const b = document.getElementById(id);
+  b.onclick = () => {
+    const active = b.classList.toggle("on");
+    b.setAttribute("aria-pressed", String(active));
+    if (id === "voice") {
+      b.title = active ? "Seslendirme açık (M)" : "Seslendirme kapalı (M)";
+      if (voAudio) voAudio.muted = !active;
+    }
+    if (!active && (id !== "voice" || !SESLENDIRME.src)) hush();
+  };
+});
+cv.onclick = () => setPlaying(!playing);
+
+// ?sync=1 Cue İşaretleyici arayüzü
+const syncMarks = [];
+const syncPanel = document.getElementById("syncPanel");
+const syncInfo = document.getElementById("syncInfo");
+const syncOut = document.getElementById("syncOut");
+function updateSyncUI() {
+  if (!SYNC_MODE) return;
+  const idx = syncMarks.length;
+  if (idx < BEATS.length) {
+    const [id, sc, txt] = BEATS[idx];
+    syncInfo.innerHTML = `Cue İşaretleyici (${idx}/${BEATS.length}) · Sıradaki: <b>${id}</b> (${sc})<small>${txt.slice(0, 88)}${txt.length > 88 ? "..." : ""}</small>`;
+  } else {
+    syncInfo.innerHTML = `Cue İşaretleyici (${BEATS.length}/${BEATS.length}) · Tamamlandı<small>Aşağıdaki diziyi SESLENDIRME.cues alanına yapıştırabilirsiniz.</small>`;
+  }
+  syncOut.value = `cues: [${syncMarks.map(v => v.toFixed(2)).join(", ")}]`;
+}
+function markCue() {
+  if (!SYNC_MODE || syncMarks.length >= BEATS.length) return;
+  syncMarks.push(Number(t.toFixed(2)));
+  updateSyncUI();
+}
+if (SYNC_MODE) {
+  syncPanel.classList.add("open");
+  document.getElementById("syncMark").onclick = markCue;
+  document.getElementById("syncUndo").onclick = () => { syncMarks.pop(); updateSyncUI(); };
+  document.getElementById("syncReset").onclick = () => { syncMarks.length = 0; updateSyncUI(); };
+  document.getElementById("syncCopy").onclick = async () => {
+    const txt = syncOut.value;
+    try { await navigator.clipboard.writeText(txt); } catch (e) { syncOut.select(); }
+  };
+  updateSyncUI();
+}
+
+document.addEventListener("keydown", e => {
+  if (SYNC_MODE && (e.code === "KeyC" || e.code === "Space")) {
+    e.preventDefault();
+    markCue();
+    return;
+  }
+  if (e.code === "Space") { e.preventDefault(); setPlaying(!playing); }
+  else if (e.code === "KeyF") { e.preventDefault(); setFullscreen(); }
+  else if (e.code === "KeyM") { e.preventDefault(); document.getElementById("voice").click(); }
+  else if (e.code === "ArrowRight") jump(t + 5);
+  else if (e.code === "ArrowLeft") jump(t - 5);
+});
+
+if (Q.get("t")) jump(parseFloat(Q.get("t")) || 0);
+(document.fonts ? document.fonts.ready : Promise.resolve()).then(() => requestAnimationFrame(frame));
+</script>
+</body>
+</html>

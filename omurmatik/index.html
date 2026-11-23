@@ -3470,8 +3470,8 @@ function son(kazandi, msg, ozelBaslik) {
   S.sonSayiAc();
 }
 // Bitiş Videosu (v2.2): her biten oyunda, Son Sayı'dan sonra, oyunun içinde (iframe). Video ilerlemesini postMessage ile bildirir.
-// v2.4: yayında video.html (vault'ta Video/omur_bitis_video.html; ölçeklendirme videosunun Ömürmatik temalı kopyası).
-const BITIS_VIDEO = location.protocol === "file:" || /\/Oyun\//.test(location.pathname) ? "../Video/omur_bitis_video.html" : "video.html";   // yayında ve yerel sunucuda yan dosya; dosya doğrudan açılınca vault'taki asıl
+// v2.4+: yayında omurmatik_video.html (vault'ta Video/omurmatik_video.html).
+const BITIS_VIDEO = location.protocol === "file:" || /\/Oyun\//.test(location.pathname) ? "../Video/omurmatik_video.html" : "omurmatik_video.html";   // yayında ve yerel sunucuda yan dosya; dosya doğrudan açılınca vault'taki asıl
 function videoAc() {
   $("popup").classList.remove("open");
   if ($("bitis")) $("bitis").remove();
