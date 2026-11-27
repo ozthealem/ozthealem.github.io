@@ -96,7 +96,7 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 </style>
-<link rel="stylesheet" href="sahne/stil.css?v=3.52">
+<link rel="stylesheet" href="sahne/stil.css?v=3.53">
 </head>
 <body>
 <button id="sesBtn" type="button" aria-pressed="false" aria-label="Ses" title="Ses kapalı (M)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="dalga" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/><path class="carpi" d="M16 9l5 6M21 9l-5 6"/></svg></button>
@@ -577,6 +577,7 @@ function kurallarAc(tur = "hepsi") {   // v3.14: "kural" yalnız kurallar, "kayn
   if (tur === "kural") popup("Kurallar", kural + notlar + kunye);
   else if (tur === "kaynak") popup("Kaynakça", kaynak + kunye);
   else popup("Kurallar ve kaynaklar", kural + notlar + kaynak + kunye);
+  document.querySelector("#popup .card").classList.add("genis-bilgi");
   $("popup").dataset.disKapat = "1";   // dışına tıklayınca kapanır
 }
 function kaynakHTML() {
@@ -950,7 +951,7 @@ document.addEventListener("keydown", e => { if ((e.key === "f" || e.key === "F")
 window.addEventListener("beforeunload", e => { if (S.ad && !S.bitti && !$("start")) { e.preventDefault(); e.returnValue = ""; } });
 let popGeri = null;   // pencere açılmadan önce odaktaki öğe: KAPAT ile odak oraya döner
 function popup(baslik, metin, dugme = "TAMAM", is = null) { const alt = document.querySelector("#popup .mkAlt"); if (alt) { alt.before($("popOk")); alt.remove(); }   // v3.51: önceki pencerenin alt sırası
-  const fl = document.querySelector("#popup .film"); if (fl) { fl.before($("popOk")); fl.remove(); } document.querySelectorAll("#popup .card > .opt.ikinci").forEach(x => x.remove()); if ($("app").contains(document.activeElement)) popGeri = document.activeElement; const pi = $("popIptal"); if (pi) pi.remove(); delete $("popup").dataset.disKapat; const kart_ = document.querySelector("#popup .card"); kart_.classList.remove("ozel", "v5", "gzt", "son", "mirasKart", "mirasVeraset", "karar1c", "varlik-kasa"); kart_.classList.add("v5"); delete kart_.dataset.donem; $("popT").textContent = baslikYap(baslik); $("popM").innerHTML = metin; $("popM").classList.toggle("uzun", metin.replace(/<[^>]+>/g, "").length > 140); $("popOk").textContent = dugme; $("popOk").disabled = false; popIs = is; $("popup").classList.add("open"); $("popOk").focus(); sesCal("pencere"); }
+  const fl = document.querySelector("#popup .film"); if (fl) { fl.before($("popOk")); fl.remove(); } document.querySelectorAll("#popup .card > .opt.ikinci").forEach(x => x.remove()); if ($("app").contains(document.activeElement)) popGeri = document.activeElement; const pi = $("popIptal"); if (pi) pi.remove(); delete $("popup").dataset.disKapat; const kart_ = document.querySelector("#popup .card"); kart_.classList.remove("ozel", "v5", "gzt", "son", "mirasKart", "mirasVeraset", "karar1c", "varlik-kasa", "genis-bilgi", "v6-genis", "v6-orta"); kart_.classList.add("v5"); delete kart_.dataset.donem; $("popT").textContent = baslikYap(baslik); $("popM").innerHTML = metin; $("popM").classList.toggle("uzun", metin.replace(/<[^>]+>/g, "").length > 140); $("popOk").textContent = dugme; $("popOk").disabled = false; popIs = is; $("popup").classList.add("open"); $("popOk").focus(); sesCal("pencere"); }
 $("popOk").onclick = () => { if (popIs) return popIs(); $("popup").classList.remove("open"); if (popSonra) { const f = popSonra; popSonra = null; return f(); } setTimeout(() => $("go").focus()); };
 $("mailClose").onclick = () => { sesCal("arsiv_kapa"); $("mailBox").classList.remove("open"); };
 $("popup").addEventListener("click", e => { if (e.target.id === "yeniHayvan") { $("popOk").click(); yeniHayvanAc(); } });   // hayvan öldü: sahiplen penceresi hemen açılır
@@ -997,6 +998,7 @@ function zorunluSor(who, txt, secenekler, src, opt = {}) {
     sonraki();
   });
   $("popM").appendChild(box); $("popOk").disabled = true;
+  if (opt.kartCls) document.querySelector("#popup .card").classList.add(opt.kartCls);
   if (src) $("popM").insertAdjacentHTML("beforeend", `<div class="src">(Kaynak: ${src})</div>`);   // kaynak en altta
   if (opt.iptal) {
     const v = document.createElement("button"); v.className = "opt ikinci"; v.id = "popIptal"; v.setAttribute("aria-label", "Vazgeç"); v.title = "Vazgeç"; v.innerHTML = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 2L10 10M10 2L2 10"/></svg>';
@@ -1048,7 +1050,7 @@ function kapatDugmesi() {
   $("popOk").after(v);
 }
 function soru(who, txt, secenekler, src, opt = {}) {
-  if (opt.zorunlu) return zorunluSor(who, txt, secenekler, src, opt.cls !== undefined ? { cls: opt.cls } : {});
+  if (opt.zorunlu) { const zOpt = {}; if (opt.cls !== undefined) zOpt.cls = opt.cls; if (opt.kartCls) zOpt.kartCls = opt.kartCls; return zorunluSor(who, txt, secenekler, src, zOpt); }
   if (opt.degisir && S.altSahip) { const sahip = S.altSahip; S.altSahip = null; return altPencere(who, txt, secenekler, src, sahip); }
   const d = kart(who, txt, { cls: "q", src, tek: opt.tek });
   const box = document.createElement("div"); box.className = "opts" + (opt.cls ? " " + opt.cls : secenekler.some(x => (x.s || "").replace(/<small class="usdAlt">.*?<\/small>/g, "").replace(/<[^>]+>/g, "").length > 22) ? " one" : secenekler.length === 3 ? " three" : "");
@@ -2731,7 +2733,7 @@ const SEG = { ucuz: "Ucuz", orta: "Orta", luks: "Lüks" };
 function degistir(id) {
   if (S.bitti) return;
   S.secili = null; ciz();
-  if (id === "araba") return zorunluSor("Galeri", `${arabaAdi()} ${arabaYas()} yaşında, eskisi takasta gider. Yenisi hangisi?`, arabaSecenek(true), "", { iptal: true });
+  if (id === "araba") return zorunluSor("Galeri", `${arabaAdi()} ${arabaYas()} yaşında, eskisi takasta gider. Yenisi hangisi?`, arabaSecenek(true), "", { iptal: true, kartCls: "v6-orta" });
   const i = +id.slice(2), eskiAd = evAdi(i), eskiSemt = evB(i).ad, sd = satisDegeri(id), surum = S.evSurum;
   zorunluSor("Emlakçı", `${eskiAd} evini satıp hangisine geçeceksin? (harç %2 dahil)`, ["ucuz", "orta", "luks"].map(k => {
     const E = D.evler[k], yeni = evSecenegi(k, eskiSemt), f = yeni.fiyat * (1 + D.harc), yetmez = harcanabilir() + sd < f;
@@ -2743,7 +2745,7 @@ function degistir(id) {
       gelir("Ev satışı", satisDegeri("ev" + i)); S.evler[i] = k; S.evKat[i] = 1; S.evYas[i] = 0; S.evBilgi[i] = yeni; al("Ev alımı", f);
       note("Emlakçı", `${eskiAd} evini sattın, ${yeni.ad} ${yeni.tip} evine ${i === S.oturulanEv ? "taşındın" : "geçtin, kiraya verdin"}: <b class="minus">−${tl(f)}</b>${yeni.gk ? " Gecekondu: bir gün kentsel dönüşüme girebilir." : ""}`, { src: E.src + "; semt adı süs, fiyat segmentin" });
     } };
-  }), "", { iptal: true });
+  }), "", { iptal: true, kartCls: "v6-orta" });
 }
 function evSecenekler() {
   const ilk = !S.evler.length;
@@ -2859,7 +2861,7 @@ function hayatOlayi() {
     // üst satır: idare et · sat; altında üç segmentten birer araba, tam satır (yenilerken eskisi takasta)
     const L = arabaSecenek(true).map(o => ({ ...o, t: "Yenile · " + o.t, cls: "genis" })), sd = satisDegeri("araba");
     return () => soru("Galeri", `${arabaAdi()} ${arabaYas()} yaşında, arızalar artıyor. Ne yapacaksın? (yenilerken eskisi takasta gider)`, [{ t: "İdare et", s: "", f: () => {} },
-      { t: "Arabanı sat", s: `+${tl(sd)}`, f: () => { if (S.araba) sat("araba"); } }, ...L], "", { degisir: true, zorunlu: true, cls: "" });
+      { t: "Arabanı sat", s: `+${tl(sd)}`, f: () => { if (S.araba) sat("araba"); } }, ...L], "", { degisir: true, zorunlu: true, cls: "v6-karma", kartCls: "v6-genis" });
   }
   if (!S.sigortali && !S.emekli && !S.sgkSorma && a < KO.primYas && Math.random() < KO.prim)
     return () => soru("SGK", 'Prim yatırmaya ne kadar erken başlarsan o kadar iyi.<div class="aciklama">' + sgkDurum() + "</div>", [
@@ -2996,7 +2998,7 @@ function uniSor(c) {
     { t: "Dershaneye gönder", s: `${tl(D.dershane)}<br>gelecek yıl yeniden dener`, tutar: D.dershane, f: () => { al("Dershane", D.dershane); S.dershane[c] = S.yil; } },
     { t: "Vakıf üniye gönder", s: `${tlYil(vf)}<br>4 yıl · mezuniyet katkısı`, f: () => { S.uni[c] = vf; S.uniTur[c] = "vakif"; S.uniBas[c] = y; note("Üniversite", `${ad} vakıf üniversitesine başladı (yıllık ${tl(vf)}).`); } },
     { t: "Yurtdışında okut", s: `${tlYil(yd)}<br>4 yıl · dövizle · konfor +1`, f: () => { S.uni[c] = yd; S.uniTur[c] = "yurtdisi"; S.uniBas[c] = y; note("Üniversite", `${ad} yurt dışında üniversiteye başladı (yıllık ${tl(yd)}).`); } }],
-    D.uni.src, { degisir: true, zorunlu: true });
+    D.uni.src, { degisir: true, zorunlu: true, cls: "v6-iki", kartCls: "v6-genis" });
 }
 // Yıl sonu
 function krizHazirlik() {
