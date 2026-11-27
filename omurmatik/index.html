@@ -96,7 +96,7 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 </style>
-<link rel="stylesheet" href="sahne/stil.css?v=3.49">
+<link rel="stylesheet" href="sahne/stil.css?v=3.52">
 </head>
 <body>
 <button id="sesBtn" type="button" aria-pressed="false" aria-label="Ses" title="Ses kapalı (M)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="dalga" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/><path class="carpi" d="M16 9l5 6M21 9l-5 6"/></svg></button>
@@ -521,7 +521,7 @@ function sesDegis() {
   document.querySelectorAll("#sesBtn, #facts .sesK").forEach(b => { b.setAttribute("aria-pressed", sesAcik); b.title = sesAcik ? "Ses açık (M)" : "Ses kapalı (M)"; b.classList.toggle("acik", sesAcik); });
   sesCal("dugme");
 }
-const KUNYE = { oyun: "Ömürmatik", surum: "v3.49", yil: 2026, yapan: "Tasarım ve geliştirme: Özgür Alem, Cezvi Studio", veri: "Veriler: TCMB, TÜİK, SGK, DASK ve diğerleri (yukarıdaki kaynaklar)", ses: "Sesler: Stable Audio Open (Stability AI) ve SFX Brew ile üretildi; öteki sesler oyunun içinde üretildi" };
+const KUNYE = { oyun: "Ömürmatik", surum: "v3.52", yil: 2026, yapan: "Tasarım ve geliştirme: Özgür Alem, Cezvi Studio", veri: "Veriler: TCMB, TÜİK, SGK, DASK ve diğerleri (yukarıdaki kaynaklar)", ses: "Sesler: Stable Audio Open (Stability AI) ve SFX Brew ile üretildi; öteki sesler oyunun içinde üretildi" };
 const KAYNAKLAR = [
   ["Geçmiş ekonomi (1978-2025, gerçek veri)", [
     ["TÜİK TÜFE", "yıllık enflasyon; Vikipedi tablosu üzerinden", ""],
@@ -949,7 +949,8 @@ document.addEventListener("keydown", e => { if ((e.key === "f" || e.key === "F")
 // oyun sürerken sayfa yenilenecek ya da kapanacaksa tarayıcı sorar (oyun bitince ve giriş ekranında sormaz)
 window.addEventListener("beforeunload", e => { if (S.ad && !S.bitti && !$("start")) { e.preventDefault(); e.returnValue = ""; } });
 let popGeri = null;   // pencere açılmadan önce odaktaki öğe: KAPAT ile odak oraya döner
-function popup(baslik, metin, dugme = "TAMAM", is = null) { const fl = document.querySelector("#popup .film"); if (fl) { fl.before($("popOk")); fl.remove(); } document.querySelectorAll("#popup .card > .opt.ikinci").forEach(x => x.remove()); if ($("app").contains(document.activeElement)) popGeri = document.activeElement; const pi = $("popIptal"); if (pi) pi.remove(); delete $("popup").dataset.disKapat; const kart_ = document.querySelector("#popup .card"); kart_.classList.remove("ozel", "v5", "gzt", "son", "mirasKart", "mirasVeraset", "karar1c", "varlik-kasa"); kart_.classList.add("v5"); delete kart_.dataset.donem; $("popT").textContent = baslikYap(baslik); $("popM").innerHTML = metin; $("popM").classList.toggle("uzun", metin.replace(/<[^>]+>/g, "").length > 140); $("popOk").textContent = dugme; $("popOk").disabled = false; popIs = is; $("popup").classList.add("open"); $("popOk").focus(); sesCal("pencere"); }
+function popup(baslik, metin, dugme = "TAMAM", is = null) { const alt = document.querySelector("#popup .mkAlt"); if (alt) { alt.before($("popOk")); alt.remove(); }   // v3.51: önceki pencerenin alt sırası
+  const fl = document.querySelector("#popup .film"); if (fl) { fl.before($("popOk")); fl.remove(); } document.querySelectorAll("#popup .card > .opt.ikinci").forEach(x => x.remove()); if ($("app").contains(document.activeElement)) popGeri = document.activeElement; const pi = $("popIptal"); if (pi) pi.remove(); delete $("popup").dataset.disKapat; const kart_ = document.querySelector("#popup .card"); kart_.classList.remove("ozel", "v5", "gzt", "son", "mirasKart", "mirasVeraset", "karar1c", "varlik-kasa"); kart_.classList.add("v5"); delete kart_.dataset.donem; $("popT").textContent = baslikYap(baslik); $("popM").innerHTML = metin; $("popM").classList.toggle("uzun", metin.replace(/<[^>]+>/g, "").length > 140); $("popOk").textContent = dugme; $("popOk").disabled = false; popIs = is; $("popup").classList.add("open"); $("popOk").focus(); sesCal("pencere"); }
 $("popOk").onclick = () => { if (popIs) return popIs(); $("popup").classList.remove("open"); if (popSonra) { const f = popSonra; popSonra = null; return f(); } setTimeout(() => $("go").focus()); };
 $("mailClose").onclick = () => { sesCal("arsiv_kapa"); $("mailBox").classList.remove("open"); };
 $("popup").addEventListener("click", e => { if (e.target.id === "yeniHayvan") { $("popOk").click(); yeniHayvanAc(); } });   // hayvan öldü: sahiplen penceresi hemen açılır
@@ -1318,7 +1319,7 @@ function bilgiPenceresi(baslik, metin) { popup(baslik, metin); $("popup").datase
 function sgkPencere() {
   if (S.bitti) return;
   const olur = !S.sigortali && !S.emekli && S.yas < 55 && !S.bitti;
-  bilgiPenceresi("SGK", sgkDurum() + `<p class="kural">EYT ve emeklilik yaşı sigortanın başladığı yıla bağlı, doğum yılına değil: 8 Eylül 1999'dan önce başlayan Mart 2023'ten sonra yaş şartı olmadan, 1999-2008 arası başlayan 60, 2008 sonrası başlayan 60-65 yaşında emekli olur.</p>` + (olur ? `<div class="opts one"><button class="opt" id="primBasla">Prim yatırmaya başla</button></div>` : ""));
+  bilgiPenceresi("SGK", sgkDurum() + `<p class="kural">EYT ve emeklilik yaşı sigortanın başladığı yıla bağlı, doğum yılına değil: 8 Eylül 1999'dan önce başlayan Mart 2023'ten sonra yaş şartı olmadan, 1999-2008 arası başlayan 60, 2008 sonrası başlayan 60-65 yaşında emekli olur.</p>` + (olur ? `<div class="opts one"><button class="opt" id="primBasla">Yatırmaya Başla</button></div>` : ""));
   if (olur) $("primBasla").onclick = () => { sigortaBasla(); note("SGK", sgkDurum(), { src: D.emeklilik.src }); $("popup").classList.remove("open"); ciz(); };
 }
 // Bilanço > Evler penceresi (Maket 2A): oturulan ve kiradaki evler ayrı kartlarda yönetilir
@@ -2014,9 +2015,9 @@ function basla(miras) {
   const verasetAc = () => {
     sesCal("veraset");
     popup("Veraset ve İntikal Vergisi",
-      `<p class="mk-giris">Dedenin mirasından veraset ve intikal vergisi kesildi, dolar hesabından bozduruldu.</p>`
+      `<p class="mk-giris">Mirastan vergi kesildi.</p><p class="aciklama">Dedenin mirasından veraset ve intikal vergisi kesildi, dolar hesabından bozduruldu.</p>`
       + `<table class="mk-tablo"><tr><td>Miras</td><td>${usd(mirasR)}</td></tr><tr><td>Veraset vergisi</td><td class="minus">−${usd(vUsdR)}</td></tr><tr class="top"><td>Hesabında</td><td>${usd(kalanUsdR)}</td></tr></table>`
-      + `<p class="mk-sonuc">Mirasının %${vYuzde}'i gitti. Gerisi senin. Bol şans!</p>`
+      + `<p class="aciklama">Mirasının %${vYuzde}'i gitti. Gerisi senin. Bol şans!</p>`
       + `<p class="mk-kaynak">Yasal oran: alt soya istisna, kalanına<br><em>kademeli %1, %3, %5, %7, %10. Kaynak: GİB 2026</em></p>`,
       "DEVAM");
     document.querySelector("#popup .card").classList.add("mirasKart", "mirasVeraset");
@@ -2631,8 +2632,8 @@ function anaSoru() {
 }
 function sigortaSoru() {
   const E = D.emeklilik;
-  soru("SGK", `Çalışmadan emekli olabilirsin: isteğe bağlı sigorta başlatırsan ${E.yil} yıl ve yaş şartından sonra emekli maaşı alırsın (aylık ${tl(E.maas)}).${kuralSatiri()}`, [
-    { t: "Prim yatırmaya başla", s: `aylık ${tl(E.prim)}`, f: () => { sigortaBasla(); note("SGK", sgkDurum(), { src: E.src }); } },
+  soru("SGK", `Prim yatırmaya ne kadar erken başlarsan o kadar iyi.<div class="aciklama">Çalışmadan emekli olabilirsin: isteğe bağlı sigorta başlatırsan ${E.yil} yıl ve yaş şartından sonra emekli maaşı alırsın (aylık ${tl(E.maas)}).${kuralSatiri()}</div>`, [
+    { t: "Yatırmaya Başla", s: `aylık ${tl(E.prim)}`, f: () => { sigortaBasla(); note("SGK", sgkDurum(), { src: E.src }); } },
     { t: "Şimdilik hayır", s: `yalnız GSS, aylık ${tl(D.gss)}`, f: () => note("SGK", sgkDurum(), { src: E.src }) }], "", { zorunlu: true, cls: "iki" });   // v3.26: pencerede; veraset penceresi kapanınca hemen açılır (zorunluSor açık pencereyi bekler)
 }
 // Emeklilik kuralı sigortanın başladığı yıla bağlıdır, doğum yılına değil (GDD > Oyun Datası > EYT). Oyuncu erkek tablosuyla:
@@ -2861,8 +2862,8 @@ function hayatOlayi() {
       { t: "Arabanı sat", s: `+${tl(sd)}`, f: () => { if (S.araba) sat("araba"); } }, ...L], "", { degisir: true, zorunlu: true, cls: "" });
   }
   if (!S.sigortali && !S.emekli && !S.sgkSorma && a < KO.primYas && Math.random() < KO.prim)
-    return () => soru("SGK", "Prim yatırmaya başlayacak mısın?<br>" + sgkDurum(), [
-      { t: "Başla", s: `aylık ${tl(D.emeklilik.prim)}`, f: () => { sigortaBasla(); note("SGK", sgkDurum(), { src: D.emeklilik.src }); } },
+    return () => soru("SGK", 'Prim yatırmaya ne kadar erken başlarsan o kadar iyi.<div class="aciklama">' + sgkDurum() + "</div>", [
+      { t: "Yatırmaya Başla", s: `aylık ${tl(D.emeklilik.prim)}`, f: () => { sigortaBasla(); note("SGK", sgkDurum(), { src: D.emeklilik.src }); } },
       { t: "Hayır", s: "", f: () => {} },
       { t: "Bir daha sorma", s: "kutudan yine başlarsın", f: () => { S.sgkSorma = true; } }], "", { degisir: true, zorunlu: true, cls: "three" });
   return null;
@@ -3247,7 +3248,7 @@ $("go").onclick = () => {
   const engel = S.bitti || S.acil || $("popup").classList.contains("open") || feed.querySelector(".opts[data-zorunlu]:not([data-secildi])");
   if (engel) return devamYil();
   if (!gec && S.devamUyar && !window.ANIM_YOK && !S.secimler.length && !S.yatirimYapti && S.kararMenu && S.kararMenu.length) {
-    popup("Karar Vermedin", "Bu yıl henüz yıllık karar vermedin. Devam etmek istiyor musun?", "Yıllık Kararları Ver", () => {
+    popup("Karar Vermedin", "Bu yıl henüz yıllık karar vermedin. Devam etmek istiyor musun?", "TAMAM", () => {
       $("popup").classList.remove("open");
       karar1CAc(S.kararMenu[0].id);
     });
@@ -3479,8 +3480,8 @@ function son(kazandi, msg, ozelBaslik) {
   S.sonSayiAc();
 }
 // Bitiş Videosu (v2.2): her biten oyunda, Son Sayı'dan sonra, oyunun içinde (iframe). Video ilerlemesini postMessage ile bildirir.
-// v2.4+: yayında omurmatik_video.html (vault'ta Video/omurmatik_video.html).
-const BITIS_VIDEO = location.protocol === "file:" || /\/Oyun\//.test(location.pathname) ? "../Video/omurmatik_video.html" : "omurmatik_video.html";   // yayında ve yerel sunucuda yan dosya; dosya doğrudan açılınca vault'taki asıl
+// v2.4+: yayında video.html (vault'ta Video/omurmatik_video.html).
+const BITIS_VIDEO = location.protocol === "file:" ? "Video/omurmatik_video.html" : "video.html";   // yayında ve yerel sunucuda yan dosya; dosya doğrudan açılınca vault'taki asıl
 function videoAc() {
   $("popup").classList.remove("open");
   if ($("bitis")) $("bitis").remove();
@@ -3734,20 +3735,16 @@ $("notes").classList.add("hide"); $("control").classList.add("hide");   // .hide
   const TEMA = [[/^Kaza kurşunu/i, "aile"], [/^(Aşk|Düğün|Eşin|Çocuğun|Kaza)|öldü$/, "aile"], [/^(Okul|Üniversite|Burslu)/, "egitim"],
     [/^(SGK|Merkez Bankası|Veraset|EYT)|emekli/i, "devlet"], [/^(Ev Çok|Emlakçı|Galeri|Gayrimenkul)/, "ev"], [/^Karar Vermedin/, "uyari"], [/İKRAMİYE|Loto/i, "sans"]];
   const SECENEK = [[/düşünmüyor|sorma|şimdilik hayır/i, "sessiz"], [/evlen/i, "yuzuk"], [/^hayır/i, "carpi"], [/^sade/i, "cicek"], [/^normal/i, "kadeh"],
-    [/görkemli/i, "tac"], [/sanayi/i, "cark"], [/dershane/i, "kitap"], [/vakıf|üni/i, "kep"], [/yurt ?dış/i, "ucak"], [/^(başla|evet|isteriz)/i, "tik"], [/cömert|katkı/i, "hediye"]];
+    [/görkemli/i, "tac"], [/sanayi/i, "cark"], [/dershane/i, "kitap"], [/vakıf|üni/i, "kep"], [/yurt ?dış/i, "ucak"], [/(^|\s)(başla|evet|isteriz)/i, "tik"], [/cömert|katkı/i, "hediye"]];
   const YASAL = /^\s*\(?\s*(Kaynak|Yasaya göre|Yasal|Kanun|Yıllık reel maliyet)/i;
   const vida = (x, y) => `<svg class="mkVida" style="${x};${y}" viewBox="0 0 8 8" aria-hidden="true"><defs><radialGradient id="mkKubbe" cx=".33" cy=".33" r=".85"><stop offset="0" stop-color="#e6ebe6"/><stop offset=".5" stop-color="#98a49c"/><stop offset="1" stop-color="#4a5550"/></radialGradient></defs><circle cx="4.6" cy="4.9" r="3.1" fill="#16201c" opacity=".4"/><circle cx="4" cy="4" r="2.7" fill="url(#mkKubbe)" stroke="#2f3a35" stroke-width=".5"/><circle cx="3.1" cy="3" r=".7" fill="#fff" opacity=".7"/></svg>`;
-  const pencereIsle = () => {
-    const p = $("popup"), card = p.querySelector(".card.v5"); if (!card) return;
-    const T = $("popT"), M = $("popM"), baslik = T ? T.textContent.trim() : "", e = !card.classList.contains("gzt") && TEMA.find(t => t[0].test(baslik));
-    if (!e || !p.classList.contains("open")) { delete card.dataset.tema; card.querySelectorAll(".mkVida").forEach(v => v.remove()); return; }
+  const temaIsle = (card, T, M, baslik, e) => {
     if (card.dataset.tema !== e[1]) card.dataset.tema = e[1];
     const ok = $("popOk"); if (ok && /İKRAMİYE/i.test(baslik) && ok.textContent !== "YAŞASIN!") ok.textContent = "YAŞASIN!";
     if (!card.querySelector(".mkVida")) card.insertAdjacentHTML("afterbegin", vida("left:4px", "top:4px") + vida("right:4px", "top:4px") + vida("left:4px", "bottom:4px") + vida("right:4px", "bottom:4px"));
     if (T) T.querySelectorAll("br").forEach(x => x.replaceWith(" "));   // başlık tek satır, sığmazsa küçülür
     if (T) { T.style.fontSize = ""; let fs = parseFloat(getComputedStyle(T).fontSize); while (T.scrollWidth > T.clientWidth + 1 && fs > 15) T.style.fontSize = (fs -= 1) + "px"; }
-    if (!M) return;
-    M.querySelectorAll(".opts .opt").forEach(o => {
+    if (M) M.querySelectorAll(".opts .opt").forEach(o => {
       if (o.querySelector(".mkRozet")) return;
       const oyunIkon = o.querySelector(".ikon"), ad = (SECENEK.find(x => x[0].test(o.textContent.trim())) || [0, "para"])[1];
       const metin = document.createElement("span"); metin.className = "mkMetin";
@@ -3756,20 +3753,47 @@ $("notes").classList.add("hide"); $("control").classList.add("hide");   // .hide
       if (oyunIkon) roz.appendChild(oyunIkon); else roz.innerHTML = ikon(ad, "mkIk");
       o.append(roz, metin);
     });
-    if (M.querySelector(".mkYasalBtn")) return;
-    const tasi = [];
+  };
+  // v3.51: pencerenin altı: ortada ana düğme, sağında (i); açıklama (önce .aciklama, sonra yasal ve kaynak satırları) (i)'nin arkasında
+  const BILGI_YOK = "Bu pencerenin çıkma olasılığı gerçek verilerden alınmıştır.";
+  const bilgiKur = (card, M) => {
+    const ok = $("popOk"); if (!M || !ok || card.querySelector(".mkAlt") || card.querySelector(".film") || /\b(karar1c|gzt|son)\b/.test(card.className)) return;
+    const tasi = [...M.querySelectorAll(":scope > .aciklama")];
     for (const n of [...M.childNodes]) {
-      if (n.nodeType === 1 && n.classList.contains("opts")) continue;
+      if (n.nodeType === 1 && (n.classList.contains("opts") || n.classList.contains("aciklama"))) continue;
       const yazi = (n.textContent || "").trim();
       if ((n.nodeType === 1 && n.tagName === "SMALL" && !n.classList.contains("usdAlt")) || (yazi && YASAL.test(yazi) && (n.nodeType === 3 || /^(SMALL|DIV|P)$/.test(n.tagName)))) tasi.push(n);
     }
-    if (!tasi.length) return;
     tasi.forEach(n => { const o = n.previousSibling; if (o && o.nodeType === 1 && o.tagName === "BR") o.remove(); });
-    const kutu = document.createElement("div"); kutu.className = "mkYasal"; tasi.forEach((n, i) => { if (i) kutu.appendChild(document.createElement("br")); kutu.appendChild(n); });
-    const btn = document.createElement("button"); btn.type = "button"; btn.className = "mkYasalBtn"; btn.setAttribute("aria-expanded", "false");
-    btn.innerHTML = ikon("bilgi", "") + "Detaylı Bilgi";
-    btn.onclick = () => { const a = kutu.classList.toggle("acik"); btn.setAttribute("aria-expanded", a); };
-    const sira = document.createElement("div"); sira.className = "mkBilgiSira"; sira.appendChild(btn); M.append(sira, kutu);
+    const kutu = document.createElement("div"); kutu.className = "mkYasal"; kutu.id = "popBilgi";
+    if (!tasi.length) kutu.textContent = BILGI_YOK;
+    tasi.forEach((n, i) => { const blok = x => x && x.nodeType === 1 && /^(P|DIV)$/.test(x.tagName); if (i && !blok(n) && !blok(tasi[i - 1])) kutu.appendChild(document.createElement("br")); kutu.appendChild(n); });
+    M.appendChild(kutu);
+    const alt = document.createElement("div"); alt.className = "mkAlt"; ok.before(alt); alt.appendChild(ok);
+    const b = document.createElement("button"); b.type = "button"; b.className = "mkInfo"; b.setAttribute("aria-label", "Detaylı Bilgi"); b.setAttribute("aria-expanded", "false"); b.setAttribute("aria-controls", "popBilgi");
+    b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" aria-hidden="true"><path d="M12 11v6.5 M12 6.6v.3"/></svg>';
+    b.onclick = () => { const a = kutu.classList.toggle("acik"); b.classList.toggle("acik", a); b.setAttribute("aria-expanded", a); };
+    alt.appendChild(b);
+  };
+  const pencereIsle = () => {
+    const p = $("popup"), card = p.querySelector(".card.v5"); if (!card) return;
+    const T = $("popT"), M = $("popM"), baslik = T ? T.textContent.trim() : "", e = !card.classList.contains("gzt") && TEMA.find(t => t[0].test(baslik));
+    if (!p.classList.contains("open")) { delete card.dataset.tema; card.querySelectorAll(".mkVida").forEach(v => v.remove()); return; }
+    if (e) temaIsle(card, T, M, baslik, e); else { delete card.dataset.tema; card.querySelectorAll(".mkVida").forEach(v => v.remove()); }
+    bilgiKur(card, M);
+    secenekDuzenle(card);
+  };
+  // v3.52: seçenek yazıları baş harfleri büyük (Türkçe; bağlaçlar küçük; büyük harfli kısaltma ve sayı olduğu gibi), ana düğmeler ve alt satırlar hariç
+  const BAGLAC = new Set(["ve", "ile", "ya", "da", "de", "veya", "ama", "ki"]);
+  const basBuyuk = t => t.split(/(\s+)/).map((w, i) => {
+    if (!w.trim()) return w;
+    if (i > 0 && BAGLAC.has(w.toLocaleLowerCase("tr").replace(/[^a-zçğıöşü]/g, ""))) return w;
+    return w.replace(/^([^\p{L}\p{N}]*)(\p{Ll})/u, (m, on, h) => on + h.toLocaleUpperCase("tr"));
+  }).join("");
+  const yaziCevir = el => [...el.childNodes].forEach(n => { if (n.nodeType === 3 && n.textContent.trim()) { const y = basBuyuk(n.textContent); if (y !== n.textContent) n.textContent = y; } });
+  const secenekDuzenle = card => {
+    card.querySelectorAll("#popM .opts .opt:not(.izleBtn):not(.yenidenBtn):not(.yat-uygula)").forEach(o => { yaziCevir(o); o.querySelectorAll(":scope > .mkMetin").forEach(yaziCevir); });
+    card.querySelectorAll(".kat-btn b").forEach(yaziCevir);
   };
   let bekle = 0;
   new MutationObserver(() => { cancelAnimationFrame(bekle); bekle = requestAnimationFrame(() => { pencereIsle(); surgu(); }); })

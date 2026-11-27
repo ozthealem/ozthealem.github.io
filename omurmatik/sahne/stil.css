@@ -654,7 +654,6 @@ body.kumAkar .logo .kumAk { animation:kumAk 1.15s steps(6) ; }
 .card.v5.mirasKart .mk-tablo td.plus { color:#1d5fb4; }
 .card.v5.mirasKart .mk-tablo tr.top td { border-top:1.2px solid #6b5228; padding-top:9px; }
 .card.v5.mirasKart .mk-tablo tr.top td:last-child { font-size:19px; font-weight:800; color:#1e1a14; }
-.card.v5.mirasKart #popM .mk-sonuc { margin:0 0 6px; font-family:var(--fn); font-weight:800; font-size:12px; line-height:1.35; color:#1e1a14; }
 .card.v5.mirasKart #popM .mk-not { margin:0 0 5px; font-family:var(--fn); font-size:11px; line-height:1.35; color:#8a8170; }
 .card.v5.mirasKart #popM .mk-kaynak { margin:0; font-family:var(--fn); font-size:10.5px; line-height:1.32; color:#8a8170; }
 .card.v5.mirasKart #popM .mk-kaynak em { font-style:italic; }
@@ -1464,13 +1463,94 @@ input[type=range]:focus-visible { outline:2px solid #e8c66e; outline-offset:2px;
 #popup .card[data-tema] .mkRozet .ikon svg { width:34px; height:30px; }
 #popup .card[data-tema] .mkMetin { display:block; min-width:0; }
 #popup .card[data-tema] .mkMetin small { display:block; margin-top:2px; font-size:12.5px; line-height:1.2; }
-#popup .mkBilgiSira { display:flex; justify-content:flex-end; margin-top:10px; }
-#popup .mkYasal { display:none; margin-top:8px; padding:8px 10px; border-radius:6px; background:rgba(90,66,32,.08); font-size:12px; line-height:1.35; color:#4a4030; }
+#popup .mkYasal { display:none; margin-top:8px; padding:8px 10px; border-radius:6px; background:rgba(90,66,32,.08); font-size:13px; line-height:1.38; color:#4a4030; }
 #popup .mkYasal.acik { display:block; }
-#popup .mkYasalBtn { display:inline-flex; align-items:center; gap:6px; padding:4px 12px 4px 8px; border-radius:14px; border:1px solid #8a6a3a; background:linear-gradient(#f2ecdb, #d8cfb6); color:#5a4220;
-  font:700 12px/1.2 var(--fn); cursor:pointer; box-shadow:0 2px 0 rgba(60,40,10,.35); }
-#popup .mkYasalBtn svg { width:15px; height:15px; }
-#popup .mkYasalBtn[aria-expanded="true"] { background:linear-gradient(#e8d6a6, #d4bd84); }
 
 /* Gelir Gider: Gelir, Gider ve Kâr kutuları aynı boy */
 body.sahne .ledger.kar { box-sizing:border-box; height:43.8px; display:flex; flex-direction:column; justify-content:center; }
+
+/* ==== v3.50: pencere yazıları SGK kademesinde (başlık 24, metin 16, seçenek ve ara başlık 16, alt satır ve kaynak 13, Detaylı Bilgi 12, ana düğme 20); sığmayan pencere büyür ==== */
+/* genel: pencere içi paragraf, ara başlık, kaynak listesi */
+#popM p { font-size:16px; }
+#popM p.kural { font-size:16px; }
+#popM h4, #popM h4.alt { font-size:16px; }
+#popM ul.kaynak { font-size:16px; }
+#popM small.usdAlt { font-size:13px; }
+.seref .not2 { font-size:16px; }
+table.seref { font-size:16px; }
+table.seref tr.ust td { font-size:13px; }
+#popup .ledger.ayrinti .line, #popup .ledger.ayrinti .empty { font-size:16px; }
+#popup .ledger.ayrinti .line .y { font-size:16px; }
+/* Veraset ve İntikal Vergisi, zaman yolculuğu kesintisi */
+.card.v5.mirasKart { max-width:400px; }
+.card.v5.mirasKart .mk-alt { font-size:13px; }
+.card.v5.mirasKart #popM .mk-giris { font-size:16px; }
+.card.v5.mirasKart .mk-tablo { font-size:16px; }
+.card.v5.mirasKart .mk-tablo td:last-child { font-size:16px; }
+.card.v5.mirasKart .mk-tablo tr.top td:last-child { font-size:19px; }
+.card.v5.mirasKart #popM .mk-not { font-size:16px; }
+.card.v5.mirasKart #popM .mk-kaynak { font-size:13px; }
+.card.v5.mirasKart #popOk { font-size:20px; }
+/* Yatırım (tek pencere ve Bazı Kararlar içinde) */
+.yat .uclar, .yat .acik { font-size:16px; }
+.yat .uclar small { font-size:13px; }
+.yat .oran { font-size:16px; }
+#popM .yat .opts.four .opt, .card.v5 #popM .yat .opts.four .opt:not(.izleBtn):not(.yenidenBtn) { font-size:16px; padding-left:2px; padding-right:2px; }
+#popup .card.v5:has(.yat):not(.karar1c) { max-width:420px; }
+/* Bazı Kararlar Verilmeli: iki kanatlı pencere büyür */
+.card.v5.karar1c { width:800px; height:620px; }
+.card.v5.karar1c #popT { font-size:24px; line-height:32px; }
+.card.v5.karar1c #popOk { font-size:20px; padding:6px 24px; }
+.kanat-govde { grid-template-columns:270px 1fr; }
+.kat-btn b { font-size:16px; line-height:1.15; }
+.kat-btn small { font-size:13px; }
+.kanat-sag-baslik { font-size:16px; }
+.kanat-sag-soru { font-size:16px; line-height:1.3; }
+.card.v5.karar1c .kanat-sag .src { font-size:13px; }
+.card.v5.karar1c #popM .opts:not(.four) .opt:not(.yat-uygula):not(.izleBtn):not(.yenidenBtn) { font-size:16px; }
+.card.v5.karar1c #popM .opts:not(.four) .opt small { font-size:13px; }
+.card.v5.karar1c .yat h4 { font-size:16px; }
+.card.v5.karar1c .yat .uclar { font-size:16px; }
+.card.v5.karar1c .yat .uclar small { font-size:13px; }
+.card.v5.karar1c .yat .oran { font-size:16px; }
+.card.v5.karar1c #popM .yat .opts.four .opt:not(.izleBtn):not(.yenidenBtn) { font-size:16px; }
+.card.v5.karar1c .yat-uygula { font-size:16px !important; }
+/* Gazete (haber sayfası): manşet başlık kademesinde, metin 16, künye ve etiketler 13; sayfa genişler */
+.card.gzt { max-width:480px; max-height:92vh; }
+.card.gzt .gz-ustbar, .card.gzt .gz-ik-etiket, .card.gzt .gz-pb { font-size:13px; }
+.card.gzt .gz-manset { font-size:24px; }
+.card.gzt #popM .gz-spot { font-size:16px; }
+.card.gzt #popM .gz-alt-yazi { font-size:13px; }
+.card.gzt #popM .gz-metin { font-size:16px; }
+.card.gzt #popM .gz-ik-baslik { font-size:16px; }
+.card.gzt .gz-piyasa { font-size:13px; }
+.card.gzt #popOk { font-size:20px; }
+@media (max-width:720px) { .card.gzt { max-width:var(--gz-dar); } .card.gzt .gz-manset { font-size:24px; } }
+
+/* ==== v3.51: pencereler %80 (336 px), altta ortada ana düğme ve sağında (i) bilgi düğmesi; açıklama (i)'nin arkasında ==== */
+#popup .card.v5:not(.karar1c):not(.gzt):not(.son) { width:336px; max-width:min(336px, calc(100vw - 20px)); min-width:0; }
+#popup .mkAlt { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; column-gap:10px; margin-top:14px; }
+#popup .mkAlt > * { grid-column:1 / -1; }
+#popup .mkAlt #popOk { grid-column:2; width:164px; min-width:0; max-width:none; flex:none; margin:0; padding-left:0; padding-right:0; font-size:20px; }
+#popup .mkAlt .mkInfo { grid-column:3; justify-self:start; }
+#popup .mkInfo { position:relative; flex:none; width:30px; height:30px; padding:0; border-radius:50%; border:1.5px solid #8a6a3a; background:linear-gradient(#f6ecd2, #e2d1a6);
+  box-shadow:0 2px 0 #5a4220, inset 0 1px 0 rgba(255,255,255,.6); display:grid; place-items:center; color:#3a2c14; cursor:pointer; }
+#popup .mkInfo svg { width:20px; height:20px; }
+#popup .mkInfo.acik { background:linear-gradient(#e8d6a6, #d4bd84); box-shadow:0 1px 0 #5a4220, inset 0 1px 2px rgba(60,40,10,.35); transform:translateY(1px); }
+#popup .mkInfo::after { content:"Detaylı Bilgi"; position:absolute; bottom:calc(100% + 8px); left:50%; width:96px; margin-left:-48px; padding:5px 0; border-radius:5px; background:#2b2a26; color:#f3ead4;
+  font:700 12px/1.2 var(--fn); text-align:center; box-shadow:0 2px 6px rgba(0,0,0,.35); opacity:0; pointer-events:none; transition:opacity .12s; }
+#popup .mkInfo:hover::after, #popup .mkInfo:focus-visible::after { opacity:1; }
+#popup .mkInfo:focus-visible { outline:2px solid #e8c66e; outline-offset:2px; }
+#popup .mkYasal p { margin:0 0 6px; font-size:inherit; }
+#popup .mkYasal .aciklama { margin:0 0 6px; }
+/* dar kartta dört yatırım düğmesi iki sıra */
+#popup .card.v5:not(.karar1c) #popM .yat .opts.four { grid-template-columns:repeat(2, 1fr); }
+#popup #popM .mkYasal, #popup #popM .mkYasal * { font-size:13px; }
+
+/* ==== v3.52: aynı penceredeki seçenek kutuları en uzunu boyunda; ışık noktası yerinde, 12 px ==== */
+.card.v5 #popM .opts:not(.four) { grid-auto-rows:1fr; }
+#popup .card[data-tema] #popM .opts { display:grid !important; grid-template-columns:1fr; grid-auto-rows:1fr; }
+.card.v5 #popM .opts:not(.four) .opt:not(.izleBtn):not(.yenidenBtn):not(.yat-uygula)::after,
+#popup .card[data-tema] #popM .opts .opt:not(.izleBtn):not(.yenidenBtn)::after,
+.card.v5.karar1c #popM .opts:not(.four) .opt:not(.yat-uygula)::after,
+#feed .opts .opt:not(.isBtn):not(.yenidenBtn)::after, body.sahne #feed .opts .opt:not(.isBtn):not(.yenidenBtn)::after { width:12px; height:12px; }
