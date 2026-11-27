@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pinloca</title>
+<meta name="description" content="Pinloca: görsellerini toplar, düzenler, gösterir, sergiler. Kendi bilgisayarında. Ücretsiz ve açık kaynak, Windows için.">
+<meta property="og:title" content="Pinloca">
+<meta property="og:description" content="Görsel arşivin için tek program. Ücretsiz, açık kaynak, hesap ve bulut yok.">
+<meta property="og:image" content="https://ozthealem.com/pinloca/img/gezgin.webp">
+<meta property="og:url" content="https://ozthealem.com/pinloca/">
+<link rel="canonical" href="https://ozthealem.com/pinloca/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Crect width='240' height='240' rx='44' fill='%23262220'/%3E%3Crect x='46' y='50' width='38' height='140' rx='10' fill='%23ff5a1f'/%3E%3Crect x='94' y='50' width='100' height='100' rx='11' fill='%23ff5a1f'/%3E%3C/svg%3E">
+<style>
+/* Renkler sunumdan: koyu kapak, krem iç sayfalar, Pinlight turuncusu */
+:root{
+  --koyu:#262220; --koyu2:#1e1a18; --kart-koyu:#2f2a27;
+  --krem:#fcefe6; --krem2:#fbe3d6; --beyaz:#fff;
+  --murekkep:#3b1710; --govde:#6e4538; --soluk:#8c5a4a; --cizgi:#efc7b4;
+  --turuncu:#d9480f; --parlak:#ff5a1f; --kremyazi:#f5ecd9;
+  --golge:0 18px 40px -22px rgba(120,40,20,.35);
+  --r:18px; --en:1180px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--krem);color:var(--murekkep);
+  font:400 18px/1.55 "Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased}
+img{max-width:100%;height:auto;display:block}
+.kap>*{min-width:0}
+a{color:inherit}
+h1,h2,h3{font-family:"Segoe UI Variable Display","Segoe UI",system-ui,sans-serif;line-height:1.1;margin:0}
+h2{font-size:clamp(34px,5vw,56px);font-weight:700;letter-spacing:-.01em}
+h2 .en-alt,h2 .ek{color:var(--turuncu)}
+.kap{max-width:var(--en);margin:0 auto;padding:0 24px}
+.etiket{font-size:13px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--soluk);margin:0 0 14px;display:flex;gap:12px}
+.etiket b{color:var(--turuncu)}
+section{padding:110px 0}
+.alt{color:var(--govde);font-size:20px;max-width:720px;margin:18px 0 0}
+
+/* dil: html[lang] hangi spanın görüneceğini seçer */
+html[lang=tr] [lang=en]:not(html){display:none}
+html[lang=en] [lang=tr]:not(html){display:none}
+
+/* üst çubuk */
+.ust{position:sticky;top:0;z-index:20;background:rgba(38,34,32,.92);backdrop-filter:blur(10px);color:var(--kremyazi)}
+.ust .kap{display:flex;align-items:center;gap:28px;height:64px}
+.marka{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px;text-decoration:none}
+.logo{width:30px;height:30px;border-radius:7px;background:var(--koyu);position:relative;flex:none}
+.logo::before,.logo::after{content:"";position:absolute;background:var(--parlak);border-radius:2px}
+.logo::before{left:19%;top:21%;width:16%;height:58%}
+.logo::after{left:39%;top:21%;width:42%;height:42%}
+.ust nav{display:flex;gap:22px;margin-left:auto;font-size:15px}
+.ust nav a{text-decoration:none;opacity:.8}
+.ust nav a:hover{opacity:1}
+.dil{background:none;border:1px solid rgba(245,236,217,.3);color:inherit;border-radius:999px;padding:5px 12px;font:600 13px/1 inherit;cursor:pointer;letter-spacing:.08em}
+.dil:hover{border-color:var(--parlak)}
+.dug{display:inline-flex;align-items:center;gap:10px;background:var(--parlak);color:#fff;text-decoration:none;font-weight:600;border-radius:12px;padding:14px 24px;font-size:17px;border:0;cursor:pointer;transition:transform .15s,background .15s}
+.dug:hover{transform:translateY(-1px);background:#ff6c36}
+.dug.ikinci{background:transparent;color:var(--kremyazi);box-shadow:inset 0 0 0 1.5px rgba(245,236,217,.35)}
+.dug.ikinci:hover{box-shadow:inset 0 0 0 1.5px var(--parlak)}
+.dug.kucuk{padding:8px 16px;font-size:14px;border-radius:9px}
+.dug[aria-disabled=true]{opacity:.55;pointer-events:none}
+
+/* kapak */
+.kapak{background:radial-gradient(1200px 600px at 85% -10%,#3a2b24 0,transparent 60%),var(--koyu);color:var(--kremyazi);padding:90px 0 110px;overflow:hidden}
+.kapak .kap{display:grid;grid-template-columns:1fr 1.15fr;gap:64px;align-items:center}
+.kapak h1{font-size:clamp(64px,10vw,124px);font-weight:700;letter-spacing:-.03em}
+.slogan{font-size:clamp(22px,2.6vw,30px);font-weight:600;margin:22px 0 0;line-height:1.3}
+.slogan em{font-style:normal;color:var(--parlak);display:block}
+.kunye{margin:20px 0 34px;opacity:.75;font-size:17px}
+.dugler{display:flex;gap:14px;flex-wrap:wrap}
+.cerceve{border-radius:14px;overflow:hidden;box-shadow:0 40px 80px -30px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.06)}
+.temalar-mini{display:flex;flex-wrap:wrap;gap:10px;margin-top:42px}
+.tl{width:38px;height:38px;border-radius:9px;position:relative;box-shadow:0 0 0 1.5px #4a423c}
+.tl::before,.tl::after{content:"";position:absolute;background:var(--v);border-radius:2px}
+.tl::before{left:19%;top:21%;width:16%;height:58%}
+.tl::after{left:39%;top:21%;width:42%;height:42%}
+
+/* sorun */
+.sorun .kap{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.yigin{position:relative;aspect-ratio:1/1;max-width:460px}
+.yigin i{position:absolute;width:24%;aspect-ratio:1;border-radius:10%;background:var(--parlak);border:5px solid var(--krem);box-shadow:var(--golge)}
+.madde{display:grid;grid-template-columns:28px 1fr;gap:6px 14px;margin:0 0 28px}
+.madde::before{content:"";width:12px;height:12px;border-radius:3px;background:var(--turuncu);margin-top:10px}
+.madde h3{font-size:24px;font-weight:700}
+.madde p{grid-column:2;margin:0;color:var(--govde)}
+.sonuc{font-size:22px;font-weight:700;margin-top:36px}
+.sonuc em{font-style:normal;color:var(--turuncu)}
+
+/* kimler için */
+.kisiler{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
+.kisi{background:var(--krem2);border:1px solid var(--cizgi);border-radius:var(--r);padding:28px 20px;text-align:center;font-size:22px;font-weight:700}
+.kisi svg{width:40px;height:40px;margin:0 auto 12px;display:block}
+.kisi small{font-weight:400;color:var(--soluk);font-size:18px}
+
+/* ikon ortak */
+.ik{fill:none;stroke:var(--turuncu);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+/* alanlar */
+.alanlar-ust{display:flex;justify-content:space-between;align-items:end;gap:40px;flex-wrap:wrap}
+.akis{display:flex;gap:10px;align-items:center;color:var(--soluk);font-size:16px}
+.akis b{color:var(--murekkep)}
+.alan{display:grid;grid-template-columns:1.2fr 1fr;gap:56px;align-items:center;margin-top:84px}
+.alan.ters{grid-template-columns:1fr 1.2fr}
+.alan.ters .gorsel{order:2}
+.gorsel{background:linear-gradient(160deg,#f7d9c8,#fbe8dd);border-radius:24px;padding:36px;display:flex;justify-content:center}
+.gorsel .cerceve{box-shadow:0 30px 60px -28px rgba(60,20,10,.55)}
+.gorsel.dar .cerceve{max-width:380px}
+.alan h3{font-size:40px;font-weight:700;display:flex;align-items:center;gap:14px}
+.alan h3 svg{width:38px;height:38px}
+.alan h3 small{font-size:20px;font-weight:400;color:var(--soluk)}
+.alan .oz{font-size:21px;color:var(--govde);margin:14px 0 26px}
+.alan ul{list-style:none;padding:0;margin:0;display:grid;gap:16px}
+.alan li b{display:block;font-size:19px}
+.alan li span{color:var(--govde);font-size:17px}
+
+/* adımlar */
+.adimlar{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:48px;counter-reset:a}
+.adim{background:var(--beyaz);border:1px solid var(--cizgi);border-radius:var(--r);padding:30px 26px;box-shadow:var(--golge)}
+.adim::before{counter-increment:a;content:"0" counter(a);display:block;font:700 64px/1 "Segoe UI Variable Display","Segoe UI",sans-serif;color:var(--turuncu);margin-bottom:26px}
+.adim h3{font-size:24px;margin-bottom:12px}
+.adim .en2{color:var(--soluk);font-size:15px;margin:-8px 0 14px}
+.adim p{margin:0;color:var(--govde);font-size:17px}
+.adim kbd{font:600 15px/1 inherit;background:var(--krem2);border-radius:5px;padding:2px 6px}
+
+/* görünüş */
+.gorunus .kap{display:grid;grid-template-columns:1.5fr 1fr;gap:56px;align-items:start}
+.temalar{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+.tema{background:var(--beyaz);border:1px solid var(--cizgi);border-radius:16px;padding:10px 10px 14px}
+.tema .ekran{height:110px;border-radius:9px;background:var(--z);display:grid;grid-template-columns:22% 1fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:5px;padding:7px}
+.tema .ekran i{border-radius:4px;background:var(--h)}
+.tema .ekran i:first-child{grid-row:span 2;background:transparent;border-left:3px solid var(--v)}
+.tema .ekran i:nth-child(3){box-shadow:inset 0 0 0 2px var(--v)}
+.tema b{display:flex;align-items:center;gap:8px;margin:12px 4px 0;font-size:16px}
+.tema b .tl{width:20px;height:20px;border-radius:5px;box-shadow:none}
+.tema span{display:block;margin:2px 4px 0;font-size:14px;color:var(--soluk)}
+.dil-kutu{margin-top:40px}
+.yirmi{font:700 150px/.9 "Segoe UI Variable Display","Segoe UI",sans-serif;color:var(--turuncu);letter-spacing:-.04em}
+.dil-kutu h3{font-size:26px;margin:10px 0 18px}
+.selam{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:20px;font-weight:600}
+.selam .tr-s{color:var(--turuncu)}
+
+/* dosya türleri */
+.turler{margin-top:44px;display:grid;gap:22px}
+.tur{display:grid;grid-template-columns:280px 1fr;gap:20px;align-items:center}
+.tur h3{font-size:20px}
+.tur h3 small{font-weight:400;color:var(--soluk);font-size:16px}
+.cipler{display:flex;flex-wrap:wrap;gap:9px}
+.cipler span{background:var(--krem2);border:1px solid var(--cizgi);border-radius:999px;padding:6px 15px;font-weight:600;font-size:15px;letter-spacing:.02em}
+.not{margin-top:34px;color:var(--govde);font-size:19px}
+
+/* özellikler */
+.sayilar{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:48px}
+.sayi{background:var(--beyaz);border:1px solid var(--cizgi);border-radius:var(--r);padding:28px 24px;box-shadow:var(--golge)}
+.sayi b{display:block;font:700 54px/1 "Segoe UI Variable Display","Segoe UI",sans-serif;color:var(--turuncu);letter-spacing:-.02em}
+.sayi b small{font-size:26px}
+.sayi p{margin:14px 0 0;color:var(--govde);font-size:17px}
+.ozet{font-size:22px;color:var(--govde);margin:48px 0 22px}
+.ozler{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.ozk{background:var(--beyaz);border:1px solid var(--cizgi);border-radius:16px;padding:22px;display:grid;grid-template-columns:34px 1fr;gap:4px 16px}
+.ozk svg{width:30px;height:30px;grid-row:span 2}
+.ozk h3{font-size:19px}
+.ozk p{margin:0;color:var(--govde);font-size:16px}
+
+/* kapanış */
+.kapanis{background:var(--koyu);color:var(--kremyazi);text-align:center;padding:120px 0}
+.kapanis h2{font-size:clamp(44px,7vw,84px)}
+.kapanis h2 em{font-style:normal;color:var(--parlak)}
+.kapanis p{opacity:.8;font-size:20px;margin:18px 0 36px}
+.kapanis .dugler{justify-content:center}
+.kucuk-not{font-size:14px;opacity:.55;margin-top:22px}
+footer{background:var(--koyu2);color:rgba(245,236,217,.6);font-size:14px;padding:28px 0}
+footer .kap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+footer a{text-decoration:none}
+footer a:hover{color:var(--parlak)}
+
+/* görünür olunca hafif yükselme */
+.belir{opacity:0;transform:translateY(16px);transition:opacity .6s,transform .6s}
+.belir.gor{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.belir{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+
+@media (max-width:960px){
+  section{padding:80px 0}
+  .kapak .kap,.sorun .kap,.alan,.alan.ters,.gorunus .kap{grid-template-columns:1fr;gap:40px}
+  .alan.ters .gorsel{order:0}
+  .adimlar,.sayilar{grid-template-columns:1fr 1fr}
+  .ozler,.kisiler{grid-template-columns:1fr 1fr}
+  .ust nav a{display:none}
+  .yigin{max-width:360px;margin:0 auto}
+}
+@media (max-width:600px){
+  .kap{padding:0 16px}
+  .adimlar,.sayilar,.ozler,.kisiler,.temalar{grid-template-columns:1fr}
+  .temalar{grid-template-columns:1fr 1fr}
+  .tur{grid-template-columns:1fr;gap:10px}
+  .gorsel{padding:18px}
+  .ust .kap{gap:12px}
+  .ust .dug.kucuk{display:none}
+  .yirmi{font-size:110px}
+}
+</style>
+</head>
+<body>
+
+<header class="ust">
+  <div class="kap">
+    <a class="marka" href="#"><span class="logo"></span>Pinloca</a>
+    <nav>
+      <a href="#alanlar"><span lang="tr">Alanlar</span><span lang="en">Spaces</span></a>
+      <a href="#nasil"><span lang="tr">Nasıl kullanılır</span><span lang="en">How it works</span></a>
+      <a href="#ozellikler"><span lang="tr">Özellikler</span><span lang="en">Features</span></a>
+    </nav>
+    <button class="dil" id="dil" type="button" aria-label="Dil / Language">EN</button>
+    <a class="dug kucuk" href="#indir"><span lang="tr">İndir</span><span lang="en">Download</span></a>
+  </div>
+</header>
+
+<main>
+<!-- KAPAK -->
+<section class="kapak">
+  <div class="kap">
+    <div>
+      <h1>Pinloca</h1>
+      <p class="slogan">
+        <span lang="tr">Toplar, düzenler, gösterir, sergiler.<em>Kendi bilgisayarında.</em></span>
+        <span lang="en">Collect, organize, view, display.<em>On your own computer.</em></span>
+      </p>
+      <p class="kunye">
+        <span lang="tr">Ücretsiz ve açık kaynak. Windows için. Hesap yok, bulut yok.</span>
+        <span lang="en">Free and open source. For Windows. No account, no cloud.</span>
+      </p>
+      <div class="dugler">
+        <a class="dug" href="#indir" data-link="kurulum">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12M6 11l6 6 6-6M5 20h14"/></svg>
+          <span lang="tr">Windows için indir</span><span lang="en">Download for Windows</span>
+        </a>
+        <a class="dug ikinci" href="#alanlar"><span lang="tr">Nasıl çalışır?</span><span lang="en">See how it works</span></a>
+      </div>
+      <div class="temalar-mini" aria-hidden="true">
+        <span class="tl" style="background:#262220;--v:#ff5a1f"></span>
+        <span class="tl" style="background:#0d1520;--v:#23b0ff"></span>
+        <span class="tl" style="background:#1a1310;--v:#ffa86a"></span>
+        <span class="tl" style="background:#e4dfd9;--v:#d9480f"></span>
+        <span class="tl" style="background:#f2f6fa;--v:#0b7fc0"></span>
+        <span class="tl" style="background:#f1e3e5;--v:#c4647d"></span>
+      </div>
+    </div>
+    <div class="cerceve"><img src="img/gezgin.webp" width="1456" height="826" alt="Pinloca Gezgin penceresi: solda klasörler ve etiketler, sağda görsel ızgarası"></div>
+  </div>
+</section>
+
+<!-- SORUN -->
+<section class="sorun">
+  <div class="kap">
+    <div class="yigin belir" aria-hidden="true" id="yigin"></div>
+    <div class="belir">
+      <p class="etiket"><b>01</b><span lang="tr">Sorun</span><span lang="en">The problem</span></p>
+      <h2><span lang="tr">Dağınık arşiv</span><span lang="en">Scattered archive</span></h2>
+      <div style="margin-top:40px">
+        <div class="madde"><h3><span lang="tr">Klasörlerde kaybolur</span><span lang="en">Lost in folders</span></h3>
+          <p><span lang="tr">Binlerce referans onlarca klasöre dağılır; aradığın görsel hep başka yerdedir.</span><span lang="en">Thousands of references spread over dozens of folders; the one you need is always somewhere else.</span></p></div>
+        <div class="madde"><h3><span lang="tr">Ağır ve yavaş</span><span lang="en">Heavy and slow</span></h3>
+          <p><span lang="tr">Arşiv büyüdükçe program ağırlaşır, açılması dakikaları bulur.</span><span lang="en">As the archive grows, the app slows down and takes minutes to open.</span></p></div>
+        <div class="madde"><h3><span lang="tr">Buluta bağlı</span><span lang="en">Tied to the cloud</span></h3>
+          <p><span lang="tr">Hesap, abonelik ve internet ister; görsellerin başkasının sunucusunda durur.</span><span lang="en">It wants an account, a subscription and a connection; your images sit on someone else's server.</span></p></div>
+      </div>
+      <p class="sonuc">Pinloca: <em><span lang="tr">hepsi tek pencerede, kendi bilgisayarında.</span><span lang="en">all in one window, on your own computer.</span></em></p>
+    </div>
+  </div>
+</section>
+
+<!-- KİMLER İÇİN -->
+<section style="padding-top:0">
+  <div class="kap belir">
+    <p class="etiket"><b>02</b><span lang="tr">Giriş</span><span lang="en">Introduction</span></p>
+    <h2><span lang="tr">Kimler için?</span><span lang="en">Who is it for?</span></h2>
+    <div class="kisiler">
+      <div class="kisi"><svg class="ik" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0 0 18c1.2 0 2-.8 2-2 0-.6-.3-1-.6-1.4-.3-.4-.6-.8-.6-1.4 0-1.1.9-2 2-2h2.2A5 5 0 0 0 21 11.2C21 6.7 17 3 12 3z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="14.5" cy="7" r="1"/><circle cx="17.3" cy="10.5" r="1"/></svg><span lang="tr">Sanatçılar</span><span lang="en">Artists</span></div>
+      <div class="kisi"><svg class="ik" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 3v18M17 3v18M3 7.5h4M3 12h4M3 16.5h4M17 7.5h4M17 12h4M17 16.5h4"/></svg><span lang="tr">Animatörler</span><span lang="en">Animators</span></div>
+      <div class="kisi"><svg class="ik" viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.6 7.6"/><circle cx="11" cy="11" r="2"/></svg><span lang="tr">Tasarımcılar</span><span lang="en">Designers</span></div>
+      <div class="kisi"><svg class="ik" viewBox="0 0 24 24"><path d="M3 21V3l18 18H3z"/><path d="M7.5 16.5v-4.5l4.5 4.5H7.5z"/><path d="M3 7h2M3 11h2M3 15h2"/></svg><span lang="tr">Mimarlar</span><span lang="en">Architects</span></div>
+      <div class="kisi"><svg class="ik" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.5"/></svg><span lang="tr">Fotoğrafçılar</span><span lang="en">Photographers</span></div>
+      <div class="kisi"><svg class="ik" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="5" rx="1"/><path d="M4 9v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9"/><path d="M10 13h4"/></svg><span lang="tr">Koleksiyoncular</span><span lang="en">Collectors</span></div>
+    </div>
+    <p class="sonuc"><span lang="tr">Kısacası, <em>bilgisayarında görsel arşiv taşıyan herkes.</em></span><span lang="en">In short, <em>anyone keeping a visual archive on their own computer.</em></span></p>
+  </div>
+</section>
+
+<!-- ALANLAR -->
+<section id="alanlar" style="background:linear-gradient(#fcefe6,#fbe6da)">
+  <div class="kap">
+    <div class="alanlar-ust belir">
+      <div>
+        <p class="etiket"><b>03</b><span lang="tr">Yardımcı araçlar</span><span lang="en">Companion tools</span></p>
+        <h2><span lang="tr">Üç pencere, tek akış</span><span lang="en">Three windows, one flow</span></h2>
+        <p class="alt"><span lang="tr">Hepsi Spaces menüsünden açılır, kapanır. Birlikte ya da tek başına kullan.</span><span lang="en">Open and close each one from the Spaces menu. Use them together or on their own.</span></p>
+      </div>
+    </div>
+
+    <div class="alan belir">
+      <div class="gorsel"><div class="cerceve"><img src="img/gezgin.webp" width="1456" height="826" loading="lazy" alt="Gezgin: klasör ve etiket ağacı, görsel ızgarası"></div></div>
+      <div>
+        <h3><svg viewBox="0 0 240 240"><rect x="46" y="50" width="38" height="140" rx="10" fill="#d9480f"/><rect x="94" y="50" width="100" height="100" rx="11" fill="#d9480f"/></svg><span lang="tr">Gezgin</span><span lang="en">Organizer</span></h3>
+        <p class="oz"><span lang="tr">Arşivin merkezi.</span><span lang="en">The center of your archive.</span></p>
+        <ul>
+          <li><b><span lang="tr">Konumlar</span><span lang="en">Locations</span></b><span><span lang="tr">Klasör ekle; dosyalar yerinde kalır. Çıkan disk takılınca geri döner.</span><span lang="en">Add folders; files stay where they are. A removed drive comes back when you plug it in.</span></span></li>
+          <li><b><span lang="tr">Etiket ağacı</span><span lang="en">Tag tree</span></b><span><span lang="tr">Görseli etikete sürükle. Üst etiket, altındakileri de getirir.</span><span lang="en">Drag an image onto a tag. A parent tag brings its children along.</span></span></li>
+          <li><b><span lang="tr">Düzenler</span><span lang="en">Layouts</span></b><span><span lang="tr">Satır, taş duvar, ızgara, liste.</span><span lang="en">Rows, masonry, grid, list.</span></span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="alan ters belir">
+      <div class="gorsel dar"><div class="cerceve"><img src="img/gozcu.webp" width="600" height="560" loading="lazy" alt="Gözcü: tek görsel, altta film şeridi"></div></div>
+      <div>
+        <h3><svg class="ik" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg><span lang="tr">Gözcü</span><span lang="en">Viewer</span></h3>
+        <p class="oz"><span lang="tr">Yakından bak.</span><span lang="en">Look closer.</span></p>
+        <ul>
+          <li><b><span lang="tr">Yakınlaş, kaydır</span><span lang="en">Zoom and pan</span></b><span><span lang="tr">Tekerlek imlecin olduğu yere yakınlaşır; çift tık sığdırır.</span><span lang="en">The wheel zooms where the cursor is; double-click fits.</span></span></li>
+          <li><b><span lang="tr">Film şeridi ve slayt</span><span lang="en">Filmstrip and slideshow</span></b><span><span lang="tr">Altta şerit, tekerlekle sıradaki. S slayt gösterisini başlatır.</span><span lang="en">A strip below, the wheel moves on. S starts a slideshow.</span></span></li>
+          <li><b><span lang="tr">Çizgi roman ve PDF</span><span lang="en">Comics and PDF</span></b><span><span lang="tr">Sayfaları çevir; ZIP ve RAR arşivlerinin içi de açılır.</span><span lang="en">Turn the pages; ZIP and RAR archives open too.</span></span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="alan belir">
+      <div class="gorsel dar"><div class="cerceve"><img src="img/pano.webp" width="540" height="640" loading="lazy" alt="Pano: serbestçe dizilmiş görseller ve bir not"></div></div>
+      <div>
+        <h3><svg class="ik" viewBox="0 0 24 24"><rect x="3" y="3" width="12" height="12" rx="2"/><rect x="9" y="9" width="12" height="12" rx="2"/></svg><span lang="tr">Pano</span><span lang="en">Board</span></h3>
+        <p class="oz"><span lang="tr">Pano kur.</span><span lang="en">Build a board.</span></p>
+        <ul>
+          <li><b><span lang="tr">Sürükle, bırak</span><span lang="en">Drag and drop</span></b><span><span lang="tr">Gezgin'den, Gözcü'den, dosya yöneticisinden, internetten.</span><span lang="en">From the Organizer, the Viewer, your file manager, the web.</span></span></li>
+          <li><b><span lang="tr">Hep göz önünde</span><span lang="en">Always in sight</span></b><span><span lang="tr">Her zaman üstte ya da yalnız çalıştığın programın üstünde.</span><span lang="en">Always on top, or only above the app you work in.</span></span></li>
+          <li><b><span lang="tr">Saydamlaş, ekrandan renk al</span><span lang="en">Fade it, pick colors</span></b><span><span lang="tr">Panoyu soluklaştır, tıklamalar alttaki programa geçsin. S basılıyken tıkla: renk kodu panoda.</span><span lang="en">Fade the board and click through to the app below. Hold S and click: the color code is copied.</span></span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NASIL KULLANILIR -->
+<section id="nasil">
+  <div class="kap belir">
+    <p class="etiket"><b>04</b><span lang="tr">Başlarken</span><span lang="en">Getting started</span></p>
+    <h2><span lang="tr">Nasıl kullanılır?</span><span lang="en">How to use it</span></h2>
+    <div class="adimlar">
+      <div class="adim"><h3><span lang="tr">Klasörlerini ekle</span><span lang="en">Add your folders</span></h3><p class="en2" lang="tr">(Add your folders)</p>
+        <p><span lang="tr">Hiçbir şey taşınmaz, kopyalanmaz. Çıkan disk takılınca döner.</span><span lang="en">Nothing is moved or copied. A removed drive returns when plugged in.</span></p></div>
+      <div class="adim"><h3><span lang="tr">Etiketle, ara</span><span lang="en">Tag and search</span></h3><p class="en2" lang="tr">(Tag and search)</p>
+        <p><span lang="tr">Üst etiketi sürükle, altındakiler de gelir. <kbd>+</kbd> olsun, <kbd>−</kbd> olmasın, <kbd>|</kbd> herhangi biri.</span><span lang="en">Drag a parent tag and its children come too. <kbd>+</kbd> must have, <kbd>−</kbd> must not, <kbd>|</kbd> either one.</span></p></div>
+      <div class="adim"><h3><span lang="tr">Çift tıkla, bak</span><span lang="en">Double-click to view</span></h3><p class="en2" lang="tr">(Double-click to view)</p>
+        <p><span lang="tr">Gözcü açılır. Tekerlekle yakınlaş, sürükle, sıradakine geç.</span><span lang="en">The Viewer opens. Zoom with the wheel, drag, move to the next.</span></p></div>
+      <div class="adim"><h3><span lang="tr">Panoya sürükle</span><span lang="en">Drag to the board</span></h3><p class="en2" lang="tr">(Drag to the board)</p>
+        <p><span lang="tr">Referanslarını diz, çalıştığın programın üstünde tut.</span><span lang="en">Arrange your references and keep them above the app you work in.</span></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- GÖRÜNÜŞ -->
+<section class="gorunus" style="padding-top:0">
+  <div class="kap">
+    <div class="belir">
+      <p class="etiket"><b>05</b><span lang="tr">Altı tema, yirmi dil</span><span lang="en">Six themes, twenty languages</span></p>
+      <h2><span lang="tr">Görünüş</span><span lang="en">Look</span></h2>
+      <div class="temalar">
+        <div class="tema" style="--z:#262220;--h:#34302d;--v:#ff5a1f"><div class="ekran"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><b><span class="tl" style="background:#262220;--v:#ff5a1f"></span>Pinloca Default</b><span><span lang="tr">Sıcak grafit, turuncu</span><span lang="en">Warm graphite, orange</span></span></div>
+        <div class="tema" style="--z:#0d1520;--h:#16222f;--v:#23b0ff"><div class="ekran"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><b><span class="tl" style="background:#0d1520;--v:#23b0ff"></span>Ocean</b><span><span lang="tr">Gece mavisi, gök mavisi</span><span lang="en">Night blue, sky blue</span></span></div>
+        <div class="tema" style="--z:#1a1310;--h:#261c17;--v:#ffa86a"><div class="ekran"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><b><span class="tl" style="background:#1a1310;--v:#ffa86a"></span>Ember</b><span><span lang="tr">Kömür, yumuşak şeftali</span><span lang="en">Charcoal, soft peach</span></span></div>
+        <div class="tema" style="--z:#e4dfd9;--h:#d6d0c9;--v:#d9480f"><div class="ekran"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><b><span class="tl" style="background:#e4dfd9;--v:#d9480f"></span>Pinlight</b><span><span lang="tr">Kâğıt, koyu turuncu</span><span lang="en">Paper, deep orange</span></span></div>
+        <div class="tema" style="--z:#f2f6fa;--h:#e2e9f0;--v:#0b7fc0"><div class="ekran"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><b><span class="tl" style="background:#f2f6fa;--v:#0b7fc0"></span>Sky</b><span><span lang="tr">Temiz beyaz, mavi</span><span lang="en">Clean white, blue</span></span></div>
+        <div class="tema" style="--z:#f1e3e5;--h:#e6d0d4;--v:#c4647d"><div class="ekran"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><b><span class="tl" style="background:#f1e3e5;--v:#c4647d"></span>Pinko</b><span><span lang="tr">Allık, gül</span><span lang="en">Blush, rose</span></span></div>
+      </div>
+      <p class="not"><span lang="tr">Üç koyu, üç açık tema. Gezgin, Gözcü ve Pano birlikte değişir.</span><span lang="en">Three dark, three light. The Organizer, Viewer and Board change together.</span></p>
+    </div>
+    <div class="dil-kutu belir">
+      <div class="yirmi">20</div>
+      <h3><span lang="tr">arayüz dili</span><span lang="en">interface languages</span></h3>
+      <div class="selam" lang="und">
+        <span>Hello</span><span>Ahoj</span><span>Hej</span><span>Hallo</span><span>Hola</span><span>Bonjour</span><span>Ciao</span><span>Szia</span><span>Hallo</span><span>Hei</span><span>Cześć</span><span>Olá</span><span>Salut</span><span>Hei</span><span>Hej</span><span class="tr-s">Merhaba</span><span>こんにちは</span><span>你好</span><span>你好</span><span>안녕하세요</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOSYA TÜRLERİ -->
+<section style="padding-top:0">
+  <div class="kap belir">
+    <p class="etiket"><b>06</b><span lang="tr">Neredeyse her dosya</span><span lang="en">Almost any file</span></p>
+    <h2><span lang="tr">Dosya türleri</span><span lang="en">File types</span></h2>
+    <div class="turler">
+      <div class="tur"><h3><span lang="tr">Resimler</span><span lang="en">Images</span></h3><div class="cipler"><span>JPG</span><span>PNG</span><span>WebP</span><span>GIF</span><span>AVIF</span><span>SVG</span><span>ICO</span><span>QOI</span></div></div>
+      <div class="tur"><h3><span lang="tr">RAW fotoğraf</span><span lang="en">RAW photos</span></h3><div class="cipler"><span>CR2</span><span>CR3</span><span>NEF</span><span>ARW</span><span>DNG</span><span>ORF</span><span>RW2</span><span>RAF</span><span>PEF</span></div></div>
+      <div class="tur"><h3><span lang="tr">Çalışma dosyaları</span><span lang="en">Work files</span></h3><div class="cipler"><span>PSD</span><span>TIFF</span><span>BMP</span><span>TGA</span><span>DDS</span><span>HDR</span><span>PCD</span></div></div>
+      <div class="tur"><h3><span lang="tr">Belgeler</span><span lang="en">Documents</span></h3><div class="cipler"><span>PDF</span><span>AI</span><span>CBZ</span><span>CBR</span><span>CB7</span><span>CBT</span><span>ZIP</span><span>RAR</span><span>EPUB</span></div></div>
+      <div class="tur"><h3>Video</h3><div class="cipler"><span>MP4</span><span>MKV</span><span>AVI</span><span>TS</span><span>MTS</span></div></div>
+    </div>
+    <p class="not"><span lang="tr">Dosyaların yerinde kalır; Pinloca yalnız gösterir.</span><span lang="en">Your files stay where they are; Pinloca only shows them.</span></p>
+  </div>
+</section>
+
+<!-- ÖZELLİKLER -->
+<section id="ozellikler" style="padding-top:0">
+  <div class="kap belir">
+    <p class="etiket"><b>07</b><span lang="tr">Özellikler</span><span lang="en">Features</span></p>
+    <h2><span lang="tr">Hızlı, yerel, senin</span><span lang="en">Fast, local, yours</span></h2>
+    <div class="sayilar">
+      <div class="sayi"><b>1,4 <small lang="tr">sn</small><small lang="en">s</small></b><p><span lang="tr">Programa tıkladığın andan görsellerin ekranı doldurmasına</span><span lang="en">From click to a screen full of images</span></p></div>
+      <div class="sayi"><b>170.000<small>+</small></b><p><span lang="tr">görsel, bir saniyede elinin altında</span><span lang="en">images at hand in one second</span></p></div>
+      <div class="sayi"><b>0,4 <small lang="tr">sn</small><small lang="en">s</small></b><p><span lang="tr">54 MB kamera videosunu oynamaya hazırlamak</span><span lang="en">to get a 54 MB camera video ready to play</span></p></div>
+      <div class="sayi"><b>0 <small lang="tr">bayt</small><small lang="en">bytes</small></b><p><span lang="tr">internete giden. Hiçbir şey yüklenmez.</span><span lang="en">sent to the internet. Nothing is uploaded.</span></p></div>
+    </div>
+    <p class="ozet"><span lang="tr">Hesap açmak yok, buluta yüklemek yok. Arşivin yerel bilgisayarda ve sana ait kalır.</span><span lang="en">No sign-up, no uploads. Your archive stays on your computer and stays yours.</span></p>
+    <div class="ozler">
+      <div class="ozk"><svg class="ik" viewBox="0 0 24 24"><path d="M2 2l20 20"/><path d="M5.8 5.8A7 7 0 0 0 7 19h10.5"/><path d="M21.5 16.5A4.5 4.5 0 0 0 17.5 10h-1.3A7 7 0 0 0 9 5.1"/></svg><h3><span lang="tr">Bulut yok</span><span lang="en">No cloud</span></h3><p><span lang="tr">Hiçbir görsel, hiçbir etiket dışarı çıkmaz.</span><span lang="en">No image and no tag ever leaves.</span></p></div>
+      <div class="ozk"><svg class="ik" viewBox="0 0 24 24"><circle cx="10" cy="8" r="4"/><path d="M3 21a7 7 0 0 1 12.5-4.3"/><path d="M17 15l4 4M21 15l-4 4"/></svg><h3><span lang="tr">Hesap yok</span><span lang="en">No account</span></h3><p><span lang="tr">Üyelik, giriş, abonelik istemez.</span><span lang="en">No sign-up, no login, no subscription.</span></p></div>
+      <div class="ozk"><svg class="ik" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 13.5l2 2 4-4"/></svg><h3><span lang="tr">Dosyalar yerinde</span><span lang="en">Files stay put</span></h3><p><span lang="tr">Pinloca kopyalamaz, taşımaz; yalnız gösterir.</span><span lang="en">Pinloca never copies or moves; it only shows.</span></p></div>
+      <div class="ozk"><svg class="ik" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18"/></svg><h3><span lang="tr">Taşınabilir</span><span lang="en">Portable</span></h3><p><span lang="tr">İstersen kurmadan, bir klasörden çalışır.</span><span lang="en">Runs from a folder, no install needed.</span></p></div>
+      <div class="ozk"><svg class="ik" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg><h3><span lang="tr">Elektrik kesilse de</span><span lang="en">Even in a power cut</span></h3><p><span lang="tr">Kayıtlar yarım kalmaz, dosya bozulmaz.</span><span lang="en">Saves never break halfway; nothing gets corrupted.</span></p></div>
+      <div class="ozk"><svg class="ik" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg><h3><span lang="tr">Her gün yedek</span><span lang="en">Daily backup</span></h3><p><span lang="tr">Kütüphanen kendiliğinden yedeklenir.</span><span lang="en">Your library backs itself up.</span></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- KAPANIŞ -->
+<section class="kapanis" id="indir">
+  <div class="kap">
+    <h2><span lang="tr">Hemen <em>dene</em></span><span lang="en">Try it <em>now</em></span></h2>
+    <p><span lang="tr">Ücretsiz ve açık kaynak. Windows için.</span><span lang="en">Free and open source. For Windows.</span></p>
+    <div class="dugler">
+      <a class="dug" data-link="kurulum" href="#"><span lang="tr">Kurulum (.exe)</span><span lang="en">Installer (.exe)</span></a>
+      <a class="dug ikinci" data-link="zip" href="#"><span lang="tr">Taşınabilir (.zip)</span><span lang="en">Portable (.zip)</span></a>
+      <a class="dug ikinci" data-link="github" href="#"><span lang="tr">Kaynak kod</span><span lang="en">Source code</span></a>
+    </div>
+    <p class="kucuk-not" id="yakinda" hidden><span lang="tr">İndirme bağlantıları çok yakında.</span><span lang="en">Download links coming soon.</span></p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="kap">
+    <span>© 2026 Özgür Alem · <a href="/">ozthealem.com</a></span>
+    <span>GPL-3.0 · <span lang="tr">Teşekkürler.</span><span lang="en">Thank you.</span></span>
+  </div>
+</footer>
+
+<script>
+// İndirme adresleri: yayın açılınca doldur. Boş olan düğme "yakında" görünür.
+const BAGLANTI = {
+  kurulum: "",
+  zip: "",
+  github: ""
+};
+
+let bos = false;
+document.querySelectorAll("[data-link]").forEach(a => {
+  const url = BAGLANTI[a.dataset.link];
+  if (url) { a.href = url; }
+  else if (a.closest("#indir")) { a.setAttribute("aria-disabled", "true"); bos = true; }
+});
+if (bos) document.getElementById("yakinda").hidden = false;
+
+// Dil: tarayıcı Türkçe değilse İngilizce açılır; seçim hatırlanır.
+const kok = document.documentElement, dug = document.getElementById("dil");
+function dilKoy(d) {
+  kok.lang = d;
+  dug.textContent = d === "tr" ? "EN" : "TR";
+  try { localStorage.setItem("pinloca-dil", d); } catch (e) {}
+}
+let kayitli = null;
+try { kayitli = localStorage.getItem("pinloca-dil"); } catch (e) {}
+dilKoy(kayitli || ((navigator.language || "").toLowerCase().startsWith("tr") ? "tr" : "en"));
+dug.addEventListener("click", () => dilKoy(kok.lang === "tr" ? "en" : "tr"));
+
+// Sorun: dağınık turuncu kareler (sunumdaki yığın)
+const yigin = document.getElementById("yigin");
+let t = 7; const r = () => (t = (t * 9301 + 49297) % 233280) / 233280;
+for (let i = 0; i < 16; i++) {
+  const k = document.createElement("i");
+  const s = 18 + r() * 9;
+  k.style.width = s + "%";
+  k.style.left = (6 + r() * 66) + "%";
+  k.style.top = (6 + r() * 66) + "%";
+  k.style.transform = "rotate(" + (r() * 76 - 38) + "deg)";
+  if (i % 4 === 0) k.style.background = "#d9480f";
+  yigin.appendChild(k);
+}
+
+// Kaydırınca belirme
+const gozle = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add("gor"); gozle.unobserve(e.target); }
+}), { threshold: 0, rootMargin: "0px 0px -60px 0px" });
+document.querySelectorAll(".belir").forEach(el => gozle.observe(el));
+</script>
+</body>
+</html>
